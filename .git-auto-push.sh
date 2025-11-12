@@ -1,11 +1,5 @@
 #!/bin/zsh
-cd "$(dirname "$0")"
-
-# 変更があればコミットしてpush
-if [ -n "$(git status --porcelain)" ]; then
-  git add .
-  git commit -m "auto: $(date '+%Y-%m-%d %H:%M:%S')"
-  git push
-fi
-
-
+cd ~/Desktop/Homepage || exit 1
+git add .
+git commit -m "auto: $(date '+%Y-%m-%d %H:%M:%S')" || exit 0
+git push origin main
