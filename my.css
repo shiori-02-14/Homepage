@@ -439,6 +439,9 @@ h2 .icon {
 html { scroll-behavior: smooth; }
 
 @media (max-width: 820px){
+  .hero::before {
+    background-position: 82% center;
+  }
   .hero {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -454,6 +457,12 @@ html { scroll-behavior: smooth; }
 }
 
 @media (max-width: 640px){
+  .hero {
+    padding: clamp(2rem, 7vw, 2.8rem);
+  }
+  .hero::before {
+    background-position: right center;
+  }
   main { padding: clamp(1.75rem, 6vw, 2.4rem); }
   .top-nav { gap:.65rem; }
   .list { grid-template-columns: 1fr; }
