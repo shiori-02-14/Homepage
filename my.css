@@ -431,8 +431,8 @@ h2 .icon svg {
   grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
 }
 .card {
-  border:1px solid rgba(226,232,240,.75);
-  background: rgba(255,255,255,.68);
+  border:1px solid rgba(0,0,0,.08);
+  background: rgba(255,255,255,.78);
   padding:1.35rem;
   border-radius: 20px;
   transition: background .18s ease, border .18s ease, transform .15s ease;
@@ -446,15 +446,15 @@ h2 .icon svg {
   inset:8% 6% auto auto;
   width:56px;
   height:56px;
-  background: radial-gradient(circle at center, rgba(0,0,0,.06), transparent 70%);
+  background: radial-gradient(circle at center, rgba(0,0,0,.08), transparent 70%);
   opacity:0;
   transition: opacity .28s ease;
 }
 .card:hover,
 .card:focus-within {
   transform: translateY(-2px);
-  border-color: rgba(148,163,184,.85);
-  background: rgba(255,255,255,.9);
+  border-color: rgba(0,0,0,.16);
+  background: rgba(255,255,255,.95);
 }
 .card:hover::after,
 .card:focus-within::after { opacity:1; }
