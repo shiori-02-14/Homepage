@@ -2,15 +2,15 @@
 :root {
   --w: 960px;
   --gap: 1rem;
-  --fg:#1a1a1a;
-  --muted:#6b7280;
-  --bg:#fafafa;
+  --fg:#1f1b16;
+  --muted:#7a5c32;
+  --bg:#fffaf3;
   --surface:#ffffff;
-  --accent:#404040;
-  --accent-weak:#f5f5f5;
-  --accent-strong:#262626;
-  --line:#e5e5e5;
-  --shadow: 0 26px 70px -34px rgba(0,0,0,.08);
+  --accent:#f4b400;
+  --accent-weak:#fff3c6;
+  --accent-strong:#c47f00;
+  --line:rgba(236,201,121,0.6);
+  --shadow: 0 26px 70px -34px rgba(196,127,0,.18);
 }
 * { box-sizing: border-box; }
 html, body {
