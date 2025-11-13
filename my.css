@@ -275,15 +275,15 @@ h2 .icon svg {
 .top-nav a {
   padding:.45rem .85rem;
   border-radius:999px;
-  background: rgba(255,255,255,.7);
-  border:1px solid var(--line);
+  background: rgba(255,255,255,.75);
+  border:1px solid rgba(0,0,0,0.06);
   text-decoration:none;
   transition: background .2s ease, color .2s ease, transform .15s ease, border .2s ease;
 }
 .top-nav a:hover,
 .top-nav a:focus-visible {
-  background: rgba(255,255,255,.9);
-  border-color: var(--accent);
+  background: rgba(255,255,255,.96);
+  border-color: rgba(0,0,0,0.1);
   color: var(--accent-strong);
   transform: translateY(-1px);
 }
