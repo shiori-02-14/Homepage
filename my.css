@@ -275,14 +275,14 @@ h2 .icon svg {
 .top-nav a {
   padding:.45rem .85rem;
   border-radius:999px;
-  background: rgba(255,255,255,.7);
-  border:1px solid var(--line);
+  background: rgba(255, 243, 198, .7);
+  border:1px solid rgba(244, 180, 0, 0.35);
   text-decoration:none;
   transition: background .2s ease, color .2s ease, transform .15s ease, border .2s ease;
 }
 .top-nav a:hover,
 .top-nav a:focus-visible {
-  background: rgba(255,255,255,.9);
+  background: rgba(255, 240, 180, .92);
   border-color: var(--accent);
   color: var(--accent-strong);
   transform: translateY(-1px);
@@ -293,7 +293,7 @@ h2 .icon svg {
   left: clamp(1.2rem, 3.5vw, 2.6rem);
   z-index:1;
   padding: clamp(0.6rem, 1.5vw, 0.85rem) clamp(0.85rem, 2vw, 1.35rem);
-  background: rgba(255,255,255,.85);
+  background: rgba(255, 248, 217, .85);
   backdrop-filter: blur(18px);
   border-radius: 18px;
   border:1px solid var(--line);
