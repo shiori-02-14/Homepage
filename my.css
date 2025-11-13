@@ -472,7 +472,7 @@ h2 .icon svg {
   gap:1.1rem 1.6rem;
   align-items:start;
   padding:1.5rem;
-  background: linear-gradient(135deg, rgba(0,0,0,.02), rgba(255,255,255,.95));
+  background: linear-gradient(135deg, rgba(255,255,255,.88), rgba(0,0,0,.03));
   border-radius: 24px;
   border:1px solid var(--line);
   box-shadow:0 18px 36px -30px rgba(0,0,0,.06);
@@ -482,9 +482,9 @@ h2 .icon svg {
   height:120px;
   border-radius:50%;
   object-fit:cover;
-  background:linear-gradient(135deg, #f5f5f5, #ffffff);
-  border:4px solid #fff;
-  box-shadow:0 16px 30px -26px rgba(0,0,0,.1);
+  background:linear-gradient(135deg, rgba(0,0,0,.05), rgba(255,255,255,.85));
+  border:4px solid rgba(255, 255, 255, 0.95);
+  box-shadow:0 16px 30px -26px rgba(0,0,0,.12);
 }
 .profile dt { color:var(--muted); font-weight:600; letter-spacing:.01em; }
 .profile dd { margin:0 0 .4rem; font-weight:500; }
