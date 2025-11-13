@@ -159,7 +159,7 @@ h2 .icon svg {
   grid-auto-rows: auto;
   gap: clamp(1.15rem, 2.2vw, 2rem);
   padding: clamp(1.5rem, 4vw, 3rem);
-  background: linear-gradient(135deg, rgba(255, 240, 210, 0.55), rgba(255, 227, 176, 0.42));
+  background: linear-gradient(125deg, rgba(0,0,0,.02), rgba(0,0,0,.04));
   border-radius: 24px;
   border:1px solid var(--line);
   margin-bottom: clamp(1.6rem, 3vw, 2.5rem);
@@ -170,9 +170,9 @@ h2 .icon svg {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(120deg, rgba(244, 180, 0, 0.38), rgba(255, 246, 205, 0.24)), url("20250909-00000042-mantan-000-1-view.jpg") 68% center/cover no-repeat;
-  opacity: .32;
-  filter: saturate(.82);
+  background: url("20250909-00000042-mantan-000-1-view.jpg") 68% center/cover no-repeat;
+  opacity: .28;
+  filter: saturate(.9);
   transform: scaleX(-1);
   transform-origin: center;
   z-index: 0;
@@ -183,8 +183,8 @@ h2 .icon svg {
   position:absolute;
   inset:-140px 35% auto -160px;
   height: 280px;
-  background: radial-gradient(circle at center, rgba(244, 180, 0, .12), rgba(244, 180, 0, 0));
-  opacity:.75;
+  background: radial-gradient(circle at center, rgba(0,0,0,.04), rgba(0,0,0,0));
+  opacity:.6;
   pointer-events:none;
 }
 .hero__body {
