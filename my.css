@@ -132,9 +132,9 @@ h2 .icon svg {
   stroke-linejoin: round;
 }
 .icon--social {
-  background: linear-gradient(135deg, rgba(255, 225, 157, 0.8), rgba(255, 211, 166, 0.72));
-  border-color: rgba(244, 180, 0, 0.35);
-  color: #92400e;
+  background: linear-gradient(135deg, rgba(226,232,240,0.85), rgba(199,210,254,0.75));
+  border-color: rgba(148,163,184,0.45);
+  color: #1f2937;
 }
 .icon--links {
   background: linear-gradient(135deg, rgba(255, 235, 170, 0.88), rgba(255, 221, 185, 0.7));
