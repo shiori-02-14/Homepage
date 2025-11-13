@@ -465,28 +465,120 @@ h2 .icon svg {
 .meta { margin:0; color:var(--muted); font-size:.92rem; }
 
 /* プロフィール */
-.profile {
-  display:grid;
-  grid-template-columns: 120px 1fr;
-  gap:1.1rem 1.6rem;
-  align-items:start;
-  padding:1.5rem;
-  background: linear-gradient(135deg, rgba(0,0,0,.02), rgba(255,255,255,.95));
+#profile-page h1 {
+  font-size: clamp(2.2rem, 5vw, 2.6rem);
+  margin: 0 0 clamp(1.6rem, 4vw, 2.4rem);
+}
+#profile-page .profile-section {
+  display: grid;
+  gap: clamp(1.8rem, 4vw, 2.8rem);
+}
+#profile-page .profile-hero {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 2.6rem);
+  padding: clamp(1.6rem, 4vw, 2.4rem);
+  background: linear-gradient(135deg, rgba(0,0,0,.03), rgba(255,255,255,.85));
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  box-shadow: 0 24px 48px -36px rgba(15,23,42,.18);
+}
+#profile-page .profile-portrait {
+  width: clamp(140px, 22vw, 180px);
+  height: clamp(140px, 22vw, 180px);
   border-radius: 24px;
-  border:1px solid var(--line);
-  box-shadow:0 18px 36px -30px rgba(0,0,0,.06);
+  object-fit: cover;
+  box-shadow: 0 20px 40px -34px rgba(15,23,42,.28);
+  border: 6px solid rgba(255,255,255,.9);
 }
-.avatar {
-  width:120px;
-  height:120px;
-  border-radius:50%;
-  object-fit:cover;
-  background:linear-gradient(135deg, #f5f5f5, #ffffff);
-  border:4px solid #fff;
-  box-shadow:0 16px 30px -26px rgba(0,0,0,.1);
+#profile-page .profile-hero__content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
-.profile dt { color:var(--muted); font-weight:600; letter-spacing:.01em; }
-.profile dd { margin:0 0 .4rem; font-weight:500; }
+#profile-page .profile-tagline {
+  margin: 0;
+  font-weight: 620;
+  letter-spacing: .02em;
+  font-size: clamp(1rem, 2.4vw, 1.2rem);
+  color: var(--accent-strong);
+}
+#profile-page .profile-intro {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+#profile-page .profile-body {
+  display: grid;
+  gap: clamp(1.8rem, 4vw, 2.6rem);
+}
+#profile-page .profile-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(255,255,255,.92);
+  border: 1px solid rgba(226,232,240,.9);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 22px 46px -40px rgba(15,23,42,.2);
+}
+#profile-page .profile-table th,
+#profile-page .profile-table td {
+  padding: clamp(0.85rem, 2.3vw, 1.3rem) clamp(1.2rem, 3vw, 1.9rem);
+  border-bottom: 1px solid rgba(226,232,240,.6);
+}
+#profile-page .profile-table th {
+  width: 140px;
+  font-weight: 600;
+  color: var(--muted);
+  text-align: left;
+  letter-spacing: .02em;
+}
+#profile-page .profile-table td {
+  font-weight: 520;
+  color: var(--fg);
+}
+#profile-page .profile-table tr:last-child th,
+#profile-page .profile-table tr:last-child td {
+  border-bottom: none;
+}
+#profile-page .profile-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+}
+#profile-page .profile-links a {
+  display: inline-flex;
+  align-items: center;
+  padding: .45rem .9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148,163,184,.45);
+  background: rgba(248,250,252,.85);
+  text-decoration: none;
+  font-weight: 520;
+  color: var(--accent-strong);
+  letter-spacing: .01em;
+  transition: background .2s ease, border .2s ease, transform .15s ease;
+}
+#profile-page .profile-links a:hover,
+#profile-page .profile-links a:focus-visible {
+  background: rgba(255,255,255,.96);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+#profile-page .profile-note {
+  padding: clamp(1.2rem, 3vw, 1.8rem);
+  border-left: 4px solid rgba(148,163,184,.55);
+  background: rgba(248,250,252,.92);
+  border-radius: 0 24px 24px 0;
+  color: var(--muted);
+  line-height: 1.7;
+  display: grid;
+  gap: .75rem;
+}
+#profile-page .profile-note p { margin: 0; }
 
 /* フッター */
 .foot {
@@ -496,6 +588,14 @@ h2 .icon svg {
   color:var(--muted);
   text-align:center;
   font-size:.88rem;
+}
+
+/* プロフィール専用ページ */
+#profile-page .wrap {
+  margin: clamp(3.5rem, 9vw, 6rem) auto clamp(2.5rem, 6vw, 4rem);
+}
+#profile-page .profile-section {
+  margin-top: 0;
 }
 
 /* 細かい快適性 */
@@ -516,6 +616,26 @@ html { scroll-behavior: smooth; }
     margin-top: 0.5rem;
     max-width: none;
     width: 100%;
+  }
+  #profile-page .profile-hero {
+    flex-direction: column;
+    text-align: center;
+  }
+  #profile-page .profile-hero__content {
+    align-items: center;
+  }
+  #profile-page .profile-portrait {
+    border-radius: 50%;
+  }
+  #profile-page .profile-table th {
+    width: auto;
+  }
+  #profile-page .profile-links {
+    justify-content: center;
+  }
+  #profile-page .profile-note {
+    border-left: none;
+    border-radius: 24px;
   }
 }
 
@@ -551,6 +671,16 @@ html { scroll-behavior: smooth; }
   }
   .reload-text {
     font-size: 0.85rem;
+  }
+  #profile-page .profile-section {
+    gap: clamp(1.4rem, 6vw, 2.2rem);
+  }
+  #profile-page .profile-table th,
+  #profile-page .profile-table td {
+    padding: clamp(0.75rem, 4vw, 1.1rem) clamp(1rem, 5vw, 1.4rem);
+  }
+  #profile-page .profile-links {
+    gap: .55rem;
   }
 }
 

@@ -19,16 +19,50 @@
   <main class="wrap">
     <section class="profile-section" aria-labelledby="profile-title">
       <h1 id="profile-title">Profile</h1>
-      <div class="profile">
+      <header class="profile-hero">
         <img src="https://assets.st-note.com/production/uploads/images/48714034/rectangle_large_type_2_b9e78de146b25585718e46e6ec668614.jpeg?width=1200"
-             alt="しおりのプロフィール画像" class="avatar" width="120" height="120" />
-        <dl>
-          <dt>Name</dt><dd>しおり🔖</dd>
-          <dt>University</dt><dd>防衛大学校 → 電気通信大学</dd>
-          <dt>Interests</dt><dd>C++, Swift, Python, インデックス投資, 坂道アイドル</dd>
-        </dl>
+             alt="しおりのプロフィール画像" class="profile-portrait" width="160" height="160" />
+        <div class="profile-hero__content">
+          <p class="profile-tagline">電気通信大学で情報工学を学ぶエンジニア志望。</p>
+          <p class="profile-intro">C++ / Swift / Python を中心に、基礎力を丁寧に積み上げながらモバイルとWebの開発に挑戦中。アイドルや黄色い看板のラーメン屋からもらった熱量で、日々のインプットとアウトプットを綴っています。</p>
+          <p class="profile-intro">基礎的なアルゴリズムの実装や、UI を伴う小さなプロダクトを作ることからスタートし、いつか現場で通用するエンジニアになるのが目標です。</p>
+        </div>
+      </header>
+
+      <div class="profile-body">
+        <table class="profile-table" aria-describedby="profile-title">
+          <tbody>
+            <tr>
+              <th scope="row">Name</th>
+              <td>しおり🔖</td>
+            </tr>
+            <tr>
+              <th scope="row">University</th>
+              <td>防衛大学校 → 電気通信大学</td>
+            </tr>
+            <tr>
+              <th scope="row">Focus</th>
+              <td>C++ / Swift / Python / インデックス投資 / 坂道アイドル</td>
+            </tr>
+            <tr>
+              <th scope="row">Links</th>
+              <td>
+                <ul class="profile-links">
+                  <li><a href="https://x.com/shiori_02_14_" target="_blank" rel="noopener noreferrer">X (Twitter)</a></li>
+                  <li><a href="https://github.com/shiori-02-14" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                  <li><a href="https://note.com/shiori_02_14_" target="_blank" rel="noopener noreferrer">note</a></li>
+                  <li><a href="https://qiita.com/shiori_02_14_" target="_blank" rel="noopener noreferrer">Qiita</a></li>
+                  <li><a href="https://www.youtube.com/@shiori_channel914" target="_blank" rel="noopener noreferrer">YouTube</a></li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="profile-note">
+          <p>講義と並行して個人開発・執筆を少しずつ進めています。小さな一歩を積み重ねて、誰かの役に立つアウトプットを届けられるように頑張ります。</p>
+          <p>活動に興味を持っていただけた方は、ぜひ SNS で声をかけてください。</p>
+        </div>
       </div>
-      <p>学びと制作の記録をゆっくり載せていきます。</p>
       <p><a class="btn btn--ghost" href="index.html">← トップに戻る</a></p>
     </section>
   </main>
