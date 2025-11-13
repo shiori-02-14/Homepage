@@ -113,8 +113,17 @@ h2 {
 h2 .icon {
   display: inline-flex;
   align-items: center;
-  font-size: 1em;
-  line-height: 1;
+  justify-content:center;
+  min-width: 2.15rem;
+  padding: 0.18rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.55);
+  background: rgba(255, 255, 255, 0.75);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--accent-strong);
+  text-transform: uppercase;
 }
 
 /* ヒーロー */
