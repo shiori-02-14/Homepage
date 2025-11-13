@@ -252,15 +252,15 @@ h2 .icon svg {
   background: var(--fg);
 }
 .btn--ghost {
-  background:rgba(255,255,255,.9);
+  background:rgba(241,241,241,.92);
   color: var(--accent-strong);
-  border-color: var(--line);
+  border-color: rgba(0,0,0,.08);
   box-shadow:none;
 }
 .btn--ghost:hover,
 .btn--ghost:focus-visible {
-  background:#fff;
-  border-color: var(--accent);
+  background:rgba(255,255,255,.97);
+  border-color: rgba(0,0,0,.12);
   transform: translateY(-1px);
   box-shadow:0 14px 32px -26px rgba(0,0,0,.08);
 }
