@@ -172,7 +172,7 @@ h2 .icon svg {
   inset: 0;
   background: url("20250909-00000042-mantan-000-1-view.jpg") 68% center/cover no-repeat;
   opacity: .32;
-  filter: saturate(0) contrast(1.05);
+  filter: contrast(1.05);
   transform: scaleX(-1);
   transform-origin: center;
   z-index: 0;
