@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>しおり🔖 | Profile</title>
+  <meta name="description" content="しおり🔖のプロフィールページです。" />
+  <meta name="keywords" content="しおり,プロフィール,電気通信大学" />
+  <link rel="stylesheet" href="my.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔖</text></svg>" />
+</head>
+<body id="profile-page">
+  <a href="index.html" class="reload-btn" aria-label="トップに戻る">
+    <span class="reload-icon-wrapper">
+      <img src="https://assets.st-note.com/production/uploads/images/48714034/rectangle_large_type_2_b9e78de146b25585718e46e6ec668614.jpeg?width=1200" alt="しおり" class="reload-icon" width="42" height="42" loading="eager" />
+    </span>
+    <span class="reload-text">しおり🔖</span>
+  </a>
+  <main class="wrap">
+    <section class="profile-section" aria-labelledby="profile-title">
+      <h1 id="profile-title">Profile</h1>
+      <div class="profile">
+        <img src="https://assets.st-note.com/production/uploads/images/48714034/rectangle_large_type_2_b9e78de146b25585718e46e6ec668614.jpeg?width=1200"
+             alt="しおりのプロフィール画像" class="avatar" width="120" height="120" />
+        <dl>
+          <dt>Name</dt><dd>しおり🔖</dd>
+          <dt>University</dt><dd>防衛大学校 → 電気通信大学</dd>
+          <dt>Interests</dt><dd>C++, Swift, Python, インデックス投資, 坂道アイドル</dd>
+        </dl>
+      </div>
+      <p>学びと制作の記録をゆっくり載せていきます。</p>
+      <p><a class="btn btn--ghost" href="index.html">← トップに戻る</a></p>
+    </section>
+  </main>
+  <footer class="foot">© <span id="profile-year"></span> しおり🔖</footer>
+
+  <script>
+    document.getElementById('profile-year').textContent = new Date().getFullYear();
+  </script>
+
+  <!-- 構造化データ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "しおり🔖",
+    "description": "電気通信大学の学生。C++ & Swift & Python で開発中。",
+    "url": "https://github.com/shiori-02-14",
+    "sameAs": [
+      "https://github.com/shiori-02-14",
+      "https://x.com/shiori_02_14_",
+      "https://note.com/shiori_02_14_",
+      "https://www.instagram.com/shiori_02_14_/",
+      "https://www.youtube.com/@shiori_channel914"
+    ],
+    "alumniOf": {
+      "@type": "EducationalOrganization",
+      "name": "電気通信大学"
+    },
+    "knowsAbout": ["C++", "Swift", "Python"]
+  }
+  </script>
+</body>
+</html>
