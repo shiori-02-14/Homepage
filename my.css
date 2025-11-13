@@ -356,8 +356,8 @@ h2 .icon svg {
   gap:.75rem;
   text-decoration:none;
   padding:.85rem 1.1rem;
-  background: rgba(255,255,255,.7);
-  border:1px solid rgba(226,232,240,.7);
+  background: rgba(255, 247, 216, .7);
+  border:1px solid rgba(244, 180, 0, .28);
   border-radius: 14px;
   font-weight:520;
   color: var(--accent-strong);
@@ -385,8 +385,8 @@ h2 .icon svg {
   font-size:.72rem;
   letter-spacing:.12em;
   text-transform: uppercase;
-  color: rgba(100,116,139,.9);
-  background: rgba(226,232,240,.6);
+  color: rgba(122, 92, 50, .75);
+  background: rgba(244, 180, 0, .16);
   padding:.25rem .65rem;
   border-radius: 999px;
   font-weight:600;
@@ -412,12 +412,12 @@ h2 .icon svg {
 .list a::after {
   content:"↗";
   font-size: .9rem;
-  color: rgba(107,114,128,.7);
+  color: rgba(196,127,0,.55);
 }
 .list a:hover,
 .list a:focus-visible {
-  background: rgba(255,255,255,.92);
-  border-color: rgba(148,163,184,.85);
+  background: rgba(255, 244, 199, .92);
+  border-color: rgba(244, 180, 0, .65);
   color: var(--accent-strong);
 }
 
