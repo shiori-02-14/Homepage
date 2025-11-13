@@ -412,7 +412,7 @@ h2 .icon svg {
 .list a::after {
   content:"↗";
   font-size: .9rem;
-  color: rgba(196,127,0,.55);
+  color: rgba(107,114,128,.7);
 }
 .list a:hover,
 .list a:focus-visible {
