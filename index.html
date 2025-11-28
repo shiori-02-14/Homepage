@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ja">
+<html lang="ja" data-theme="light">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -30,6 +30,12 @@
     </span>
     <span class="reload-text">しおり🔖</span>
   </a>
+  <button class="theme-toggle" id="theme-toggle" type="button" aria-label="ダークモードに切り替え" aria-pressed="false" title="テーマを切り替え">
+    <span class="theme-toggle__track" aria-hidden="true">
+      <span class="theme-toggle__knob"></span>
+    </span>
+    <span class="theme-toggle__text">ダーク</span>
+  </button>
   <main id="main-content" class="wrap">
 
     <!-- Hero -->
@@ -173,6 +179,61 @@
 
   <!-- 年だけ自動更新（JS不要なら手書きでOK） -->
   <script>
+    (function setupThemeToggle() {
+      const root = document.documentElement;
+      const themeToggle = document.getElementById('theme-toggle');
+      const prefersDark = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+      const storageKey = 'shiori-theme';
+
+      const updateToggleUI = (theme) => {
+        if (!themeToggle) return;
+        const isDark = theme === 'dark';
+        const label = isDark ? 'ライトモードに切り替え' : 'ダークモードに切り替え';
+        themeToggle.setAttribute('aria-label', label);
+        themeToggle.setAttribute('aria-pressed', String(isDark));
+        const textEl = themeToggle.querySelector('.theme-toggle__text');
+        if (textEl) {
+          textEl.textContent = isDark ? 'ライト' : 'ダーク';
+        }
+      };
+
+      const applyTheme = (theme, { persist } = { persist: false }) => {
+        const next = theme === 'dark' ? 'dark' : 'light';
+        root.setAttribute('data-theme', next);
+        updateToggleUI(next);
+        if (persist) {
+          localStorage.setItem(storageKey, next);
+        }
+      };
+
+      const savedTheme = localStorage.getItem(storageKey);
+      const prefersDarkMatches = prefersDark && prefersDark.matches;
+      const initialTheme = savedTheme || (prefersDarkMatches ? 'dark' : 'light');
+      applyTheme(initialTheme);
+
+      if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+          const current = root.getAttribute('data-theme');
+          const next = current === 'dark' ? 'light' : 'dark';
+          applyTheme(next, { persist: true });
+        });
+      }
+
+      const handleSystemChange = (event) => {
+        if (!localStorage.getItem(storageKey)) {
+          applyTheme(event.matches ? 'dark' : 'light');
+        }
+      };
+
+      if (prefersDark) {
+        if (prefersDark.addEventListener) {
+          prefersDark.addEventListener('change', handleSystemChange);
+        } else if (prefersDark.addListener) {
+          prefersDark.addListener(handleSystemChange);
+        }
+      }
+    })();
+
     document.getElementById('y').textContent = new Date().getFullYear();
     
     // リロードボタンのイベントリスナー
@@ -186,7 +247,7 @@
     document.querySelectorAll('.top-nav a').forEach(function(link) {
       link.addEventListener('click', function(e) {
         const href = this.getAttribute('href');
-        if (href.startsWith('#')) {
+        if (href && href.startsWith('#')) {
           e.preventDefault();
           const targetId = href.substring(1);
           const targetElement = document.getElementById(targetId);
