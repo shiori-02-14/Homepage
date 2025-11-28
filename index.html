@@ -24,7 +24,7 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔖</text></svg>" />
 </head>
 <body id="top">
-  <a href="#" class="reload-btn" id="reload-btn" aria-label="ページを更新">
+  <a href="#top" class="reload-btn" id="reload-btn" aria-label="ページを更新してトップに戻る">
     <span class="reload-icon-wrapper">
       <img src="https://assets.st-note.com/production/uploads/images/48714034/rectangle_large_type_2_b9e78de146b25585718e46e6ec668614.jpeg?width=1200" alt="しおり" class="reload-icon" width="42" height="42" loading="eager" />
     </span>
@@ -44,13 +44,16 @@
         <h1>しおり🔖</h1>
         <p class="subtitle">エンジニア志望</p>
         <p class="note">アイドルと黄色い看板のラーメン屋が好きです。</p>
-        <ul class="chips" aria-label="メインスキル">
-          <li>C++</li>
-          <li>Swift</li>
-          <li>Python</li>
-          <li>HTML</li>
-          <li>CSS</li>
-        </ul>
+        <div class="hero__skills">
+          <ul class="chips" aria-labelledby="hero-skills-label">
+            <li class="chips__label" id="hero-skills-label">Skills</li>
+            <li>C++</li>
+            <li>Swift</li>
+            <li>Python</li>
+            <li>HTML</li>
+            <li>CSS</li>
+          </ul>
+        </div>
         <div class="hero__actions">
           <a class="btn" href="profile.html">≫ Profile</a>
           <a class="btn btn--ghost" href="#articles">Latest Articles</a>
@@ -151,11 +154,11 @@
   <script>
     document.getElementById('y').textContent = new Date().getFullYear();
     
-    // リロードボタンのイベントリスナー
+    // ページを再読み込みしてトップに戻るボタン
     document.getElementById('reload-btn').addEventListener('click', function(e) {
       e.preventDefault();
       window.scrollTo({ top: 0, behavior: 'auto' });
-      location.reload();
+      window.location.reload();
     });
 
     // ナビゲーションリンクのクリック時に中央にスクロール
