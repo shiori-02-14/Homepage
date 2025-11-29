@@ -1,3 +1,4 @@
+(() => {
 const storageKey = 'shiori-theme';
 const reduceMotionQuery = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
 
@@ -545,4 +546,4 @@ if (document.readyState === 'loading') {
 } else {
   initPage();
 }
-
+})();
