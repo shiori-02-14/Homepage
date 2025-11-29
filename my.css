@@ -392,6 +392,12 @@ h2 .icon svg {
   color: var(--accent-strong);
   line-height:1.05;
 }
+.hero__skills-label-sub {
+  font-size:.95rem;
+  font-weight:500;
+  color: var(--muted);
+  letter-spacing:.02em;
+}
 .hero__skills .chips { margin:0; }
 .chips {
   list-style:none;
