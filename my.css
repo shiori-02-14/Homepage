@@ -927,3 +927,111 @@ html { scroll-behavior: smooth; }
   70% { transform: scale(1); box-shadow:0 0 0 10px rgba(0,0,0,0); }
   100% { transform: scale(.95); box-shadow:0 0 0 0 rgba(0,0,0,0); }
 }
+
+/* =========================================
+   おみくじボタン (ここから下を追加)
+   ========================================= */
+
+/* ボタンと結果を配置するエリア */
+.fortune-container {
+  text-align: center;
+  margin: 3rem auto 1rem; /* 上に少し余白、下は控えめに */
+  min-height: 150px; /* コメントとラッキーアイテム分の高さを確保 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
+/* ボタンのデザイン */
+.fortune-btn {
+  background: var(--surface); /* サイトの背景色変数を使用 */
+  border: 2px solid #e60033; /* 神社の赤 */
+  color: #e60033;
+  padding: 0.8rem 2rem;
+  border-radius: 999px; /* 角丸（カプセル型） */
+  font-weight: bold;
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif; /* 明朝体 */
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 弾むようなアニメーション設定 */
+  box-shadow: 0 4px 12px rgba(230, 0, 51, 0.15);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+}
+
+/* ホバー時の動き */
+.fortune-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  background: #e60033;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(230, 0, 51, 0.3);
+}
+
+/* 結果テキストのデザイン */
+.fortune-result {
+  display: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #e60033;
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+  animation: popUp 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.fortune-comment {
+  display: none;
+  font-size: 1rem;
+  color: #8c2f3c;
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+  line-height: 1.6;
+}
+
+.fortune-lucky {
+  display: none;
+  font-size: 0.95rem;
+  color: #444;
+  font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
+}
+
+/* ダークモード対応 */
+html[data-theme='dark'] .fortune-btn {
+  background: var(--card-bg); /* ダークモード用のカード背景色 */
+  color: #ff4d4d; /* 少し明るい赤 */
+  border-color: #ff4d4d;
+}
+
+html[data-theme='dark'] .fortune-btn:hover {
+  background: #ff4d4d;
+  color: #fff;
+}
+
+html[data-theme='dark'] .fortune-result {
+  color: #ff4d4d;
+}
+
+html[data-theme='dark'] .fortune-comment {
+  color: #ffb3c1;
+}
+
+html[data-theme='dark'] .fortune-lucky {
+  color: #ffd9e0;
+}
+
+/* アニメーション定義 */
+@keyframes rotateOut {
+  0% { transform: rotateX(0); opacity: 1; }
+  100% { transform: rotateX(90deg); opacity: 0; }
+}
+
+@keyframes popUp {
+  0% { transform: translateY(20px) scale(0.5); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* JSから付与されるクラス */
+.animate-out {
+  animation: rotateOut 0.3s forwards;
+}
