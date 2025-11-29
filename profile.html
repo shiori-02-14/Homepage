@@ -89,6 +89,8 @@
                       <a href="https://sakurazaka46.com/s/s46/artist/50?ima=0000" target="_blank" rel="noopener noreferrer">森田 ひかる</a>
                       <span aria-hidden="true"> / </span>
                       <a href="https://sakurazaka46.com/s/s46/artist/69?ima=0000" target="_blank" rel="noopener noreferrer">山下 瞳月</a>
+                      <span aria-hidden="true"> / </span>
+                      <a href="https://sakurazaka46.com/s/s46/artist/64?ima=0000" target="_blank" rel="noopener noreferrer">中嶋 優月</a>
                     </span>
                   </li>
                 </ul>
@@ -118,64 +120,7 @@
   </main>
   <footer class="foot">© <span id="profile-year"></span> しおり🔖</footer>
 
-  <script>
-    (function setupThemeToggle() {
-      const root = document.documentElement;
-      const themeToggle = document.getElementById('theme-toggle');
-      const prefersDark = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
-      const storageKey = 'shiori-theme';
-
-      const updateToggleUI = (theme) => {
-        if (!themeToggle) return;
-        const isDark = theme === 'dark';
-        const label = isDark ? 'ライトモードに切り替え' : 'ダークモードに切り替え';
-        themeToggle.setAttribute('aria-label', label);
-        themeToggle.setAttribute('aria-pressed', String(isDark));
-        const textEl = themeToggle.querySelector('.theme-toggle__text');
-        if (textEl) {
-          textEl.textContent = isDark ? 'ライト' : 'ダーク';
-        }
-      };
-
-      const applyTheme = (theme, { persist } = { persist: false }) => {
-        const next = theme === 'dark' ? 'dark' : 'light';
-        root.setAttribute('data-theme', next);
-        updateToggleUI(next);
-        if (persist) {
-          localStorage.setItem(storageKey, next);
-        }
-      };
-
-      const savedTheme = localStorage.getItem(storageKey);
-      const prefersDarkMatches = prefersDark && prefersDark.matches;
-      const initialTheme = savedTheme || (prefersDarkMatches ? 'dark' : 'light');
-      applyTheme(initialTheme);
-
-      if (themeToggle) {
-        themeToggle.addEventListener('click', () => {
-          const current = root.getAttribute('data-theme');
-          const next = current === 'dark' ? 'light' : 'dark';
-          applyTheme(next, { persist: true });
-        });
-      }
-
-      const handleSystemChange = (event) => {
-        if (!localStorage.getItem(storageKey)) {
-          applyTheme(event.matches ? 'dark' : 'light');
-        }
-      };
-
-      if (prefersDark) {
-        if (prefersDark.addEventListener) {
-          prefersDark.addEventListener('change', handleSystemChange);
-        } else if (prefersDark.addListener) {
-          prefersDark.addListener(handleSystemChange);
-        }
-      }
-    })();
-
-    document.getElementById('profile-year').textContent = new Date().getFullYear();
-  </script>
+  <script type="module" src="scripts/main.js"></script>
 
   <!-- 構造化データ -->
   <script type="application/ld+json">

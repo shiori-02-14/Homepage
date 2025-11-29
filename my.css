@@ -262,7 +262,10 @@ main {
   box-shadow: var(--shadow);
   padding: clamp(1.25rem, 3.5vw, 2.4rem);
 }
-section { margin: clamp(1.25rem, 3vw, 2.3rem) 0; }
+section {
+  margin: clamp(1.25rem, 3vw, 2.3rem) 0;
+  scroll-margin: clamp(5rem, 12vw, 8rem) 0;
+}
 h1, h2, h3 { line-height: 1.25; }
 h2 {
   font-size: clamp(1.2rem, 2vw, 1.35rem);
@@ -965,6 +968,20 @@ html { scroll-behavior: smooth; }
   }
   #profile-page .profile-links {
     gap: .55rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  html {
+    scroll-behavior: auto;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .fortune-btn:hover {
+    transform: none;
   }
 }
 
