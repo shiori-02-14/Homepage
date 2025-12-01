@@ -266,6 +266,26 @@ section {
   margin: clamp(1.25rem, 3vw, 2.3rem) 0;
   scroll-margin: clamp(5rem, 12vw, 8rem) 0;
 }
+.section__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1.1rem;
+}
+.section__description {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+.section__cta {
+  margin-top: 1.4rem;
+  display: flex;
+  justify-content: flex-end;
+}
+.section__cta .btn {
+  font-size: 0.88rem;
+  padding: 0.5rem 1.4rem;
+}
 h1, h2, h3 { line-height: 1.25; }
 h2 {
   font-size: clamp(1.2rem, 2vw, 1.35rem);
@@ -722,6 +742,76 @@ h2 .icon svg {
   display:flex;
   flex-direction:column;
   gap:0.45rem;
+}
+.card__meta {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:0.55rem;
+  font-size:0.82rem;
+  color:var(--muted);
+}
+.badge {
+  display:inline-flex;
+  align-items:center;
+  gap:0.25rem;
+  padding:0.2rem 0.7rem;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:var(--accent-weak);
+  font-size:0.72rem;
+  font-weight:620;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--accent-strong);
+}
+.badge--source {
+  background:var(--meta-bg);
+}
+.badge--series {
+  background:rgba(14,165,233,.15);
+  border-color:rgba(14,165,233,.4);
+  color:#0ea5e9;
+}
+:root[data-theme='dark'] .badge--series {
+  border-color:rgba(56,189,248,.5);
+  color:#38bdf8;
+}
+.meta__length,
+.meta__status {
+  font-weight:560;
+  letter-spacing:.01em;
+}
+.tag-pills {
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:flex;
+  flex-wrap:wrap;
+  gap:0.45rem;
+}
+.tag-pills li {
+  padding:0.35rem 0.8rem;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:var(--accent-weak);
+  font-size:0.78rem;
+  font-weight:520;
+  color:var(--accent-strong);
+}
+.card__cta {
+  display:inline-flex;
+  align-items:center;
+  gap:0.2rem;
+  font-weight:600;
+  font-size:0.88rem;
+  color:var(--accent-strong);
+  opacity:.85;
+  transition:opacity .2s ease;
+}
+.card__link:hover .card__cta,
+.card__link:focus-visible .card__cta {
+  opacity:1;
 }
 .meta { margin:0; color:var(--muted); font-size:.92rem; }
 
