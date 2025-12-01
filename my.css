@@ -677,18 +677,20 @@ h2 .icon svg {
   margin:0;
   padding:0;
   display:grid;
-  gap:1.35rem;
-  grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+  gap:clamp(1rem, 2vw, 1.5rem);
+  grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+}
+.cards > li {
+  list-style:none;
 }
 .card {
   border:1px solid var(--card-border);
-  background: var(--card-bg);
-  padding:1.35rem;
-  border-radius: 20px;
-  transition: background .18s ease, border .18s ease, transform .15s ease;
+  background: var(--glass-bg-strong);
+  padding:1.5rem;
+  border-radius: 24px;
+  transition: background .18s ease, border .18s ease, transform .15s ease, box-shadow .2s ease;
   position: relative;
-  overflow:hidden;
-  box-shadow:none;
+  box-shadow:0 25px 60px -40px rgba(15,23,42,.45);
 }
 .card::after {
   content:"";
@@ -708,6 +710,12 @@ h2 .icon svg {
 }
 .card:hover::after,
 .card:focus-within::after { opacity:1; }
+.card.card--upcoming .card__link {
+  cursor: default;
+}
+.card.card--upcoming .card__link:focus-visible {
+  outline:none;
+}
 .card h3 {
   margin:0 0 .65rem;
   font-size:1.08rem;
@@ -791,6 +799,7 @@ h2 .icon svg {
   gap:0.45rem;
 }
 .tag-pills li {
+  list-style:none;
   padding:0.35rem 0.8rem;
   border-radius:999px;
   border:1px solid var(--line);
