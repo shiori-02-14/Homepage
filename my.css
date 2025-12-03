@@ -1127,7 +1127,7 @@ html { scroll-behavior: smooth; }
 }
 
 /* =========================================
-   おみくじボタン (ここから下を追加)
+   おみくじボタン
    ========================================= */
 
 /* ボタンと結果を配置するエリア */
@@ -1232,4 +1232,123 @@ html[data-theme='dark'] .fortune-lucky {
 /* JSから付与されるクラス */
 .animate-out {
   animation: rotateOut 0.3s forwards;
+}
+
+/* =========================================
+   LINE風 BGMバッジ
+   ========================================= */
+.profile-bgm {
+  margin-top: -0.25rem;
+  margin-bottom: 0.25rem;
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* モバイルで中央寄せにする場合 */
+@media (max-width: 820px) {
+  .profile-bgm {
+    justify-content: center;
+  }
+}
+
+.bgm-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 0.8rem 0.35rem 0.45rem;
+  background: rgba(0, 0, 0, 0.4); /* デフォルトで少し暗く */
+  border-radius: 999px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.8rem;
+  backdrop-filter: blur(8px);
+  transition: background 0.2s ease, transform 0.15s ease;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* ダークモード/ライトモードで調整 */
+:root[data-theme='light'] .bgm-badge {
+  background: rgba(255, 255, 255, 0.6);
+  color: #1a1a1a;
+  border-color: rgba(0, 0, 0, 0.08);
+}
+:root[data-theme='dark'] .bgm-badge {
+  background: rgba(40, 40, 40, 0.6);
+  color: #f0f0f0;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.bgm-badge:hover {
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  transform: translateY(-1px);
+}
+:root[data-theme='light'] .bgm-badge:hover {
+  background: rgba(255, 255, 255, 0.85);
+  color: #000;
+}
+:root[data-theme='dark'] .bgm-badge:hover {
+  background: rgba(60, 60, 60, 0.8);
+  color: #fff;
+}
+
+.bgm-badge__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: #27ae60; /* LINE music green */
+  border-radius: 50%;
+  color: #fff;
+  flex-shrink: 0;
+}
+.bgm-badge__icon svg {
+  width: 12px;
+  height: 12px;
+  margin-left: 2px; /* 三角を中央に見せる微調整 */
+}
+
+.bgm-badge__content {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 100px;
+}
+
+.bgm-badge__text {
+  white-space: nowrap;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  /* 長い場合にスクロールさせるアニメーション */
+  /* mask-image: linear-gradient(90deg, transparent 0%, #000 5%, #000 95%, transparent 100%); */
+}
+
+.bgm-badge__eq {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+  margin-left: 0.2rem;
+}
+
+.bgm-badge__eq span {
+  display: block;
+  width: 3px;
+  background: currentColor;
+  border-radius: 1px;
+  opacity: 0.8;
+  animation: eq-bounce 1s ease-in-out infinite;
+}
+.bgm-badge__eq span:nth-child(1) { height: 6px; animation-delay: 0s; }
+.bgm-badge__eq span:nth-child(2) { height: 12px; animation-delay: 0.2s; }
+.bgm-badge__eq span:nth-child(3) { height: 8px; animation-delay: 0.4s; }
+.bgm-badge__eq span:nth-child(4) { height: 10px; animation-delay: 0.1s; }
+
+@keyframes eq-bounce {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.4); }
 }
