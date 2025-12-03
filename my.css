@@ -962,6 +962,24 @@ h2 .icon svg {
   letter-spacing: .02em;
   color: var(--accent-strong);
 }
+#profile-page .profile-oshimen__group--nogi {
+  color: #7e1083;
+}
+#profile-page .profile-oshimen__group--hinata {
+  color: #4baddd;
+}
+#profile-page .profile-oshimen__group--sakura {
+  color: #e06a8e;
+}
+:root[data-theme='dark'] #profile-page .profile-oshimen__group--nogi {
+  color: #d4aadd;
+}
+:root[data-theme='dark'] #profile-page .profile-oshimen__group--hinata {
+  color: #7cc7e8;
+}
+:root[data-theme='dark'] #profile-page .profile-oshimen__group--sakura {
+  color: #f9c6d6;
+}
 #profile-page .profile-oshimen__member {
   font-weight: 520;
   color: var(--fg);
