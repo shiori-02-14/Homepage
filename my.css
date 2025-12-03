@@ -680,6 +680,20 @@ h2 .icon svg {
   gap:clamp(1rem, 2vw, 1.5rem);
   grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
 }
+.cards-scroll {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  padding-bottom: 1rem; /* スクロールバーの領域確保 */
+  -webkit-overflow-scrolling: touch; /* iOSでの慣性スクロール */
+}
+.cards-scroll > li {
+  list-style: none;
+  scroll-snap-align: start;
+  flex: 0 0 auto; /* 横幅を固定しないと縮む */
+  width: min(320px, 80vw); /* カードの幅設定 */
+}
 .cards > li {
   list-style:none;
 }
@@ -971,6 +985,9 @@ h2 .icon svg {
 #profile-page .profile-oshimen__group--sakura {
   color: #e06a8e;
 }
+#profile-page .profile-oshimen__group--others {
+  color: #d97706;
+}
 :root[data-theme='dark'] #profile-page .profile-oshimen__group--nogi {
   color: #d4aadd;
 }
@@ -980,12 +997,15 @@ h2 .icon svg {
 :root[data-theme='dark'] #profile-page .profile-oshimen__group--sakura {
   color: #f9c6d6;
 }
+:root[data-theme='dark'] #profile-page .profile-oshimen__group--others {
+  color: #fbbf24;
+}
 #profile-page .profile-oshimen__member {
   font-weight: 520;
   color: var(--fg);
 }
 #profile-page .profile-oshimen__member a {
-  display: inline-flex;
+  display: inline-block;
   align-items: center;
   gap: 0.2rem;
   color: var(--accent-strong);
