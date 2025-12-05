@@ -347,10 +347,10 @@ h2 .icon svg {
   content: "";
   position: absolute;
   inset: 0;
-  background: url("20250909-00000042-mantan-000-1-view.jpg") 68% center/cover no-repeat;
+  background: url("IMG_4573.jpg") 85% 20%/cover no-repeat;
   opacity: .28;
   filter: saturate(.9);
-  transform: scaleX(-1);
+    /* transform: scaleX(-1); */
   transform-origin: center;
   z-index: 0;
   pointer-events: none;
@@ -1058,7 +1058,7 @@ html { scroll-behavior: smooth; }
 
 @media (max-width: 820px){
   .hero::before {
-    background-position: 82% center;
+    background-position: 50% center;
   }
   .hero {
     grid-template-columns: minmax(0, 1fr);
@@ -1099,7 +1099,7 @@ html { scroll-behavior: smooth; }
     padding: clamp(2rem, 7vw, 2.8rem);
   }
   .hero::before {
-    background-position: right center;
+    background-position: 15% center;
   }
   main { padding: clamp(1.75rem, 6vw, 2.4rem); }
   .top-nav { gap:.65rem; }
