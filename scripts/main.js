@@ -2,6 +2,18 @@
 const storageKey = 'shiori-theme';
 const reduceMotionQuery = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
 
+const applyReducedEffectsHint = () => {
+  try {
+    const root = document.documentElement;
+    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (connection && connection.saveData) {
+      root.setAttribute('data-reduced-effects', 'true');
+    }
+  } catch (_) {
+    // ignore
+  }
+};
+
 const fortuneDataKey = '__SHIORI_FORTUNE_DATA__';
 const scriptBaseUrl = (() => {
   const current = document.currentScript;
@@ -156,17 +168,37 @@ const setupHeaderAutoFit = () => {
   const topNav = headerInner.querySelector('.top-nav');
   const logoText = headerInner.querySelector('.reload-text');
 
-  const fitElementToWidth = (el, { minPx = 12, stepPx = 0.5, maxLoops = 80 } = {}) => {
+  // scrollWidth/clientWidth の計測はレイアウト計算を伴うので、ループ回数を極力減らす
+  const fitElementToWidth = (el, { minPx = 12, precisionPx = 0.25, maxLoops = 18 } = {}) => {
     if (!el) return;
+    if (el.clientWidth === 0) return;
+
     const max = Number.parseFloat(getComputedStyle(el).fontSize);
     if (!Number.isFinite(max)) return;
-    let size = max;
-    let loops = 0;
-    while (el.scrollWidth > el.clientWidth + 1 && size - stepPx >= minPx && loops < maxLoops) {
-      size -= stepPx;
-      el.style.fontSize = `${size}px`;
-      loops += 1;
+
+    const min = Math.min(minPx, max);
+    if (max <= min) return;
+
+    const isOverflowing = () => el.scrollWidth > el.clientWidth + 1;
+    if (!isOverflowing()) return;
+
+    let low = min;
+    let high = max;
+    let best = min;
+
+    for (let loops = 0; loops < maxLoops && high - low > precisionPx; loops += 1) {
+      const mid = (low + high) / 2;
+      el.style.fontSize = `${mid}px`;
+
+      if (isOverflowing()) {
+        high = mid;
+      } else {
+        best = mid;
+        low = mid;
+      }
     }
+
+    el.style.fontSize = `${best}px`;
   };
 
   const fit = () => {
@@ -556,6 +588,7 @@ const initFortune = () => {
 };
 
 const initPage = () => {
+  applyReducedEffectsHint();
   setupThemeToggle();
   initYearStamp();
   initReloadButton();

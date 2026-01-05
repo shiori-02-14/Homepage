@@ -514,6 +514,30 @@ section {
   margin: clamp(1.6rem, 3.8vw, 2.9rem) 0;
   scroll-margin: clamp(5rem, 12vw, 8rem) 0;
 }
+
+/* -----------------------------------------
+   パフォーマンス最適化
+   ----------------------------------------- */
+
+/* 画面外のセクションは描画を遅延して、初期レンダリングとスクロールを軽くする */
+@supports (content-visibility: auto) {
+  main > section {
+    content-visibility: auto;
+    /* ざっくりの高さ見積もり（レンダリングされるまでのスクロールジャンプを抑える） */
+    contain-intrinsic-size: 1px 520px;
+  }
+}
+
+/* 省データ/省電力っぽいときは、重いエフェクトだけ抑える（機能は維持） */
+:root[data-reduced-effects='true'] .site-header,
+:root[data-reduced-effects='true'] .hero__aside,
+:root[data-reduced-effects='true'] .bgm-badge {
+  backdrop-filter: none;
+}
+:root[data-reduced-effects='true'] .status-dot,
+:root[data-reduced-effects='true'] .bgm-badge__eq span {
+  animation: none !important;
+}
 /* ページ最下部の “余白だけ” をなくす（間の余白は section 自体の margin で維持） */
 main > section:last-of-type {
   margin-bottom: clamp(1.1rem, 3vw, 1.6rem);
@@ -2232,6 +2256,11 @@ html { scroll-behavior: smooth; }
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+  .site-header,
+  .hero__aside,
+  .bgm-badge {
+    backdrop-filter: none !important;
   }
   .btn--fortune:hover,
   .fortune-btn:hover {
