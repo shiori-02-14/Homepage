@@ -1382,7 +1382,8 @@ a.friend-card::after {
     radial-gradient(700px circle at 90% 0%, rgba(251,191,36,.22), transparent 60%),
     linear-gradient(135deg, rgba(0,0,0,.02), rgba(0,0,0,.06));
 }
-.card__thumb img {
+.card__thumb img,
+.card__thumb svg {
   position:absolute;
   inset:0;
   width:100%;
@@ -1391,6 +1392,10 @@ a.friend-card::after {
   display:block;
   transform: scale(1);
   transition: transform .25s ease;
+}
+.card__thumb svg {
+  object-fit: contain;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
 }
 .card__content {
   display:flex;
@@ -1532,6 +1537,28 @@ a.friend-card::after {
 }
 .card--article:hover .card__thumb img,
 .card--article:focus-within .card__thumb img {
+  transform: scale(1.03);
+}
+.card--work {
+  padding: 0;
+  overflow: hidden;
+}
+.card--work .card__link {
+  gap: 0;
+}
+.card--work .card__thumb {
+  border-radius: 24px 24px 0 0;
+  border: none;
+}
+.card--work .card__content {
+  padding: 1.1rem 1.2rem 1.3rem;
+  background: var(--glass-bg-strong);
+  border-top: 1px solid var(--card-border);
+}
+.card--work:hover .card__thumb img,
+.card--work:focus-within .card__thumb img,
+.card--work:hover .card__thumb svg,
+.card--work:focus-within .card__thumb svg {
   transform: scale(1.03);
 }
 .meta { margin:0; color:var(--muted); font-size:.92rem; }
