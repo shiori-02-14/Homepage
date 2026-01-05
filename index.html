@@ -24,22 +24,22 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <!-- タブのアイコン（ファビコン）：Xの画像を使用 -->
-  <link rel="icon" type="image/jpeg" href="https://pbs.twimg.com/profile_images/2005878117399945217/KuODqIbT_200x200.jpg" />
+  <link rel="icon" type="image/jpeg" href="https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg?v=20260105" />
+  <link rel="apple-touch-icon" href="https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg?v=20260105" />
 </head>
 <body id="top">
   <header class="site-header" aria-label="ヘッダー">
     <div class="site-header__inner">
       <a href="index.html" class="reload-btn" id="reload-btn" aria-label="ホームへ">
         <span class="reload-icon-wrapper">
-          <img src="https://pbs.twimg.com/profile_images/2005878117399945217/KuODqIbT_200x200.jpg" alt="しおり" class="reload-icon" width="42" height="42" loading="eager" decoding="async" referrerpolicy="no-referrer" />
+          <img src="https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg?v=20260105" alt="しおり" class="reload-icon" width="42" height="42" loading="eager" decoding="async" referrerpolicy="no-referrer" />
         </span>
         <span class="reload-text">しおり🔖</span>
       </a>
 
       <nav class="top-nav" aria-label="サイト内リンク">
-        <a href="#social">Social</a>
-        <a href="#links">Links</a>
-        <a href="#articles">Articles</a>
+        <a href="index.html" aria-current="page">Home</a>
+        <a href="articles.html">Articles</a>
         <a href="profile.html">Profile</a>
       </nav>
 
@@ -85,7 +85,7 @@
         -->
         <div class="hero__actions">
           <a class="btn" href="profile.html">≫ Profile</a>
-          <a class="btn btn--ghost" href="#articles">Latest Articles</a>
+          <a class="btn btn--ghost" href="articles.html">Latest Articles</a>
         </div>
       </div>
       <div class="hero__aside">
@@ -98,18 +98,20 @@
     </header>
 
     <section aria-labelledby="social">
-      <h2 id="social"><span class="icon icon--social" aria-hidden="true">
-        <svg viewBox="0 0 24 24" role="presentation">
-          <circle cx="6.5" cy="12" r="2.1"></circle>
-          <circle cx="17.5" cy="6.5" r="2.1"></circle>
-          <circle cx="17.5" cy="17.5" r="2.1"></circle>
-          <path d="M8.3 11l7.1-3.3M8.3 13l7.1 3.3" />
-        </svg>
-      </span> Social</h2>
+      <div class="section__intro section__intro--bar">
+        <h2 id="social"><span class="icon icon--social" aria-hidden="true">
+          <svg viewBox="0 0 24 24" role="presentation">
+            <circle cx="6.5" cy="12" r="2.1"></circle>
+            <circle cx="17.5" cy="6.5" r="2.1"></circle>
+            <circle cx="17.5" cy="17.5" r="2.1"></circle>
+            <path d="M8.3 11l7.1-3.3M8.3 13l7.1 3.3" />
+          </svg>
+        </span> Social</h2>
+      </div>
       <ul class="list list--social list--icons">
         <li><a href="https://x.com/shiori_02_14_" target="_blank" rel="noopener noreferrer">
           <span class="social-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></span>
-          <span class="social-label">X (Twitter)</span>
+          <span class="social-label">Twitter</span>
         </a></li>
         <li><a href="https://github.com/shiori-02-14" target="_blank" rel="noopener noreferrer">
           <span class="social-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></span>
@@ -139,13 +141,15 @@
     </section>
 
     <section aria-labelledby="links">
-      <h2 id="links"><span class="icon icon--links" aria-hidden="true">
-        <svg viewBox="0 0 24 24" role="presentation">
-          <path d="M8.75 14.75 6.3 12.3a3.75 3.75 0 0 1 5.3-5.3l2.45 2.45" />
-          <path d="M15.25 9.25 17.7 11.7a3.75 3.75 0 1 1-5.3 5.3L10 14.55" />
-          <path d="M11.9 12.1 13.1 10.9" />
-        </svg>
-      </span> Friends' Links</h2>
+      <div class="section__intro section__intro--bar">
+        <h2 id="links"><span class="icon icon--links" aria-hidden="true">
+          <svg viewBox="0 0 24 24" role="presentation">
+            <path d="M8.75 14.75 6.3 12.3a3.75 3.75 0 0 1 5.3-5.3l2.45 2.45" />
+            <path d="M15.25 9.25 17.7 11.7a3.75 3.75 0 1 1-5.3 5.3L10 14.55" />
+            <path d="M11.9 12.1 13.1 10.9" />
+          </svg>
+        </span> Links</h2>
+      </div>
       <ul class="list list--friends list--icons">
         <li>
           <a class="friend-card" href="https://ctes091x.net/" target="_blank" rel="noopener noreferrer">
@@ -179,6 +183,14 @@
             <span class="friend-card__name">こっとん</span>
           </a>
         </li>
+        <li>
+          <a class="friend-card" href="https://thunfasky.com/" target="_blank" rel="noopener noreferrer">
+            <span class="friend-card__avatar">
+              <img src="https://unavatar.io/twitter/ThunFasky" alt="ThunFaskyのアイコン" width="40" height="40" loading="lazy" decoding="async" />
+            </span>
+            <span class="friend-card__name">ThunFasky</span>
+          </a>
+        </li>
         <li><a href="https://example.com" target="_blank" rel="noopener noreferrer">募集中（DM来てください）</a></li>
         <li><a href="https://example.com" target="_blank" rel="noopener noreferrer">サイト作ってるやつは</a></li>
         <li><a href="https://example.com" target="_blank" rel="noopener noreferrer">多分勝手に追加します</a></li>
@@ -188,7 +200,7 @@
     </section>
 
     <section aria-labelledby="articles">
-      <div class="section__intro">
+      <div class="section__intro section__intro--split">
         <h2 id="articles"><span class="icon icon--articles" aria-hidden="true">
           <svg viewBox="0 0 24 24" role="presentation">
             <path d="M9 4h6l4 4v10a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />
@@ -197,6 +209,7 @@
             <path d="M10 16h5" />
           </svg>
         </span> Articles</h2>
+        <a class="section__more" href="articles.html" aria-label="記事一覧ページへ">See all articles</a>
       </div>
       <ul class="cards-scroll" aria-live="polite">
         <li class="card card--article">
@@ -238,19 +251,22 @@
       </ul>
     </section>
 
-    <div class="fortune-container">
-      <button id="fortune-btn" class="fortune-btn" type="button">
-        <span class="icon">⛩️</span> 今日の運勢は？
-      </button>
-    <div id="fortune-result" class="fortune-result" aria-live="polite"></div>
-    <p id="fortune-comment" class="fortune-comment" aria-live="polite"></p>
-    <p id="fortune-lucky" class="fortune-lucky" aria-live="polite"></p>
-    </div>
+    <section aria-label="おみくじ">
+      <div class="fortune-container">
+        <button id="fortune-btn" class="btn fortune-btn" type="button">
+          <span class="icon" aria-hidden="true">⛩️</span> 今日の運勢は？
+        </button>
+        <p id="fortune-hint" class="fortune-hint">上のタップしてみて</p>
+        <div id="fortune-result" class="fortune-result" aria-live="polite"></div>
+        <p id="fortune-comment" class="fortune-comment" aria-live="polite"></p>
+        <p id="fortune-lucky" class="fortune-lucky" aria-live="polite"></p>
+      </div>
+    </section>
 
     <footer class="foot">© <span id="y"></span> しおり🔖</footer>
   </main>
 
-  <script src="scripts/main.js"></script>
+  <script src="scripts/main.js" defer></script>
 
   <script type="application/ld+json">
   {

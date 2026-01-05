@@ -11,23 +11,23 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <!-- タブのアイコン（ファビコン）：Xの画像を使用 -->
-  <link rel="icon" type="image/jpeg" href="https://pbs.twimg.com/profile_images/2005878117399945217/KuODqIbT_200x200.jpg" />
+  <!-- タブのアイコン（ファビコン） -->
+  <link rel="icon" type="image/jpeg" href="https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg?v=20260105" />
+  <link rel="apple-touch-icon" href="https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg?v=20260105" />
 </head>
 <body id="profile-page">
   <header class="site-header" aria-label="ヘッダー">
     <div class="site-header__inner">
       <a href="index.html" class="reload-btn" id="reload-btn" aria-label="ホームへ">
         <span class="reload-icon-wrapper">
-          <img src="https://pbs.twimg.com/profile_images/2005878117399945217/KuODqIbT_200x200.jpg" alt="しおり" class="reload-icon" width="42" height="42" loading="eager" decoding="async" referrerpolicy="no-referrer" />
+          <img src="https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg?v=20260105" alt="しおり" class="reload-icon" width="42" height="42" loading="eager" decoding="async" referrerpolicy="no-referrer" />
         </span>
         <span class="reload-text">しおり🔖</span>
       </a>
 
       <nav class="top-nav" aria-label="サイト内リンク">
-        <a href="index.html#social">Social</a>
-        <a href="index.html#links">Links</a>
-        <a href="index.html#articles">Articles</a>
+        <a href="index.html">Home</a>
+        <a href="articles.html">Articles</a>
         <a href="profile.html" aria-current="page">Profile</a>
       </nav>
 
@@ -53,10 +53,17 @@
 
   <main class="wrap">
     <section class="profile-section" aria-labelledby="profile-title">
-      <h1 id="profile-title">Profile</h1>
+      <div class="section__intro section__intro--bar">
+        <h1 id="profile-title" class="page-title"><span class="icon icon--profile" aria-hidden="true">
+          <svg viewBox="0 0 24 24" role="presentation">
+            <circle cx="12" cy="7.5" r="4"></circle>
+            <path d="M20 21a8 8 0 0 0-16 0"></path>
+          </svg>
+        </span> Profile</h1>
+      </div>
       <header class="profile-hero">
-        <img src="https://assets.st-note.com/production/uploads/images/48714034/rectangle_large_type_2_b9e78de146b25585718e46e6ec668614.jpeg?width=1200"
-             alt="しおり🔖のプロフィール画像" class="profile-portrait" width="160" height="160" />
+        <img src="https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg?v=20260105"
+             alt="しおり🔖のアイコン" class="profile-portrait" width="160" height="160" loading="eager" decoding="async" referrerpolicy="no-referrer" />
         <div class="profile-hero__content">
           <p class="profile-tagline">しおり🔖</p>
           
@@ -195,10 +202,12 @@
           <p>SNSで気軽に声をかけてもらえると嬉しいです。</p>
         </aside>
       </div>
-      <p><a class="btn btn--ghost" href="index.html">← トップに戻る</a></p>
+      <div class="section__cta">
+        <a class="btn btn--ghost" href="index.html">← トップに戻る</a>
+      </div>
     </section>
+    <footer class="foot">© <span id="y"></span> しおり🔖</footer>
   </main>
-  <footer class="foot">© <span id="profile-year"></span> しおり🔖</footer>
 
   <script src="scripts/main.js" defer></script>
 
