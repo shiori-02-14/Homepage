@@ -60,9 +60,9 @@
   /* タイル（Social/Links）のアイコンサイズ */
   --tile-social-icon-box: 44px;
   --tile-social-icon-size: 38px;
-  --tile-friend-avatar-size: 56px;
-  --tile-friend-plus-size: 56px;
-  --tile-friend-plus-font-size: 1.35rem;
+  --tile-friend-avatar-size: 48px;
+  --tile-friend-plus-size: 48px;
+  --tile-friend-plus-font-size: 1.2rem;
   --status-dot: var(--accent);
   --status-dot-ring: rgba(64,64,64,.3);
   --profile-title-bg: linear-gradient(135deg, rgba(241,245,249,.85), rgba(226,232,240,.55));
@@ -503,11 +503,15 @@ main {
   /* ヘッダーとヒーローの間隔を消す：上だけ 0 */
   /* ページ最下部の「謎のpadding」を消す：下も 0 */
   /* ただし “0” だと詰め詰めに見えるので、下だけ少し戻す */
-  padding: 0 clamp(1.25rem, 3.5vw, 2.4rem) clamp(0.85rem, 2vw, 1.2rem);
+  padding: 0 clamp(1.25rem, 3.5vw, 2.4rem) 0;
 }
 section {
   margin: clamp(1.25rem, 3vw, 2.3rem) 0;
   scroll-margin: clamp(5rem, 12vw, 8rem) 0;
+}
+/* ページ最下部の “余白だけ” をなくす（間の余白は section 自体の margin で維持） */
+main > section:last-of-type {
+  margin-bottom: 0;
 }
 /* ページ先頭のセクションだけは、ヘッダー直下に余白を作らない */
 main > section:first-child {
@@ -678,8 +682,8 @@ h2 .icon svg {
   content: "";
   position: absolute;
   inset: 0;
-  /* ヒーロー背景：モバイルは small.jpg（軽い）/ 大きい画面は IMG_4573.jpg */
-  background: url("small.jpg") 85% 20%/cover no-repeat;
+  /* ヒーロー背景：モバイルは軽量版 / 大きい画面は高解像度 */
+  background: url("IMG_4573-small.jpg") 85% 20%/cover no-repeat;
   opacity: .28;
   filter: saturate(.9);
     /* transform: scaleX(-1); */
@@ -1061,8 +1065,8 @@ h2 .icon svg {
   color: var(--accent-strong);
 }
 .list--icons .social-icon {
-  width: 40px;
-  height: 40px;
+  width: var(--tile-social-icon-box);
+  height: var(--tile-social-icon-box);
   padding: 0;
   background: transparent;
   border: none;
@@ -1109,7 +1113,7 @@ h2 .icon svg {
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 .list--friends.list--icons {
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
 }
 a.friend-card {
   display: flex;
@@ -1726,13 +1730,24 @@ a.friend-card::after {
 /* フッター */
 .foot {
   /* main の上下余白と合わさって下が空きやすいので、少し詰める */
-  margin-top: 1.6rem;
+  margin-top: 0;
   padding-top: 0.85rem;
   padding-bottom: 0.9rem;
   border-top:1px solid var(--line);
   color:var(--muted);
   text-align:center;
   font-size:.88rem;
+}
+
+/* Articlesページ：下の余白（padding/margin）が大きく見えるのを解消 */
+#articles-page main {
+  padding-bottom: 0;
+}
+#articles-page main > section {
+  margin-bottom: 0;
+}
+#articles-page .foot {
+  margin-top: 0;
 }
 
 /* プロフィール専用ページ */
@@ -1814,7 +1829,7 @@ html { scroll-behavior: smooth; }
   }
 
   /* 上だけ 0（ヘッダー直下の空きを消す） */
-  main { padding: 0 1.05rem 0.85rem; }
+  main { padding: 0 1.05rem 0; }
   .list:not(.list--icons) { grid-template-columns: 1fr; }
   .cards { grid-template-columns: 1fr; }
   .profile {
@@ -1857,15 +1872,26 @@ html { scroll-behavior: smooth; }
   #profile-page .profile-dl dt {
     font-size: 0.82rem;
   }
+
+  /* スマホ：NOTEバッジの文字が大きく見えるので少し小さく */
+  #articles-page .badge--note {
+    font-size: 0.64rem;
+    padding: 0.16rem 0.55rem;
+    letter-spacing: 0.06em;
+  }
+  #articles-page .badge--corner {
+    top: 0.75rem;
+    right: 0.75rem;
+  }
 }
 
 @media (max-width: 420px){
   :root {
     --tile-social-icon-box: 38px;
     --tile-social-icon-size: 32px;
-    --tile-friend-avatar-size: 52px;
-    --tile-friend-plus-size: 52px;
-    --tile-friend-plus-font-size: 1.25rem;
+    --tile-friend-avatar-size: 44px;
+    --tile-friend-plus-size: 44px;
+    --tile-friend-plus-font-size: 1.1rem;
   }
   .wrap {
     margin: 0 auto;
@@ -1873,7 +1899,7 @@ html { scroll-behavior: smooth; }
   main {
     border-radius: 0;
     /* 上だけ 0（ヘッダー直下の空きを消す） */
-    padding: 0 0.95rem 0.75rem;
+    padding: 0 0.95rem 0;
   }
   section {
     margin: 1.05rem 0;
