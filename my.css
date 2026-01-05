@@ -503,19 +503,16 @@ main {
   /* 外枠も角丸なしに統一 */
   border-radius: 0;
   box-shadow: var(--shadow);
-  /* 上下の余白が大きく見えやすいので、縦（上下）だけ少し小さめにする */
-  /* ヘッダーとヒーローの間隔を消す：上だけ 0 */
-  /* ページ最下部の「謎のpadding」を消す：下も 0 */
-  /* ただし “0” だと詰め詰めに見えるので、下だけ少し戻す */
-  padding: 0 clamp(1.25rem, 3.5vw, 2.4rem) 0;
+  /* “0” だと詰め詰めに見えるので、上下に少し余白を戻す */
+  padding: clamp(0.9rem, 2.4vw, 1.4rem) clamp(1.25rem, 3.5vw, 2.4rem) clamp(0.9rem, 2.4vw, 1.4rem);
 }
 section {
-  margin: clamp(1.4rem, 3.2vw, 2.5rem) 0;
+  margin: clamp(1.6rem, 3.8vw, 2.9rem) 0;
   scroll-margin: clamp(5rem, 12vw, 8rem) 0;
 }
 /* ページ最下部の “余白だけ” をなくす（間の余白は section 自体の margin で維持） */
 main > section:last-of-type {
-  margin-bottom: 0;
+  margin-bottom: clamp(1.1rem, 3vw, 1.6rem);
 }
 /* ページ先頭のセクションだけは、ヘッダー直下に余白を作らない */
 main > section:first-child {
@@ -524,8 +521,8 @@ main > section:first-child {
 .section__intro {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
-  margin-bottom: 1.25rem;
+  gap: 0.55rem;
+  margin-bottom: 1.45rem;
 }
 .section__intro--split {
   justify-content: space-between;
@@ -982,7 +979,7 @@ h2 .icon svg {
   margin:0;
   padding:0;
   display:grid;
-  gap:1.05rem;
+  gap:1.2rem;
   grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
 }
 .list--icons {
@@ -995,7 +992,7 @@ h2 .icon svg {
   justify-content:space-between;
   gap:.75rem;
   text-decoration:none;
-  padding:.9rem 1.15rem;
+  padding:1rem 1.25rem;
   background: var(--panel-bg);
   border:1px solid var(--panel-border);
   border-radius: 16px;
@@ -1209,7 +1206,7 @@ a.friend-card::after {
   margin:0;
   padding:0;
   display:grid;
-  gap:clamp(1.1rem, 2.2vw, 1.6rem);
+  gap:clamp(1.25rem, 2.8vw, 1.85rem);
   grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
 }
 #articles-page .cards {
@@ -1792,10 +1789,10 @@ a.friend-card::after {
 
 /* Articlesページ：下の余白（padding/margin）が大きく見えるのを解消 */
 #articles-page main {
-  padding-bottom: 0;
+  padding-bottom: clamp(0.9rem, 2.4vw, 1.4rem);
 }
 #articles-page main > section {
-  margin-bottom: 0;
+  margin-bottom: clamp(1.1rem, 3vw, 1.6rem);
 }
 #articles-page .foot {
   margin-top: 0;
@@ -1881,8 +1878,8 @@ html { scroll-behavior: smooth; }
     margin-left: 0;
   }
 
-  /* 上だけ 0（ヘッダー直下の空きを消す） */
-  main { padding: 0 1.05rem 0; }
+  /* スマホでも詰まりすぎないように上下の余白を確保 */
+  main { padding: 0.85rem 1.05rem 1rem; }
   .list:not(.list--icons) { grid-template-columns: 1fr; }
   .cards { grid-template-columns: 1fr; }
   .profile {
@@ -1952,11 +1949,11 @@ html { scroll-behavior: smooth; }
   }
   main {
     border-radius: 0;
-    /* 上だけ 0（ヘッダー直下の空きを消す） */
-    padding: 0 0.95rem 0;
+    /* 極小幅でも詰まりすぎないように上下に少し余白 */
+    padding: 0.75rem 0.95rem 0.95rem;
   }
   section {
-    margin: 1.05rem 0;
+    margin: 1.2rem 0;
   }
   .section__intro--bar,
   .section__intro--split {
