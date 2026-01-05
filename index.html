@@ -40,6 +40,7 @@
       <nav class="top-nav" aria-label="サイト内リンク">
         <a href="index.html" aria-current="page">Home</a>
         <a href="articles.html">Articles</a>
+        <a href="works.html">Works</a>
         <a href="profile.html">Profile</a>
       </nav>
 
@@ -97,7 +98,7 @@
       </div>
     </header>
 
-    <section aria-labelledby="social">
+    <section class="narrow" aria-labelledby="social">
       <div class="section__intro section__intro--bar">
         <h2 id="social"><span class="icon icon--social" aria-hidden="true">
           <svg viewBox="0 0 24 24" role="presentation">
@@ -140,7 +141,7 @@
       </ul>
     </section>
 
-    <section aria-labelledby="links">
+    <section class="narrow" aria-labelledby="links">
       <div class="section__intro section__intro--bar">
         <h2 id="links"><span class="icon icon--links" aria-hidden="true">
           <svg viewBox="0 0 24 24" role="presentation">
@@ -195,7 +196,7 @@
       <p class="links-note">募集中（DM来てください）<br>サイト作ってるやつは多分勝手に追加します<br>選定基準は一緒にご飯行きたいかです</p>
     </section>
 
-    <section aria-labelledby="works">
+    <section class="narrow" aria-labelledby="works">
       <div class="section__intro section__intro--split">
         <h2 id="works"><span class="icon icon--works" aria-hidden="true">
           <svg viewBox="0 0 24 24" role="presentation">
@@ -203,10 +204,26 @@
             <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
           </svg>
         </span> Works</h2>
+        <a class="section__more" href="works.html" aria-label="作品一覧ページへ">See all works</a>
       </div>
       <ul class="cards-scroll" aria-live="polite">
+        <li class="card card--work card--upcoming">
+          <a class="card__link">
+            <span class="badge badge--platform badge--corner">iOS/Android</span>
+            <div class="card__thumb">
+              <span class="badge badge--soon">COMING SOON</span>
+              <img src="AppIcon-light.jpg" alt="U-NODE" class="thumb-logo" loading="lazy" decoding="async" fetchpriority="low" />
+            </div>
+            <div class="card__content">
+              <h3>U-NODE</h3>
+              <p>電通大生向けの総合アプリ</p>
+              <p class="card__note">現在iOS版を開発中</p>
+            </div>
+          </a>
+        </li>
         <li class="card card--work">
           <a class="card__link" href="https://shiori-02-14.github.io/UCode/" target="_blank" rel="noopener noreferrer">
+            <span class="badge badge--web badge--corner">Web</span>
             <div class="card__thumb">
               <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="UCode">
                 <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, sans-serif" font-size="64" font-weight="700" fill="#2563eb">UCode</text>
@@ -221,7 +238,7 @@
       </ul>
     </section>
 
-    <section aria-labelledby="articles">
+    <section class="narrow" aria-labelledby="articles">
       <div class="section__intro section__intro--split">
         <h2 id="articles"><span class="icon icon--articles" aria-hidden="true">
           <svg viewBox="0 0 24 24" role="presentation">
@@ -275,18 +292,19 @@
           <a class="card__link" href="#!" aria-disabled="true" tabindex="-1">
             <div class="card__thumb card__thumb--placeholder" aria-hidden="true">
               <span class="badge badge--note badge--corner">NOTE</span>
-              <span class="badge badge--soon">COMING SOON</span>
+              <span class="badge badge--soon">COMING LATER</span>
             </div>
             <div class="card__content">
-              <span class="card__date" aria-hidden="true">Coming soon</span>
+              <span class="card__date" aria-hidden="true">Coming later</span>
               <h3>全大学生向け 金欠ポイ活大学生によるポイ活&節約術</h3>
+              <p class="card__note" style="font-size: 0.85rem; color: var(--muted); margin-top: 0.5rem;">※お蔵入りかも</p>
             </div>
           </a>
         </li>
       </ul>
     </section>
 
-    <section aria-label="おみくじ">
+    <section class="narrow" aria-label="おみくじ">
       <div class="fortune-container">
         <button id="fortune-btn" class="btn fortune-btn" type="button">
           <span class="icon" aria-hidden="true">⛩️</span> 今日の運勢は？
