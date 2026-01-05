@@ -379,19 +379,23 @@ a:focus-visible { color: var(--accent-strong); }
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+/* ライトモードの時は太陽アイコンのみ表示 */
 :root[data-theme='light'] .theme-toggle--switch .theme-toggle__glyph--sun {
+  display: grid;
   color: var(--accent-strong);
   opacity: 1;
 }
 :root[data-theme='light'] .theme-toggle--switch .theme-toggle__glyph--moon {
-  opacity: .45;
+  display: none;
 }
+/* ダークモードの時は月アイコンのみ表示 */
 :root[data-theme='dark'] .theme-toggle--switch .theme-toggle__glyph--moon {
+  display: grid;
   color: var(--accent-strong);
   opacity: 1;
 }
 :root[data-theme='dark'] .theme-toggle--switch .theme-toggle__glyph--sun {
-  opacity: .45;
+  display: none;
 }
 
 /* ヘッダーのテーマ切替（アイコン） */
