@@ -219,8 +219,10 @@ img, video, iframe {
   justify-content: center;
   width: 38px;
   height: 38px;
+  aspect-ratio: 1 / 1;
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.05));
   border-radius: 50%;
+  overflow: hidden;
   flex-shrink: 0;
 }
 .reload-icon {
@@ -1258,6 +1260,7 @@ a.friend-card::after {
   gap: 0;
 }
 #works-page .card--work .card__thumb {
+  /* スマホ〜タブレットで自然に伸縮するサムネ幅 */
   flex: 0 0 clamp(140px, 40vw, 260px);
   width: clamp(140px, 40vw, 260px);
   padding-top: 0;
@@ -1279,7 +1282,7 @@ a.friend-card::after {
   inset: auto;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(1);
   width: auto;
   height: 72%;
   border-radius: 22%;
@@ -1326,7 +1329,14 @@ a.friend-card::after {
   font-size: clamp(1.05rem, 1.4vw, 1.2rem);
   line-height: 1.35;
 }
+#works-page .card--work h3 {
+  font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+  line-height: 1.35;
+}
 #articles-page .card__date {
+  font-size: 0.9rem;
+}
+#works-page .card__date {
   font-size: 0.9rem;
 }
 
@@ -1608,8 +1618,9 @@ a.friend-card::after {
   font-size: 0.64rem;
 }
 :root[data-theme='dark'] .badge--soon {
-  background: rgba(255,255,255,.14);
-  border-color: rgba(255,255,255,.22);
+  /* サムネが白い場合でも読めるように、ダークモードでも暗めのピルにする */
+  background: rgba(0,0,0,.62);
+  border-color: rgba(255,255,255,.28);
   color: rgba(255,255,255,.92);
 }
 .badge--source {
@@ -2102,8 +2113,8 @@ html { scroll-behavior: smooth; }
     height: 36px;
   }
   .reload-icon {
-    width: 36px;
-    height: 36px;
+    width: 100%;
+    height: 100%;
   }
   .reload-text {
     font-size: 0.82rem;
@@ -2137,11 +2148,6 @@ html { scroll-behavior: smooth; }
     right: 0.75rem;
     left: auto;
   }
-  #works-page .card--work .card__thumb {
-    flex: 0 0 140px;
-    width: 140px;
-    aspect-ratio: 16 / 9;
-  }
   #works-page .card--work .card__content {
     padding: 0.95rem 0.95rem;
   }
@@ -2149,6 +2155,14 @@ html { scroll-behavior: smooth; }
     top: 0.75rem;
     right: 0.75rem;
     left: auto;
+  }
+  /* スマホ：COMING SOON/LATERバッジのサイズを小さく */
+  .badge--soon {
+    font-size: 0.56rem;
+    padding: 0.14rem 0.5rem;
+    letter-spacing: 0.1em;
+    left: 0.65rem;
+    bottom: 0.65rem;
   }
 }
 
@@ -2230,21 +2244,19 @@ html { scroll-behavior: smooth; }
     padding: 0.75rem 0.55rem;
     border-radius: 16px;
   }
-  #articles-page .card--article .card__thumb {
-    flex: 0 0 140px;
-    width: 140px;
-    aspect-ratio: 16 / 9;
-  }
   #articles-page .card--article .card__content {
     padding: 0.95rem 0.95rem;
   }
-  #works-page .card--work .card__thumb {
-    flex: 0 0 140px;
-    width: 140px;
-    aspect-ratio: 16 / 9;
-  }
   #works-page .card--work .card__content {
     padding: 0.95rem 0.95rem;
+  }
+  /* 極小画面：COMING SOON/LATERバッジをさらに小さく */
+  .badge--soon {
+    font-size: 0.52rem;
+    padding: 0.12rem 0.45rem;
+    letter-spacing: 0.08em;
+    left: 0.6rem;
+    bottom: 0.6rem;
   }
 }
 
@@ -2275,7 +2287,7 @@ html { scroll-behavior: smooth; }
 }
 
 /* =========================================
-   おみくじボタン
+   おみくじ
    ========================================= */
 
 /* ボタンと結果を配置するエリア */
