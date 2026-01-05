@@ -19,30 +19,53 @@
   <meta name="twitter:image" content="https://assets.st-note.com/production/uploads/images/48714034/rectangle_large_type_2_b9e78de146b25585718e46e6ec668614.jpeg?width=1200" />
   
   <link rel="stylesheet" href="my.css" />
-  <link rel="icon" href="https://assets.st-note.com/production/uploads/images/48714034/rectangle_large_type_2_b9e78de146b25585718e46e6ec668614.jpeg?width=1200" />
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- タブのアイコン（ファビコン）：Xの画像を使用 -->
+  <link rel="icon" type="image/jpeg" href="https://pbs.twimg.com/profile_images/2005878117399945217/KuODqIbT_200x200.jpg" />
 </head>
 <body id="top">
-  <a href="#" class="reload-btn" id="reload-btn" aria-label="ページを更新">
-    <span class="reload-icon-wrapper">
-      <img src="https://assets.st-note.com/production/uploads/images/48714034/rectangle_large_type_2_b9e78de146b25585718e46e6ec668614.jpeg?width=1200" alt="しおり" class="reload-icon" width="42" height="42" loading="eager" />
-    </span>
-    <span class="reload-text">しおり🔖</span>
-  </a>
-  <button class="theme-toggle" id="theme-toggle" type="button" aria-label="ダークモードに切り替え" aria-pressed="false" title="テーマを切り替え">
-    <span class="theme-toggle__track" aria-hidden="true">
-      <span class="theme-toggle__knob"></span>
-    </span>
-    <span class="theme-toggle__text">ダーク</span>
-  </button>
-  <main id="main-content" class="wrap">
+  <header class="site-header" aria-label="ヘッダー">
+    <div class="site-header__inner">
+      <a href="index.html" class="reload-btn" id="reload-btn" aria-label="ホームへ">
+        <span class="reload-icon-wrapper">
+          <img src="https://pbs.twimg.com/profile_images/2005878117399945217/KuODqIbT_200x200.jpg" alt="しおり" class="reload-icon" width="42" height="42" loading="eager" decoding="async" referrerpolicy="no-referrer" />
+        </span>
+        <span class="reload-text">しおり🔖</span>
+      </a>
 
-    <header class="hero">
       <nav class="top-nav" aria-label="サイト内リンク">
         <a href="#social">Social</a>
         <a href="#links">Links</a>
         <a href="#articles">Articles</a>
         <a href="profile.html">Profile</a>
       </nav>
+
+      <button class="theme-toggle theme-toggle--switch" id="theme-toggle" type="button" role="switch" aria-checked="false" aria-label="ダークモードに切り替え" title="テーマを切り替え">
+        <span class="theme-toggle__glyph theme-toggle__glyph--sun" aria-hidden="true">
+          <svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24" role="presentation">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2M12 20v2M4 12H2M22 12h-2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"></path>
+          </svg>
+        </span>
+        <span class="theme-toggle__track" aria-hidden="true">
+          <span class="theme-toggle__knob" aria-hidden="true"></span>
+        </span>
+        <span class="theme-toggle__glyph theme-toggle__glyph--moon" aria-hidden="true">
+          <svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24" role="presentation">
+            <path d="M21 14.5A8.5 8.5 0 1 1 9.5 3a7 7 0 1 0 11.5 11.5z"></path>
+          </svg>
+        </span>
+        <span class="theme-toggle__text sr-only">ライト</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main-content" class="wrap">
+
+    <header class="hero">
       <div class="hero__body">
         <h1>しおり🔖</h1>
         <p class="note">アイドルと黄色い看板のラーメン屋が好きです。</p>
@@ -70,7 +93,7 @@
           <span class="status-dot" aria-hidden="true"></span>
           <span class="status-label">Currently learning</span>
         </p>
-        <p class="hero__mini">C++とPythonとswiftを勉強中😵‍💫</p>
+        <p class="hero__mini">自分の大学の学生向けにアプリを開発中😵‍💫</p>
       </div>
     </header>
 
@@ -83,18 +106,18 @@
           <path d="M8.3 11l7.1-3.3M8.3 13l7.1 3.3" />
         </svg>
       </span> Social</h2>
-      <ul class="list">
+      <ul class="list list--social list--icons">
         <li><a href="https://x.com/shiori_02_14_" target="_blank" rel="noopener noreferrer">
           <span class="social-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></span>
-          X (Twitter)
+          <span class="social-label">X (Twitter)</span>
         </a></li>
         <li><a href="https://github.com/shiori-02-14" target="_blank" rel="noopener noreferrer">
           <span class="social-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></span>
-          GitHub
+          <span class="social-label">GitHub</span>
         </a></li>
         <li><a href="https://note.com/shiori_02_14_" target="_blank" rel="noopener noreferrer">
           <span class="social-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4.1c4.2 0 6.9 2.2 6.9 6.4V19h-3.4v-7.5c0-2.1-1.1-3.2-3.2-3.2H9.5V19H6V5z"/></svg></span>
-          note
+          <span class="social-label">note</span>
         </a></li>
         <li><a href="https://qiita.com/shiori_02_14_" target="_blank" rel="noopener noreferrer">
           <span class="social-icon" aria-hidden="true">
@@ -102,15 +125,15 @@
               <path d="M248.445-.086h15.535c50.594 1.969 96.68 17.246 138.262 45.832 40.39 28.555 70.348 65.57 89.871 111.04 12.407 29.898 19.035 61.023 19.887 93.366v13.828c-1.434 39.383-11.281 76.54-29.531 111.465l-.168.168c-6.23-3.12-12.832-4.855-19.801-5.203-3.703-.129-7.402-.07-11.098.168-4.707.422-9.402.961-14.082 1.621a12.438 12.438 0 0 1-6.23-2.133 44.843 44.843 0 0 1-7.082-6.058 80.19 80.19 0 0 1-9.39-12.121c-2.24-4.125-2.981-8.508-2.22-13.14 5.727-17.692 8.856-35.845 9.391-54.454.938-26.027-3.441-51.117-13.144-75.277-9.582-23.993-23.211-45.301-40.883-63.926a5.79 5.79 0 0 0 .258-1.278 2772.54 2772.54 0 0 0-.344-50.015c-.922-7.813-5.278-11.2-13.059-10.156a25.062 25.062 0 0 0-6.824 2.73 5499.798 5499.798 0 0 1-35.164 20.059c-29.938-12.47-60.832-15.57-92.688-9.305-20.5 4.594-39.222 13.012-56.16 25.262a305.263 305.263 0 0 0-9.472 7.258c-12.442-3.09-24.871-6.192-37.297-9.305a17.357 17.357 0 0 0-8.875.34c-4.86 2.136-6.992 5.863-6.403 11.183a4012.428 4012.428 0 0 0 12.204 46.172c-18.922 33.156-27.825 68.863-26.711 107.11.293 18.89 3.48 37.27 9.558 55.136 12.75 35 35.938 60.52 69.559 76.555 20.023 9.117 41.02 14.465 62.984 16.047 28.059 1.86 55.711-.645 82.957-7.512a175.953 175.953 0 0 0 44.211-17.922 128.533 128.533 0 0 0 23.64-17.836c2.817 5 6.173 9.61 10.075 13.825 11.344 12.085 24.687 21.273 40.027 27.566a63.505 63.505 0 0 0 9.899 2.73c-37.512 38.594-82.86 63.176-136.043 73.743A285.817 285.817 0 0 1 262.445 512h-12.293c-62.222-2.078-116.734-23.387-163.523-63.926-40.762-36.457-67.531-81.433-80.313-134.933a284.931 284.931 0 0 1-6.402-49.16v-13.829a257.12 257.12 0 0 1 11.352-69.984c16.558-51.7 46.175-94.172 88.847-127.422C143.895 19.63 193.336 2.02 248.445-.086Zm0 0"></path>
             </svg>
           </span>
-          Qiita
+          <span class="social-label">Qiita</span>
         </a></li>
         <li><a href="https://www.youtube.com/@shiori_channel914" target="_blank" rel="noopener noreferrer">
           <span class="social-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></span>
-          YouTube
+          <span class="social-label">YouTube</span>
         </a></li>
         <li><a href="https://www.amazon.jp/hz/wishlist/ls/1KLE5W4JBJ1E5?ref_=wl_share" target="_blank" rel="noopener noreferrer">
-          <span class="social-icon"><img src="data:image/png;base64,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" alt="Amazonロゴ" width="20" height="20" loading="lazy" decoding="async" /></span>
-          乞食リスト
+          <span class="social-icon"><img class="amazon-icon" src="assets/amazon-a-black.png" alt="Amazon" width="20" height="20" loading="lazy" decoding="async" /></span>
+          <span class="social-label">乞食リスト</span>
         </a></li>
       </ul>
     </section>
@@ -123,7 +146,7 @@
           <path d="M11.9 12.1 13.1 10.9" />
         </svg>
       </span> Friends' Links</h2>
-      <ul class="list list--friends">
+      <ul class="list list--friends list--icons">
         <li>
           <a class="friend-card" href="https://ctes091x.net/" target="_blank" rel="noopener noreferrer">
             <span class="friend-card__avatar">
@@ -138,6 +161,22 @@
               <img src="https://unavatar.io/twitter/ShibaInuKabu_Re" alt="柴犬被りのアイコン" width="40" height="40" loading="lazy" decoding="async" />
             </span>
             <span class="friend-card__name">柴犬被り</span>
+          </a>
+        </li>
+        <li>
+          <a class="friend-card" href="https://toramutton.me/" target="_blank" rel="noopener noreferrer">
+            <span class="friend-card__avatar">
+              <img src="https://unavatar.io/twitter/ToraMutton" alt="トラマトのアイコン" width="40" height="40" loading="lazy" decoding="async" />
+            </span>
+            <span class="friend-card__name">トラマト</span>
+          </a>
+        </li>
+        <li>
+          <a class="friend-card" href="https://cotton7.me/" target="_blank" rel="noopener noreferrer">
+            <span class="friend-card__avatar">
+              <img src="https://pbs.twimg.com/profile_images/2004512006716715008/fAGR85hc_200x200.jpg" alt="Cottonのアイコン" width="40" height="40" loading="lazy" decoding="async" referrerpolicy="no-referrer" />
+            </span>
+            <span class="friend-card__name">こっとん</span>
           </a>
         </li>
         <li><a href="https://example.com" target="_blank" rel="noopener noreferrer">募集中（DM来てください）</a></li>
@@ -160,63 +199,40 @@
         </span> Articles</h2>
       </div>
       <ul class="cards-scroll" aria-live="polite">
-        <li class="card">
+        <li class="card card--article">
           <a class="card__link" href="https://note.com/shiori_02_14_/n/n87a34fd58422?app_launch=false" target="_blank" rel="noopener noreferrer">
-            <div class="card__meta" aria-label="公開情報">
-              <span class="badge badge--source">note</span>
-              <time datetime="2025-12-08">2025年12月8日公開</time>
-              <span class="meta__length">約10分</span>
+            <div class="card__thumb">
+              <img src="https://assets.st-note.com/production/uploads/images/233534653/rectangle_large_type_2_8c0f45592b67a9b7fbd0f4b7c466431c.png?width=1200" alt="嫌中による中国語講座のサムネ" loading="lazy" decoding="async" />
+              <span class="badge badge--note badge--corner" aria-hidden="true">NOTE</span>
             </div>
-            <h3>嫌中による中国語講座</h3>
-            <p>
-              バイリンガルの視点から、実際に役立つ「ガチで使う」中国語フレーズや学習のポイントを紹介しました。
-            </p>
-            <ul class="tag-pills" aria-label="記事のキーワード">
-              <li>#中国語</li>
-              <li>#第二外国語</li>
-              <li>#UEC25アドベントカレンダー</li>
-              <li>#UEC25</li>
-            </ul>
-            <span class="card__cta" aria-hidden="true">続きを読む ↗</span>
+            <div class="card__content">
+              <time class="card__date" datetime="2025-12-08">2025/12/08</time>
+              <h3>嫌中による中国語講座</h3>
+            </div>
           </a>
         </li>
-        <li class="card">
+        <li class="card card--article">
           <a class="card__link" href="https://note.com/shiori_02_14_/n/n94f62fd81311" target="_blank" rel="noopener noreferrer">
-            <div class="card__meta" aria-label="公開情報">
-              <span class="badge badge--source">note</span>
-              <time datetime="2025-12-01">2025年12月1日公開</time>
-              <span class="meta__length">約10分</span>
+            <div class="card__thumb">
+              <img src="https://assets.st-note.com/production/uploads/images/227257198/rectangle_large_type_2_0653c2f2d9c444f3b022001ee6667d6a.png?width=1200" alt="大学生になって携帯代を“自分で払うようになった人”へのサムネ" loading="lazy" decoding="async" />
+              <span class="badge badge--note badge--corner" aria-hidden="true">NOTE</span>
             </div>
-            <h3>大学生になって携帯代を“自分で払うようになった人”へ</h3>
-            <p>
-              三大キャリアの見直しから楽天モバイルや株主優待の活用法まで、通信費をぐっと抑える実践的なステップをまとめました。
-            </p>
-            <ul class="tag-pills" aria-label="記事のキーワード">
-              <li>#通信費の節約</li>
-              <li>#楽天モバイル</li>
-              <li>#アドベントカレンダー</li>
-              <li>#UEC25</li>
-            </ul>
-            <span class="card__cta" aria-hidden="true">続きを読む ↗</span>
+            <div class="card__content">
+              <time class="card__date" datetime="2025-12-01">2025/12/01</time>
+              <h3>大学生になって携帯代を“自分で払うようになった人”へ</h3>
+            </div>
           </a>
         </li>
-        <li class="card card--upcoming">
+        <li class="card card--article card--upcoming">
           <a class="card__link" href="#!" aria-disabled="true" tabindex="-1">
-            <div class="card__meta" aria-label="公開情報">
-              <span class="badge badge--source">note</span>
-              <span class="meta__status">Comming soon</span>
-              <span class="meta__length">約20分</span>
+            <div class="card__thumb card__thumb--placeholder" aria-hidden="true">
+              <span class="badge badge--note badge--corner">NOTE</span>
+              <span class="badge badge--soon">COMING SOON</span>
             </div>
-            <h3>全大学生向け 金欠ポイ活大学生によるポイ活&節約術</h3>
-            <p>
-              私が普段から実践しているポイ活や固定費の削り方、日々の節約アイデアをまとめた記事を準備中です。再現性の高い手順を整理してから公開します。
-            </p>
-            <ul class="tag-pills" aria-label="記事のキーワード">
-              <li>#ポイ活</li>
-              <li>#節約術</li>
-              <li>#CommingSoon</li>
-            </ul>
-            <span class="card__cta" aria-hidden="true">公開準備中…</span>
+            <div class="card__content">
+              <span class="card__date" aria-hidden="true">Coming soon</span>
+              <h3>全大学生向け 金欠ポイ活大学生によるポイ活&節約術</h3>
+            </div>
           </a>
         </li>
       </ul>

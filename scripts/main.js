@@ -1356,10 +1356,14 @@ const setupThemeToggle = () => {
     const isDark = theme === 'dark';
     const label = isDark ? 'ライトモードに切り替え' : 'ダークモードに切り替え';
     themeToggle.setAttribute('aria-label', label);
-    themeToggle.setAttribute('aria-pressed', String(isDark));
+    if (themeToggle.getAttribute('role') === 'switch') {
+      themeToggle.setAttribute('aria-checked', String(isDark));
+    } else {
+      themeToggle.setAttribute('aria-pressed', String(isDark));
+    }
     const textEl = themeToggle.querySelector('.theme-toggle__text');
     if (textEl) {
-      textEl.textContent = isDark ? 'ライト' : 'ダーク';
+      textEl.textContent = isDark ? 'ダーク' : 'ライト';
     }
   };
 
@@ -1412,6 +1416,10 @@ const initReloadButton = () => {
   if (!reloadBtn) return;
 
   reloadBtn.addEventListener('click', (event) => {
+    const isTopPage = document.body && document.body.id === 'top';
+    if (!isTopPage) {
+      return;
+    }
     event.preventDefault();
     window.scrollTo({ top: 0, behavior: 'auto' });
     window.location.reload();

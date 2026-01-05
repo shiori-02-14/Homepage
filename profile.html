@@ -7,21 +7,50 @@
   <meta name="description" content="しおり🔖のプロフィールページです。" />
   <meta name="keywords" content="しおり,プロフィール,電気通信大学" />
   <link rel="stylesheet" href="my.css" />
-  <link rel="icon" href="https://assets.st-note.com/production/uploads/images/48714034/rectangle_large_type_2_b9e78de146b25585718e46e6ec668614.jpeg?width=1200" />
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- タブのアイコン（ファビコン）：Xの画像を使用 -->
+  <link rel="icon" type="image/jpeg" href="https://pbs.twimg.com/profile_images/2005878117399945217/KuODqIbT_200x200.jpg" />
 </head>
 <body id="profile-page">
-  <a href="index.html" class="reload-btn" aria-label="トップに戻る">
-    <span class="reload-icon-wrapper">
-      <img src="https://assets.st-note.com/production/uploads/images/48714034/rectangle_large_type_2_b9e78de146b25585718e46e6ec668614.jpeg?width=1200" alt="しおり" class="reload-icon" width="42" height="42" loading="eager" />
-    </span>
-    <span class="reload-text">しおり🔖</span>
-  </a>
-  <button class="theme-toggle" id="theme-toggle" type="button" aria-label="ダークモードに切り替え" aria-pressed="false" title="テーマを切り替え">
-    <span class="theme-toggle__track" aria-hidden="true">
-      <span class="theme-toggle__knob"></span>
-    </span>
-    <span class="theme-toggle__text">ダーク</span>
-  </button>
+  <header class="site-header" aria-label="ヘッダー">
+    <div class="site-header__inner">
+      <a href="index.html" class="reload-btn" id="reload-btn" aria-label="ホームへ">
+        <span class="reload-icon-wrapper">
+          <img src="https://pbs.twimg.com/profile_images/2005878117399945217/KuODqIbT_200x200.jpg" alt="しおり" class="reload-icon" width="42" height="42" loading="eager" decoding="async" referrerpolicy="no-referrer" />
+        </span>
+        <span class="reload-text">しおり🔖</span>
+      </a>
+
+      <nav class="top-nav" aria-label="サイト内リンク">
+        <a href="index.html#social">Social</a>
+        <a href="index.html#links">Links</a>
+        <a href="index.html#articles">Articles</a>
+        <a href="profile.html" aria-current="page">Profile</a>
+      </nav>
+
+      <button class="theme-toggle theme-toggle--switch" id="theme-toggle" type="button" role="switch" aria-checked="false" aria-label="ダークモードに切り替え" title="テーマを切り替え">
+        <span class="theme-toggle__glyph theme-toggle__glyph--sun" aria-hidden="true">
+          <svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24" role="presentation">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2M12 20v2M4 12H2M22 12h-2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"></path>
+          </svg>
+        </span>
+        <span class="theme-toggle__track" aria-hidden="true">
+          <span class="theme-toggle__knob" aria-hidden="true"></span>
+        </span>
+        <span class="theme-toggle__glyph theme-toggle__glyph--moon" aria-hidden="true">
+          <svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24" role="presentation">
+            <path d="M21 14.5A8.5 8.5 0 1 1 9.5 3a7 7 0 1 0 11.5 11.5z"></path>
+          </svg>
+        </span>
+        <span class="theme-toggle__text sr-only">ライト</span>
+      </button>
+    </div>
+  </header>
+
   <main class="wrap">
     <section class="profile-section" aria-labelledby="profile-title">
       <h1 id="profile-title">Profile</h1>
@@ -51,118 +80,120 @@
       </header>
 
       <div class="profile-body">
-        <table class="profile-table" aria-describedby="profile-title">
-          <tbody>
-            <tr>
-              <th scope="row">University</th>
-              <td>
+        <div class="profile-cards">
+          <section class="profile-card" id="profile-about" aria-labelledby="profile-about-title">
+            <h2 id="profile-about-title"><span class="icon icon--profile" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="presentation">
+                <circle cx="12" cy="7.5" r="4"></circle>
+                <path d="M20 21a8 8 0 0 0-16 0"></path>
+              </svg>
+            </span> About</h2>
+            <dl class="profile-dl">
+              <dt>University</dt>
+              <dd>
                 <a href="https://www.mod.go.jp/nda/" target="_blank" rel="noopener noreferrer">防衛大学校</a>
                  → 
                 <a href="https://www.uec.ac.jp/" target="_blank" rel="noopener noreferrer">電気通信大学</a>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">Hobby</th>
-              <td>資産運用 / 坂道 / 食べ歩き / 献血 / 旅行</td>
-            </tr>
-            <tr>
-              <th scope="row">My fave</th>
-              <td>
-                <ul class="profile-oshimen" aria-label="推しメン一覧">
-                  <li>
-                    <a href="https://www.nogizaka46.com/" target="_blank" rel="noopener noreferrer" class="profile-oshimen__group profile-oshimen__group--nogi">乃木坂46</a>
-                    <span class="profile-oshimen__member">
-                      <a href="https://www.nogizaka46.com/s/n46/artist/55396?ima=0000" target="_blank" rel="noopener noreferrer">五百城 茉央</a>
-                      <span aria-hidden="true"> / </span>
-                      <a href="https://www.nogizaka46.com/s/n46/artist/55397?ima=0000" target="_blank" rel="noopener noreferrer">池田 瑛紗</a>
-                      <span aria-hidden="true"> / </span>
-                      <a href="https://www.nogizaka46.com/s/n46/artist/55393?ima=0000" target="_blank" rel="noopener noreferrer">冨里 奈央</a>
-                      <span aria-hidden="true"> / </span>
-                      <a href="https://www.nogizaka46.com/s/n46/artist/63107?ima=0000" target="_blank" rel="noopener noreferrer">瀬戸口 心月</a>
-                      <span aria-hidden="true"> / </span>
-                      <a href="https://www.nogizaka46.com/s/n46/artist/63109?ima=0000" target="_blank" rel="noopener noreferrer">増田 三莉音</a>
-                      <span aria-hidden="true"> / </span>
-                      <a href="https://www.nogizaka46.com/s/n46/artist/63110?ima=0000" target="_blank" rel="noopener noreferrer">森平 麗心</a>
-                      <span aria-hidden="true"> / </span>
-                      <a href="https://www.nogizaka46.com/s/n46/artist/48015?ima=3512" target="_blank" rel="noopener noreferrer">田村 真佑</a>
-                      <span aria-hidden="true"> / </span>
-                      <a href="https://www.nogizaka46.com/s/n46/artist/48008?ima=0000" target="_blank" rel="noopener noreferrer">遠藤 さくら</a>
-                      <span aria-hidden="true"> / </span>
-                      <a href="#" target="_blank" rel="noopener noreferrer">大越 ひなの</a>
-                    </span>
-                  </li>
-                  <li>
-                    <a href="https://www.hinatazaka46.com/" target="_blank" rel="noopener noreferrer" class="profile-oshimen__group profile-oshimen__group--hinata">日向坂46</a>
-                    <span class="profile-oshimen__member">
-                      <a href="https://www.hinatazaka46.com/s/official/artist/29?ima=0000" target="_blank" rel="noopener noreferrer">正源司 陽子</a>
-                      <span aria-hidden="true"> / </span>
-                      <a href="https://www.hinatazaka46.com/s/official/artist/38?ima=0000" target="_blank" rel="noopener noreferrer">大野 愛実</a>
-                      <span aria-hidden="true"> / </span>
-                      <a href="https://www.hinatazaka46.com/s/official/artist/31?ima=0000" target="_blank" rel="noopener noreferrer">平尾 帆夏</a>
-                      <span aria-hidden="true"> / </span>
-                      <a href="https://www.hinatazaka46.com/s/official/artist/24?ima=0000" target="_blank" rel="noopener noreferrer">山口 陽世</a>
-                      <span aria-hidden="true"> / </span>
-                      <a href="https://www.hinatazaka46.com/s/official/artist/35?ima=0000" target="_blank" rel="noopener noreferrer">山下 葉留花</a>
-                      <span aria-hidden="true"> / </span>
-                      <a href="https://www.hinatazaka46.com/s/official/artist/21?ima=0000" target="_blank" rel="noopener noreferrer">上村 ひなの</a>
-                      <span aria-hidden="true"> / </span>
-                      <a href="https://www.hinatazaka46.com/s/official/artist/33?ima=0000" target="_blank" rel="noopener noreferrer">藤嶌 果歩</a>
-                      <span aria-hidden="true"> / </span>
-                      <a href="https://www.hinatazaka46.com/s/official/artist/22?ima=0000" target="_blank" rel="noopener noreferrer">髙橋 未来虹</a>
-                      <span aria-hidden="true"> / </span>
-                      <a href="https://www.hinatazaka46.com/s/official/artist/39?ima=0000" target="_blank" rel="noopener noreferrer">片山 紗希</a>
-                      <span aria-hidden="true"> / </span>
-                      <a href="https://www.hinatazaka46.com/s/official/artist/44?ima=0000" target="_blank" rel="noopener noreferrer">高井 俐香</a>
-                      <span aria-hidden="true"> / </span>
-                      <a href="https://www.hinatazaka46.com/s/official/artist/46?ima=0000" target="_blank" rel="noopener noreferrer">松尾 桜</a>
-                    </span>
-                  </li>
-                  <li>
-                    <a href="https://sakurazaka46.com/" target="_blank" rel="noopener noreferrer" class="profile-oshimen__group profile-oshimen__group--sakura">櫻坂46</a>
-                    <span class="profile-oshimen__member">
-                      <a href="https://sakurazaka46.com/s/s46/artist/50?ima=0000" target="_blank" rel="noopener noreferrer">森田 ひかる</a>
-                      <span aria-hidden="true"> / </span>
-                      <a href="https://sakurazaka46.com/s/s46/artist/69?ima=0000" target="_blank" rel="noopener noreferrer">山下 瞳月</a>
-                      <span aria-hidden="true"> / </span>
-                      <a href="https://sakurazaka46.com/s/s46/artist/64?ima=0000" target="_blank" rel="noopener noreferrer">中嶋 優月</a>
-                      <span aria-hidden="true"> / </span>
-                      <a href="https://sakurazaka46.com/s/s46/artist/59?ima=0000" target="_blank" rel="noopener noreferrer">石森 璃花</a>
-                      <span aria-hidden="true"> / </span>
-                      <a href="https://sakurazaka46.com/s/s46/artist/65?ima=0000" target="_blank" rel="noopener noreferrer">的野 美青</a>
-                    </span>
-                  </li>
-                  <li>
-                    <span class="profile-oshimen__group profile-oshimen__group--others">その他</span>
-                    <span class="profile-oshimen__member">
-                      <a href="https://www.youtube.com/@nazeyama" target="_blank" rel="noopener noreferrer">nazeyama</a>
-                      <span aria-hidden="true"> / </span>
-                      <a href="https://kurusurin.jp/" target="_blank" rel="noopener noreferrer">来栖りん</a>
-                      <span aria-hidden="true"> / </span>
-                      <a href="https://www.instagram.com/hikari_kabashima/" target="_blank" rel="noopener noreferrer">椛島光</a>
-                    </span>
-                  </li>
-                </ul>
-                <p class="profile-oshimen__hint">推しはなんぼいてもええですからね</p>
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">Links</th>
-              <td>
-                <ul class="profile-links">
-                  <li><a href="https://x.com/shiori_02_14_" target="_blank" rel="noopener noreferrer">X(twitter)</a></li>
-                  <li><a href="https://github.com/shiori-02-14" target="_blank" rel="noopener noreferrer">GitHub</a></li>
-                  <li><a href="https://note.com/shiori_02_14_" target="_blank" rel="noopener noreferrer">note</a></li>
-                  <li><a href="https://qiita.com/shiori_02_14_" target="_blank" rel="noopener noreferrer">Qiita</a></li>
-                  <li><a href="https://www.youtube.com/@shiori_channel914" target="_blank" rel="noopener noreferrer">YouTube</a></li>
-                </ul>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="profile-note">
+              </dd>
+              <dt>Hobby</dt>
+              <dd>資産運用 / 坂道 / 食べ歩き / 献血 / 旅行</dd>
+            </dl>
+          </section>
+
+          <section class="profile-card" id="profile-faves" aria-labelledby="profile-faves-title">
+            <h2 id="profile-faves-title"><span class="icon icon--profile" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="presentation">
+                <path d="M12 21s-7-4.4-9.5-9.1C.2 7.6 2.6 4.5 6.1 4.5c1.9 0 3.5 1 4.4 2.3.9-1.3 2.5-2.3 4.4-2.3 3.5 0 5.9 3.1 3.6 7.4C19 16.6 12 21 12 21z"></path>
+              </svg>
+            </span> My fave</h2>
+            <ul class="profile-oshimen" aria-label="推しメン一覧">
+              <li>
+                <a href="https://www.nogizaka46.com/" target="_blank" rel="noopener noreferrer" class="profile-oshimen__group profile-oshimen__group--nogi">乃木坂46</a>
+                <span class="profile-oshimen__member">
+                  <a href="https://www.nogizaka46.com/s/n46/artist/55396?ima=0000" target="_blank" rel="noopener noreferrer">五百城 茉央</a>
+                  <span aria-hidden="true"> / </span>
+                  <a href="https://www.nogizaka46.com/s/n46/artist/55397?ima=0000" target="_blank" rel="noopener noreferrer">池田 瑛紗</a>
+                  <span aria-hidden="true"> / </span>
+                  <a href="https://www.nogizaka46.com/s/n46/artist/55393?ima=0000" target="_blank" rel="noopener noreferrer">冨里 奈央</a>
+                  <span aria-hidden="true"> / </span>
+                  <a href="https://www.nogizaka46.com/s/n46/artist/63107?ima=0000" target="_blank" rel="noopener noreferrer">瀬戸口 心月</a>
+                  <span aria-hidden="true"> / </span>
+                  <a href="https://www.nogizaka46.com/s/n46/artist/63109?ima=0000" target="_blank" rel="noopener noreferrer">増田 三莉音</a>
+                  <span aria-hidden="true"> / </span>
+                  <a href="https://www.nogizaka46.com/s/n46/artist/63110?ima=0000" target="_blank" rel="noopener noreferrer">森平 麗心</a>
+                  <span aria-hidden="true"> / </span>
+                  <a href="https://www.nogizaka46.com/s/n46/artist/48015?ima=3512" target="_blank" rel="noopener noreferrer">田村 真佑</a>
+                  <span aria-hidden="true"> / </span>
+                  <a href="https://www.nogizaka46.com/s/n46/artist/48008?ima=0000" target="_blank" rel="noopener noreferrer">遠藤 さくら</a>
+                  <span aria-hidden="true"> / </span>
+                  <a href="#" target="_blank" rel="noopener noreferrer">大越 ひなの</a>
+                </span>
+              </li>
+              <li>
+                <a href="https://www.hinatazaka46.com/" target="_blank" rel="noopener noreferrer" class="profile-oshimen__group profile-oshimen__group--hinata">日向坂46</a>
+                <span class="profile-oshimen__member">
+                  <a href="https://www.hinatazaka46.com/s/official/artist/29?ima=0000" target="_blank" rel="noopener noreferrer">正源司 陽子</a>
+                  <span aria-hidden="true"> / </span>
+                  <a href="https://www.hinatazaka46.com/s/official/artist/38?ima=0000" target="_blank" rel="noopener noreferrer">大野 愛実</a>
+                  <span aria-hidden="true"> / </span>
+                  <a href="https://www.hinatazaka46.com/s/official/artist/31?ima=0000" target="_blank" rel="noopener noreferrer">平尾 帆夏</a>
+                  <span aria-hidden="true"> / </span>
+                  <a href="https://www.hinatazaka46.com/s/official/artist/24?ima=0000" target="_blank" rel="noopener noreferrer">山口 陽世</a>
+                  <span aria-hidden="true"> / </span>
+                  <a href="https://www.hinatazaka46.com/s/official/artist/35?ima=0000" target="_blank" rel="noopener noreferrer">山下 葉留花</a>
+                  <span aria-hidden="true"> / </span>
+                  <a href="https://www.hinatazaka46.com/s/official/artist/21?ima=0000" target="_blank" rel="noopener noreferrer">上村 ひなの</a>
+                  <span aria-hidden="true"> / </span>
+                  <a href="https://www.hinatazaka46.com/s/official/artist/33?ima=0000" target="_blank" rel="noopener noreferrer">藤嶌 果歩</a>
+                  <span aria-hidden="true"> / </span>
+                  <a href="https://www.hinatazaka46.com/s/official/artist/22?ima=0000" target="_blank" rel="noopener noreferrer">髙橋 未来虹</a>
+                  <span aria-hidden="true"> / </span>
+                  <a href="https://www.hinatazaka46.com/s/official/artist/39?ima=0000" target="_blank" rel="noopener noreferrer">片山 紗希</a>
+                  <span aria-hidden="true"> / </span>
+                  <a href="https://www.hinatazaka46.com/s/official/artist/44?ima=0000" target="_blank" rel="noopener noreferrer">高井 俐香</a>
+                  <span aria-hidden="true"> / </span>
+                  <a href="https://www.hinatazaka46.com/s/official/artist/46?ima=0000" target="_blank" rel="noopener noreferrer">松尾 桜</a>
+                </span>
+              </li>
+              <li>
+                <a href="https://sakurazaka46.com/" target="_blank" rel="noopener noreferrer" class="profile-oshimen__group profile-oshimen__group--sakura">櫻坂46</a>
+                <span class="profile-oshimen__member">
+                  <a href="https://sakurazaka46.com/s/s46/artist/50?ima=0000" target="_blank" rel="noopener noreferrer">森田 ひかる</a>
+                  <span aria-hidden="true"> / </span>
+                  <a href="https://sakurazaka46.com/s/s46/artist/69?ima=0000" target="_blank" rel="noopener noreferrer">山下 瞳月</a>
+                  <span aria-hidden="true"> / </span>
+                  <a href="https://sakurazaka46.com/s/s46/artist/64?ima=0000" target="_blank" rel="noopener noreferrer">中嶋 優月</a>
+                  <span aria-hidden="true"> / </span>
+                  <a href="https://sakurazaka46.com/s/s46/artist/59?ima=0000" target="_blank" rel="noopener noreferrer">石森 璃花</a>
+                  <span aria-hidden="true"> / </span>
+                  <a href="https://sakurazaka46.com/s/s46/artist/65?ima=0000" target="_blank" rel="noopener noreferrer">的野 美青</a>
+                </span>
+              </li>
+              <li>
+                <span class="profile-oshimen__group profile-oshimen__group--others">その他</span>
+                <span class="profile-oshimen__member">
+                  <a href="https://www.youtube.com/@nazeyama" target="_blank" rel="noopener noreferrer">nazeyama</a>
+                  <span aria-hidden="true"> / </span>
+                  <a href="https://kurusurin.jp/" target="_blank" rel="noopener noreferrer">来栖りん</a>
+                  <span aria-hidden="true"> / </span>
+                  <a href="https://www.instagram.com/hikari_kabashima/" target="_blank" rel="noopener noreferrer">椛島光</a>
+                </span>
+              </li>
+            </ul>
+            <p class="profile-oshimen__hint">推しはなんぼいてもええですからね</p>
+          </section>
+        </div>
+
+        <aside class="profile-note" id="profile-note" aria-labelledby="profile-note-title">
+          <h2 id="profile-note-title"><span class="icon icon--profile" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="presentation">
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"></path>
+            </svg>
+          </span> Note</h2>
           <p>暇な時間に個人開発や文章づくりをゆっくり進めています。</p>
           <p>SNSで気軽に声をかけてもらえると嬉しいです。</p>
-        </div>
+        </aside>
       </div>
       <p><a class="btn btn--ghost" href="index.html">← トップに戻る</a></p>
     </section>
