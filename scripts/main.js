@@ -40,6 +40,33 @@ const pickRandom = (items) => {
   return items[index];
 };
 
+const pickWeightedRandom = (items, weights) => {
+  if (!Array.isArray(items) || items.length === 0) {
+    return undefined;
+  }
+  if (!Array.isArray(weights) || weights.length !== items.length) {
+    // 重みが指定されていない場合は均等確率
+    return pickRandom(items);
+  }
+  
+  // 重みの合計を計算
+  const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+  
+  // 0からtotalWeightまでの乱数を生成
+  let random = Math.random() * totalWeight;
+  
+  // 重みに基づいて選択
+  for (let i = 0; i < items.length; i++) {
+    random -= weights[i];
+    if (random <= 0) {
+      return items[i];
+    }
+  }
+  
+  // フォールバック（通常は到達しない）
+  return items[items.length - 1];
+};
+
 const setupThemeToggle = () => {
   const root = document.documentElement;
   const themeToggle = document.getElementById('theme-toggle');
@@ -228,7 +255,21 @@ const initFortune = () => {
 
   const showFortune = (fortuneData) => {
     const data = fortuneData || defaultFortuneData;
-    const randomResult = pickRandom(data.results) || '吉';
+    
+    // おみくじの確率設定（一般的な確率分布）
+    // 大吉: 3%, 中吉: 12%, 小吉: 15%, 吉: 40%, 末吉: 20%, 凶: 10%
+    const fortuneWeights = {
+      '大吉': 3,
+      '中吉': 12,
+      '小吉': 15,
+      '吉': 40,
+      '末吉': 20,
+      '凶': 10
+    };
+    
+    // データに含まれる運勢の重みを取得
+    const weights = data.results.map(result => fortuneWeights[result] || 10);
+    const randomResult = pickWeightedRandom(data.results, weights) || '吉';
     const finalResult = randomResult === '大吉' ? '🌸 大吉 🌸' : randomResult;
 
     const commentCandidates = data.commentsByResult && data.commentsByResult[randomResult];
