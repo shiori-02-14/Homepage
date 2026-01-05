@@ -215,7 +215,7 @@
         <li class="card card--article">
           <a class="card__link" href="https://note.com/shiori_02_14_/n/n87a34fd58422?app_launch=false" target="_blank" rel="noopener noreferrer">
             <div class="card__thumb">
-              <img src="https://assets.st-note.com/production/uploads/images/233534653/rectangle_large_type_2_8c0f45592b67a9b7fbd0f4b7c466431c.png?width=1200" alt="嫌中による中国語講座のサムネ" loading="lazy" decoding="async" />
+              <img src="https://assets.st-note.com/production/uploads/images/233534653/rectangle_large_type_2_8c0f45592b67a9b7fbd0f4b7c466431c.png?width=640" alt="嫌中による中国語講座のサムネ" loading="lazy" decoding="async" fetchpriority="low" />
               <span class="badge badge--note badge--corner" aria-hidden="true">NOTE</span>
             </div>
             <div class="card__content">
@@ -227,7 +227,7 @@
         <li class="card card--article">
           <a class="card__link" href="https://note.com/shiori_02_14_/n/n94f62fd81311" target="_blank" rel="noopener noreferrer">
             <div class="card__thumb">
-              <img src="https://assets.st-note.com/production/uploads/images/227257198/rectangle_large_type_2_0653c2f2d9c444f3b022001ee6667d6a.png?width=1200" alt="大学生になって携帯代を“自分で払うようになった人”へのサムネ" loading="lazy" decoding="async" />
+              <img src="https://assets.st-note.com/production/uploads/images/227257198/rectangle_large_type_2_0653c2f2d9c444f3b022001ee6667d6a.png?width=640" alt="大学生になって携帯代を“自分で払うようになった人”へのサムネ" loading="lazy" decoding="async" fetchpriority="low" />
               <span class="badge badge--note badge--corner" aria-hidden="true">NOTE</span>
             </div>
             <div class="card__content">
@@ -256,10 +256,18 @@
         <button id="fortune-btn" class="btn fortune-btn" type="button">
           <span class="icon" aria-hidden="true">⛩️</span> 今日の運勢は？
         </button>
-        <p id="fortune-hint" class="fortune-hint">上のにして</p>
-        <div id="fortune-result" class="fortune-result" aria-live="polite"></div>
+        <p id="fortune-hint" class="fortune-hint">押してみて</p>
+        <div id="fortune-result" class="fortune-result" aria-live="polite">
+          <div class="fortune-slot">
+            <div class="fortune-slot-reel" id="fortune-slot-reel"></div>
+          </div>
+          <div class="fortune-result-text"></div>
+        </div>
         <p id="fortune-comment" class="fortune-comment" aria-live="polite"></p>
         <p id="fortune-lucky" class="fortune-lucky" aria-live="polite"></p>
+        <button id="fortune-retry-btn" class="btn fortune-btn fortune-retry-btn" type="button" style="display: none;">
+          <span class="icon" aria-hidden="true">⛩️</span> もう一度
+        </button>
       </div>
     </section>
 
