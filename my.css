@@ -1198,7 +1198,7 @@ a.friend-card::after {
   grid-template-columns: 1fr;
 }
 #articles-page .cards {
-  gap: clamp(1.05rem, 2.2vw, 1.55rem);
+  gap: clamp(1.5rem, 3vw, 2rem);
 }
 #articles-page .card {
   box-shadow: var(--elev-1);
@@ -1227,10 +1227,10 @@ a.friend-card::after {
 }
 #articles-page .card--article .card__thumb {
   /* スマホ〜タブレットで自然に伸縮するサムネ幅 */
-  flex: 0 0 clamp(120px, 36vw, 220px);
-  width: clamp(120px, 36vw, 220px);
+  flex: 0 0 clamp(140px, 40vw, 260px);
+  width: clamp(140px, 40vw, 260px);
   padding-top: 0;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 16 / 9;
   border-radius: 20px 0 0 20px;
 }
 #articles-page .card--article .card__content {
@@ -1244,8 +1244,8 @@ a.friend-card::after {
 /* 画面が広い時はサムネを固定幅にして、より「記事一覧」感を出す */
 @media (min-width: 760px) {
   #articles-page .card--article .card__thumb {
-    flex: 0 0 280px;
-    width: 280px;
+    flex: 0 0 320px;
+    width: 320px;
   }
   #articles-page .card--article .card__content {
     padding: 1.25rem 1.4rem;
@@ -1976,8 +1976,9 @@ html { scroll-behavior: smooth; }
     border-radius: 16px;
   }
   #articles-page .card--article .card__thumb {
-    flex: 0 0 120px;
-    width: 120px;
+    flex: 0 0 140px;
+    width: 140px;
+    aspect-ratio: 16 / 9;
   }
   #articles-page .card--article .card__content {
     padding: 0.95rem 0.95rem;
