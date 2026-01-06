@@ -341,7 +341,6 @@ const initFortune = () => {
         slotReel.innerHTML = '';
         // リールに複数の運勢を追加（ループさせるため多めに、同じアイテムを繰り返し）
         const reelItems = [];
-        const itemHeight = 80;
         
         // 最初の部分：ランダムな運勢を繰り返し（高速回転用、ループさせるため最初のアイテムを最後にも追加）
         const firstItems = [];
@@ -364,6 +363,22 @@ const initFortune = () => {
         // ループを滑らかにするため、最初のアイテムを最後にも追加
         if (firstItems.length > 0) {
           reelItems.push(firstItems[0]);
+        }
+        
+        // 最初のアイテムを作成して高さを取得（レスポンシブ対応）
+        const firstItem = document.createElement('div');
+        firstItem.className = 'fortune-slot-item';
+        firstItem.textContent = reelItems[0];
+        firstItem.style.position = 'absolute';
+        firstItem.style.visibility = 'hidden';
+        slotReel.appendChild(firstItem);
+        const itemHeight = firstItem.offsetHeight || 80;
+        slotReel.removeChild(firstItem);
+        
+        // CSS変数を設定してアニメーションが正しく動作するようにする
+        const slotContainer = slotReel.parentElement;
+        if (slotContainer) {
+          slotContainer.style.setProperty('--slot-item-height', `${itemHeight}px`);
         }
         
         reelItems.forEach((item) => {

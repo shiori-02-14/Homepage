@@ -2371,6 +2371,7 @@ html { scroll-behavior: smooth; }
   width: 100%;
   max-width: 400px;
   height: 80px;
+  --slot-item-height: 80px;
   margin: 0 auto;
   overflow: hidden;
   border: 3px solid var(--fortune-accent);
@@ -2440,7 +2441,7 @@ html { scroll-behavior: smooth; }
 
 /* スロットアイテム */
 .fortune-slot-item {
-  height: 80px;
+  height: var(--slot-item-height, 80px);
   width: 100%;
   display: flex;
   align-items: center;
@@ -2461,7 +2462,7 @@ html { scroll-behavior: smooth; }
     transform: translateY(0);
   }
   100% {
-    transform: translateY(-80px);
+    transform: translateY(calc(var(--slot-item-height, 80px) * -1));
   }
 }
 
@@ -2665,6 +2666,52 @@ html { scroll-behavior: smooth; }
 /* JSから付与されるクラス */
 .animate-out {
   animation: rotateOut 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* iPad向けのおみくじスタイル調整 */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .fortune-container {
+    padding: 1rem;
+    min-height: 200px;
+    gap: 0.8rem;
+  }
+  
+  .fortune-slot {
+    max-width: 100%;
+    width: 100%;
+    height: 90px;
+    --slot-item-height: 90px;
+  }
+  
+  .fortune-slot-item {
+    height: var(--slot-item-height, 90px);
+    font-size: 1.75rem;
+  }
+  
+  .fortune-result {
+    font-size: 1.75rem;
+    min-height: 90px;
+  }
+  
+  .fortune-result-text {
+    font-size: 1.75rem;
+    min-height: 90px;
+  }
+  
+  .fortune-btn {
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+  }
+  
+  .fortune-comment {
+    font-size: 1.05rem;
+    max-width: 100%;
+    line-height: 1.7;
+  }
+  
+  .fortune-lucky {
+    font-size: 1rem;
+  }
 }
 
 /* =========================================
