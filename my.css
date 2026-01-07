@@ -1583,6 +1583,17 @@ a.friend-card::after {
   background: rgba(74,222,128,.92);
   border-color: rgba(255,255,255,.3);
 }
+.badge--crypto {
+  background: rgba(245,158,11,.95);
+  border-color: rgba(255,255,255,.4);
+  color: #fff;
+  box-shadow: 0 10px 24px -18px rgba(15,23,42,.35);
+  text-transform: none;
+}
+:root[data-theme='dark'] .badge--crypto {
+  background: rgba(251,191,36,.92);
+  border-color: rgba(255,255,255,.3);
+}
 .badge--corner {
   position: absolute;
   top: 0.9rem;
