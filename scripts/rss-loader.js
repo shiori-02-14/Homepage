@@ -22,12 +22,10 @@
   // オプション3: 直接取得（CORSが許可されている場合）
   // const RSS_PROXY = '';
 
-  // 記事を表示するコンテナ
-  const articlesContainer = document.querySelector('#articles-page .cards');
-  if (!articlesContainer) return;
-
-  // 既存の記事カードを保持（手動で追加した記事）
-  const existingArticles = Array.from(articlesContainer.querySelectorAll('.card--article:not([data-rss])'));
+  // 記事を表示するコンテナ（Articlesページ / トップページ）
+  const articlesPageContainer = document.querySelector('#articles-page .cards');
+  const homeArticlesContainer = document.querySelector('#top [data-rss="home-articles"]');
+  if (!articlesPageContainer && !homeArticlesContainer) return;
 
   // サムネ取得は遅くなりがちなので、localStorageでキャッシュ（再訪問で爆速に）
   const thumbCacheStorageKey = '__SHIORI_NOTE_EYECATCH_CACHE_V1__';
@@ -406,14 +404,52 @@
     return li;
   };
 
+  // カードのサイズを「3つ目（= Coming soonのカード想定）」に合わせて統一（主に高さ）
+  // - 参照: 最初の .card--article.card--upcoming（通常 RSS の後＝3つ目）
+  // - 他のカードは min-height で揃える（長いタイトルで高くなるカードはそのまま）
+  let syncCardsRafId = 0;
+  const syncArticleCardMinHeight = (container) => {
+    if (!container) return;
+    const cards = Array.from(container.querySelectorAll('.card--article'));
+    if (cards.length === 0) return;
+
+    // 既存の min-height をクリアして、参照カードの自然な高さを測る
+    cards.forEach((card) => {
+      card.style.removeProperty('min-height');
+    });
+
+    const reference = container.querySelector('.card--article.card--upcoming') || cards[0];
+    const targetHeight = Math.round(reference.getBoundingClientRect().height);
+    if (!targetHeight || targetHeight < 1) return;
+
+    cards.forEach((card) => {
+      if (card === reference) return;
+      card.style.minHeight = `${targetHeight}px`;
+    });
+  };
+
+  const scheduleSyncArticleCardMinHeight = (container) => {
+    if (!container) return;
+    if (syncCardsRafId) cancelAnimationFrame(syncCardsRafId);
+    syncCardsRafId = requestAnimationFrame(() => {
+      syncCardsRafId = 0;
+      syncArticleCardMinHeight(container);
+    });
+  };
+
   // 記事を表示
-  const displayArticles = (articles) => {
+  const displayArticles = (container, articles, { mode = 'insertBeforeExisting', existingArticles = [], enableSizeSync = false } = {}) => {
+    if (!container) return;
     // 既存のRSS記事を削除
-    const existingRSSArticles = articlesContainer.querySelectorAll('[data-rss="true"]');
+    const existingRSSArticles = container.querySelectorAll('[data-rss="true"]');
     existingRSSArticles.forEach(el => el.remove());
 
+    if (mode === 'replaceAll') {
+      container.innerHTML = '';
+    }
+
     // 新しい記事を追加（既存の記事の前に挿入）
-    const firstExisting = existingArticles[0];
+    const firstExisting = mode === 'insertBeforeExisting' ? (existingArticles[0] || null) : null;
     const notesToHydrate = new Map(); // noteKey -> { title, thumbEls: [] }
 
     articles.forEach(article => {
@@ -421,7 +457,7 @@
       if (firstExisting && firstExisting.parentNode) {
         firstExisting.parentNode.insertBefore(card, firstExisting);
       } else {
-        articlesContainer.appendChild(card);
+        container.appendChild(card);
       }
 
       if (!article.imageUrl) {
@@ -434,6 +470,11 @@
         }
       }
     });
+
+    // 先に高さを揃えてからサムネを後追いで入れる
+    if (enableSizeSync) {
+      scheduleSyncArticleCardMinHeight(container);
+    }
 
     // サムネは後から（UI表示をブロックしない）
     if (notesToHydrate.size > 0) {
@@ -469,9 +510,25 @@
   const init = async () => {
     const articles = await fetchRSSFeed();
     if (articles.length > 0) {
-      // 最新10件のみ表示
-      const latestArticles = articles.slice(0, 10);
-      displayArticles(latestArticles);
+      // Articlesページ（縦リスト）
+      if (articlesPageContainer) {
+        const latestArticles = articles.slice(0, 10);
+        const existing = Array.from(articlesPageContainer.querySelectorAll('.card--article:not([data-rss])'));
+        displayArticles(articlesPageContainer, latestArticles, { mode: 'insertBeforeExisting', existingArticles: existing, enableSizeSync: true });
+
+        // リサイズやフォントロード後も崩れないように再計算（Articlesページのみ）
+        const schedule = () => scheduleSyncArticleCardMinHeight(articlesPageContainer);
+        window.addEventListener('resize', schedule, { passive: true });
+        if ('fonts' in document && document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(schedule).catch(() => {});
+        }
+      }
+
+      // トップページ（横スクロール）：RSS記事のみ表示
+      if (homeArticlesContainer) {
+        const latestHome = articles.slice(0, 10);
+        displayArticles(homeArticlesContainer, latestHome, { mode: 'replaceAll' });
+      }
     } else {
       console.warn('RSSから記事を取得できませんでした');
     }

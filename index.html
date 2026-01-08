@@ -250,59 +250,7 @@
         </span> Articles</h2>
         <a class="section__more" href="articles.html" aria-label="記事一覧ページへ">View all articles</a>
       </div>
-      <ul class="cards-scroll" aria-live="polite">
-        <li class="card card--article card--upcoming">
-          <a class="card__link" href="#!" aria-disabled="true" tabindex="-1">
-            <div class="card__thumb card__thumb--placeholder" aria-hidden="true">
-              <span class="badge badge--note badge--corner">NOTE</span>
-              <span class="badge badge--soon">COMING SOON</span>
-            </div>
-            <div class="card__content">
-              <span class="card__date" aria-hidden="true">Coming soon</span>
-              <h3>作業環境を整えてみた</h3>
-              <p class="card__note" style="font-size: 0.85rem; color: var(--muted); margin-top: 0.5rem;">※引っ越してから書きます</p>
-            </div>
-          </a>
-        </li>
-        <li class="card card--article">
-          <a class="card__link" href="https://note.com/shiori_02_14_/n/n87a34fd58422?app_launch=false" target="_blank" rel="noopener noreferrer">
-            <div class="card__thumb">
-              <img src="https://assets.st-note.com/production/uploads/images/233534653/rectangle_large_type_2_8c0f45592b67a9b7fbd0f4b7c466431c.png?width=640" alt="嫌中による中国語講座のサムネ" loading="lazy" decoding="async" fetchpriority="low" />
-              <span class="badge badge--note badge--corner" aria-hidden="true">NOTE</span>
-            </div>
-            <div class="card__content">
-              <time class="card__date" datetime="2025-12-08">2025/12/08</time>
-              <h3>嫌中による中国語講座</h3>
-            </div>
-          </a>
-        </li>
-        <li class="card card--article">
-          <a class="card__link" href="https://note.com/shiori_02_14_/n/n94f62fd81311" target="_blank" rel="noopener noreferrer">
-            <div class="card__thumb">
-              <img src="https://assets.st-note.com/production/uploads/images/227257198/rectangle_large_type_2_0653c2f2d9c444f3b022001ee6667d6a.png?width=640" alt="大学生になって携帯代を“自分で払うようになった人”へのサムネ" loading="lazy" decoding="async" fetchpriority="low" />
-              <span class="badge badge--note badge--corner" aria-hidden="true">NOTE</span>
-            </div>
-            <div class="card__content">
-              <time class="card__date" datetime="2025-12-01">2025/12/01</time>
-              <h3>大学生になって携帯代を“自分で払うようになった人”へ</h3>
-            </div>
-          </a>
-        </li>
-        <li class="card card--article card--upcoming">
-          <a class="card__link" href="#!" aria-disabled="true" tabindex="-1">
-            <div class="card__thumb">
-              <img src="https://assets.st-note.com/production/uploads/images/226997732/rectangle_large_type_2_f9c91c0867ea6d3fcab1df5e8c629fc5.png?fit=bounds&quality=85&width=1280" alt="全大学生向け 金欠ポイ活大学生によるポイ活&節約術のサムネ" loading="lazy" decoding="async" fetchpriority="low" />
-              <span class="badge badge--note badge--corner" aria-hidden="true">NOTE</span>
-              <span class="badge badge--soon">COMING LATER</span>
-            </div>
-            <div class="card__content">
-              <span class="card__date" aria-hidden="true">Coming later</span>
-              <h3>全大学生向け 金欠ポイ活大学生によるポイ活&節約術</h3>
-              <p class="card__note" style="font-size: 0.85rem; color: var(--muted); margin-top: 0.5rem;">※お蔵入りかも</p>
-            </div>
-          </a>
-        </li>
-      </ul>
+      <ul class="cards-scroll" aria-live="polite" data-rss="home-articles"></ul>
     </section>
 
     <section class="narrow" aria-label="おみくじ">
@@ -329,6 +277,7 @@
   </main>
 
   <script src="scripts/main.js" defer></script>
+  <script src="scripts/rss-loader.js" defer></script>
 
   <script type="application/ld+json">
   {
