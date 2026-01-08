@@ -77,7 +77,19 @@
         </span> Articles</h1>
       </div>
 
-      <ul class="cards" aria-live="polite">
+      <div class="articles-filter" role="tablist" aria-label="記事のフィルタ">
+        <button class="articles-filter__tab" role="tab" aria-selected="true" data-filter="all" id="filter-all">
+          All
+        </button>
+        <button class="articles-filter__tab" role="tab" aria-selected="false" data-filter="note" id="filter-note">
+          note
+        </button>
+        <button class="articles-filter__tab" role="tab" aria-selected="false" data-filter="qiita" id="filter-qiita">
+          Qiita
+        </button>
+      </div>
+
+      <ul class="cards" aria-live="polite" id="articles-list">
         <!--
         <li class="card card--article card--upcoming">
           <a class="card__link" href="#!" aria-disabled="true" tabindex="-1">

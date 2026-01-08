@@ -362,6 +362,9 @@
     const li = document.createElement('li');
     li.className = 'card card--article';
     li.setAttribute('data-rss', 'true');
+    if (article.source) {
+      li.setAttribute('data-source', article.source);
+    }
     
     const link = document.createElement('a');
     link.className = 'card__link';
@@ -371,7 +374,7 @@
     
     // バッジ
     const badgeConfigBySource = {
-      note: { label: 'NOTE', className: 'badge--note' },
+      note: { label: 'note', className: 'badge--note' },
       qiita: { label: 'QIITA', className: 'badge--qiita' }
     };
     const badgeConfig = badgeConfigBySource[article.source] || { label: 'ARTICLE', className: 'badge--source' };
@@ -565,11 +568,96 @@
     }
   };
 
+  // 空の状態メッセージを表示/非表示
+  const updateEmptyState = (articlesList, filter) => {
+    // 既存の空の状態メッセージを削除
+    const existingEmpty = articlesList.querySelector('.articles-empty');
+    if (existingEmpty) {
+      existingEmpty.remove();
+    }
+
+    // 表示されている記事数をカウント
+    const allCards = articlesList.querySelectorAll('.card--article');
+    let visibleCount = 0;
+    allCards.forEach(card => {
+      if (card.style.display !== 'none') {
+        visibleCount++;
+      }
+    });
+
+    // 記事が0件の場合、メッセージを表示
+    if (visibleCount === 0) {
+      const emptyDiv = document.createElement('div');
+      emptyDiv.className = 'articles-empty';
+      
+      if (filter === 'qiita') {
+        emptyDiv.innerHTML = '<p class="articles-empty__text">まだ記事何もないです<br>毎日投稿で何か書きたいです</p>';
+      } else {
+        emptyDiv.innerHTML = '<p class="articles-empty__text">記事がありません</p>';
+      }
+      
+      articlesList.appendChild(emptyDiv);
+    }
+  };
+
+  // フィルタリング機能（Articlesページのみ）
+  const setupArticleFilter = () => {
+    const filterTabs = document.querySelectorAll('.articles-filter__tab');
+    const articlesList = document.getElementById('articles-list');
+    if (!filterTabs.length || !articlesList) return;
+
+    // 初期状態で「全て」タブをアクティブにする
+    const allTab = document.getElementById('filter-all');
+    if (allTab) {
+      allTab.classList.add('articles-filter__tab--active');
+    }
+
+    filterTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const filter = tab.getAttribute('data-filter');
+        
+        // タブの状態を更新
+        filterTabs.forEach(t => {
+          t.setAttribute('aria-selected', 'false');
+          t.classList.remove('articles-filter__tab--active');
+        });
+        tab.setAttribute('aria-selected', 'true');
+        tab.classList.add('articles-filter__tab--active');
+
+        // 記事をフィルタリング
+        const allCards = articlesList.querySelectorAll('.card--article');
+        allCards.forEach(card => {
+          if (filter === 'all') {
+            card.style.display = '';
+          } else {
+            const source = card.getAttribute('data-source');
+            card.style.display = source === filter ? '' : 'none';
+          }
+        });
+
+        // 空の状態メッセージを更新
+        updateEmptyState(articlesList, filter);
+
+        // カードの高さを再同期
+        scheduleSyncArticleCardMinHeight(articlesList);
+      });
+    });
+
+    // 初期状態でも空の状態をチェック
+    setTimeout(() => {
+      updateEmptyState(articlesList, 'all');
+    }, 100);
+  };
+
   // ページ読み込み時に実行
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', () => {
+      init();
+      setupArticleFilter();
+    });
   } else {
     init();
+    setupArticleFilter();
   }
 })();
 

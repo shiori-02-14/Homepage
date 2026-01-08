@@ -589,6 +589,82 @@ main > section:first-child {
   /* アイコンはそのまま立体感を残す */
   margin-right: 0.1rem;
 }
+/* 記事フィルタタブ */
+.articles-filter {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem;
+  background: var(--section-bar-bg);
+  border: 1px solid var(--section-bar-border);
+  border-radius: 14px;
+  box-shadow: var(--section-bar-shadow);
+}
+
+.articles-filter__tab {
+  flex: 1;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.articles-filter__tab:hover {
+  background: var(--accent-weak);
+  color: var(--fg);
+}
+
+.articles-filter__tab--active,
+.articles-filter__tab[aria-selected="true"] {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  box-shadow: 0 4px 12px -4px rgba(15, 23, 42, 0.2);
+}
+
+.articles-filter__tab-note {
+  display: inline-block;
+  margin-left: 0.3rem;
+  font-size: 0.75em;
+  font-weight: 400;
+  opacity: 0.85;
+}
+
+.articles-filter__tab--active .articles-filter__tab-note,
+.articles-filter__tab[aria-selected="true"] .articles-filter__tab-note {
+  opacity: 0.9;
+}
+
+:root[data-theme='dark'] .articles-filter__tab--active,
+:root[data-theme='dark'] .articles-filter__tab[aria-selected="true"] {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* 空の状態メッセージ */
+.articles-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.articles-empty__text {
+  font-size: 1rem;
+  color: var(--muted);
+  line-height: 1.8;
+  margin: 0;
+}
+
 .section__more {
   display: inline-flex;
   align-items: center;
@@ -2157,6 +2233,29 @@ html { scroll-behavior: smooth; }
   }
   #profile-page .profile-dl dt {
     font-size: 0.82rem;
+  }
+
+  /* スマホ：記事フィルタタブ */
+  .articles-filter {
+    gap: 0.35rem;
+    padding: 0.4rem;
+    border-radius: 12px;
+  }
+  .articles-filter__tab {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
+    border-radius: 8px;
+  }
+  .articles-filter__tab-note {
+    font-size: 0.7em;
+    margin-left: 0.2rem;
+  }
+  .articles-empty {
+    min-height: 200px;
+    padding: 1.5rem;
+  }
+  .articles-empty__text {
+    font-size: 0.9rem;
   }
 
   /* スマホ：NOTEバッジの文字が大きく見えるので少し小さく */
