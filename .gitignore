@@ -1,1 +1,32 @@
+# OS固有のファイル
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ログファイル
+*.log
+push.log
+
+# エディタ固有のファイル
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# 一時ファイル
+*.tmp
+*.temp
+.cache/
+
+# 環境変数ファイル
+.env
+.env.local
+.env.*.local
