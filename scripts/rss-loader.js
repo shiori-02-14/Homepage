@@ -9,8 +9,9 @@
     if (DEBUG) console.warn(...args);
   };
 
-  // RSSフィードのURL（NoteのRSSフィード）
-  const RSS_FEED_URL = 'https://note.com/shiori_02_14_/rss';
+  // RSS/Atom フィード
+  const NOTE_FEED_URL = 'https://note.com/shiori_02_14_/rss';
+  const QIITA_FEED_URL = 'https://qiita.com/shiori_02_14_/feed.atom';
   
   // CORSプロキシ（必要に応じて変更可能）
   // オプション1: RSS2JSON（無料プランあり）- 現在有効
@@ -201,10 +202,18 @@
     thumbEl.appendChild(img);
   };
 
-  // RSSフィードを取得してパース
-  const fetchRSSFeed = async () => {
+  const parseItemDate = (item) => {
+    const raw = item?.pubDate || item?.published || item?.updated || item?.created || '';
+    const date = raw ? new Date(raw) : null;
+    if (!date || Number.isNaN(date.getTime())) return { dateMs: 0, dateText: '' };
+    return { dateMs: date.getTime(), dateText: formatDate(date) };
+  };
+
+  // RSS/Atomフィードを取得してパース
+  const fetchFeedItems = async (feedUrlRaw, source) => {
     try {
-      const feedUrl = RSS_PROXY ? `${RSS_PROXY}${encodeURIComponent(RSS_FEED_URL)}` : RSS_FEED_URL;
+      if (!feedUrlRaw) return [];
+      const feedUrl = RSS_PROXY ? `${RSS_PROXY}${encodeURIComponent(feedUrlRaw)}` : feedUrlRaw;
       
       // RSS2JSONを使う場合
       if (RSS_PROXY.includes('rss2json')) {
@@ -285,12 +294,16 @@
             // 5. 画像URLが見つからない場合、記事URLからOGP画像を取得（非同期）
             // ただし、ここでは一旦空にして、後で取得する
             
+            const { dateMs, dateText } = parseItemDate(item);
+
             return {
               title: item.title || '',
-              link: item.link || '',
-              date: item.pubDate ? formatDate(new Date(item.pubDate)) : '',
-              imageUrl: imageUrl, // 空の場合は後でOGPから取得
-              description: item.description || ''
+              link: item.link || item.guid || '',
+              date: dateText,
+              dateMs,
+              imageUrl: imageUrl, // 空の場合は後で取得
+              description: item.description || '',
+              source: source || 'rss'
             };
           });
         }
@@ -301,9 +314,13 @@
       const response = await fetchWithTimeout(feedUrl, { timeoutMs: 8000 });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const xmlText = await response.text();
-      return parseRSS(xmlText);
+      return parseRSS(xmlText).map((entry) => ({
+        ...entry,
+        dateMs: entry.date ? new Date(entry.date).getTime() : 0,
+        source: source || 'rss'
+      }));
     } catch (error) {
-      console.error('RSS取得エラー:', error);
+      console.error(`RSS取得エラー(${source || 'rss'}):`, error);
       return [];
     }
   };
@@ -353,10 +370,16 @@
     link.rel = 'noopener noreferrer';
     
     // バッジ
+    const badgeConfigBySource = {
+      note: { label: 'NOTE', className: 'badge--note' },
+      qiita: { label: 'QIITA', className: 'badge--qiita' }
+    };
+    const badgeConfig = badgeConfigBySource[article.source] || { label: 'ARTICLE', className: 'badge--source' };
+
     const badge = document.createElement('span');
-    badge.className = 'badge badge--note badge--corner';
+    badge.className = `badge ${badgeConfig.className} badge--corner`;
     badge.setAttribute('aria-hidden', 'true');
-    badge.textContent = 'NOTE';
+    badge.textContent = badgeConfig.label;
     link.appendChild(badge);
     
     // サムネイル
@@ -508,7 +531,15 @@
 
   // 初期化
   const init = async () => {
-    const articles = await fetchRSSFeed();
+    const [noteItems, qiitaItems] = await Promise.all([
+      fetchFeedItems(NOTE_FEED_URL, 'note'),
+      fetchFeedItems(QIITA_FEED_URL, 'qiita')
+    ]);
+
+    const articles = [...noteItems, ...qiitaItems]
+      .filter((item) => item && item.link && item.title)
+      .sort((a, b) => (b.dateMs || 0) - (a.dateMs || 0));
+
     if (articles.length > 0) {
       // Articlesページ（縦リスト）
       if (articlesPageContainer) {
