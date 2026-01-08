@@ -30,3 +30,6 @@ push.log
 .env
 .env.local
 .env.*.local
+
+# 開発用プレビューファイル
+preview-icons.html
