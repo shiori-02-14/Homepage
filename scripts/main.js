@@ -602,6 +602,65 @@ const initFortune = () => {
   // コンテナ全体のクリックイベントは削除
 };
 
+const initWorksFilter = () => {
+  const isWorksPage = document.body && document.body.id === 'works-page';
+  if (!isWorksPage) return;
+
+  const filterTabs = document.querySelectorAll('#works-page .articles-filter__tab');
+  const worksList = document.getElementById('works-list');
+  if (!filterTabs.length || !worksList) return;
+
+  const updateEmptyState = (filter) => {
+    const existingEmpty = worksList.querySelector('.articles-empty');
+    if (existingEmpty) existingEmpty.remove();
+
+    const allCards = worksList.querySelectorAll('.card--work');
+    let visibleCount = 0;
+    allCards.forEach((card) => {
+      if (card.style.display !== 'none') visibleCount += 1;
+    });
+
+    if (visibleCount === 0) {
+      const emptyDiv = document.createElement('div');
+      emptyDiv.className = 'articles-empty';
+      emptyDiv.innerHTML = '<p class="articles-empty__text">該当する作品がありません</p>';
+      worksList.appendChild(emptyDiv);
+    }
+  };
+
+  const applyFilter = (filter) => {
+    const allCards = worksList.querySelectorAll('.card--work');
+    allCards.forEach((card) => {
+      if (filter === 'all') {
+        card.style.display = '';
+        return;
+      }
+      const type = card.getAttribute('data-work-type');
+      card.style.display = type === filter ? '' : 'none';
+    });
+    updateEmptyState(filter);
+  };
+
+  filterTabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const filter = tab.getAttribute('data-filter') || 'all';
+
+      filterTabs.forEach((t) => {
+        t.setAttribute('aria-selected', 'false');
+        t.classList.remove('articles-filter__tab--active');
+      });
+      tab.setAttribute('aria-selected', 'true');
+      tab.classList.add('articles-filter__tab--active');
+
+      applyFilter(filter);
+    });
+  });
+
+  const allTab = document.getElementById('works-filter-all');
+  if (allTab) allTab.classList.add('articles-filter__tab--active');
+  applyFilter('all');
+};
+
 const initPage = () => {
   applyReducedEffectsHint();
   setupThemeToggle();
@@ -610,6 +669,7 @@ const initPage = () => {
   setupHeaderAutoFit();
   initAnchorScroll();
   initFortune();
+  initWorksFilter();
 };
 
 if (document.readyState === 'loading') {

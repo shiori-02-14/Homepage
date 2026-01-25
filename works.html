@@ -75,8 +75,20 @@
         </span> Works</h1>
       </div>
 
-      <ul class="cards" aria-live="polite">
-        <li class="card card--work card--upcoming" id="u-node">
+      <div class="articles-filter" role="tablist" aria-label="作品のフィルタ">
+        <button class="articles-filter__tab" role="tab" aria-selected="true" data-filter="all" id="works-filter-all">
+          All
+        </button>
+        <button class="articles-filter__tab" role="tab" aria-selected="false" data-filter="app" id="works-filter-app">
+          App
+        </button>
+        <button class="articles-filter__tab" role="tab" aria-selected="false" data-filter="other" id="works-filter-other">
+          Other
+        </button>
+      </div>
+
+      <ul class="cards" aria-live="polite" id="works-list">
+        <li class="card card--work card--upcoming" id="u-node" data-work-type="app">
           <a class="card__link" href="#!" aria-disabled="true" tabindex="-1">
             <span class="badge badge--platform badge--corner">iOS/Android</span>
             <div class="card__thumb">
@@ -90,7 +102,7 @@
             </div>
           </a>
         </li>
-        <li class="card card--work card--upcoming" id="cheese-gyudon-coin">
+        <li class="card card--work card--upcoming" id="cheese-gyudon-coin" data-work-type="other">
           <a class="card__link" href="#!" aria-disabled="true" tabindex="-1">
             <span class="badge badge--crypto badge--corner">仮想通貨</span>
             <div class="card__thumb">
@@ -102,7 +114,7 @@
             </div>
           </a>
         </li>
-        <li class="card card--work">
+        <li class="card card--work" data-work-type="other">
           <a class="card__link" href="https://shiori-02-14.github.io/UCode/" target="_blank" rel="noopener noreferrer">
             <span class="badge badge--web badge--corner">Web</span>
             <div class="card__thumb">
