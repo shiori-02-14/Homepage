@@ -12,6 +12,8 @@
   // RSS/Atom フィード
   const NOTE_FEED_URL = 'https://note.com/shiori_02_14_/rss';
   const QIITA_FEED_URL = 'https://qiita.com/shiori_02_14_/feed.atom';
+  const QIITA_USER_ID = 'shiori_02_14_';
+  const QIITA_API_URL = `https://qiita.com/api/v2/users/${QIITA_USER_ID}/items`;
   
   // CORSプロキシ（必要に応じて変更可能）
   // オプション1: RSS2JSON（無料プランあり）- 現在有効
@@ -207,6 +209,65 @@
     const date = raw ? new Date(raw) : null;
     if (!date || Number.isNaN(date.getTime())) return { dateMs: 0, dateText: '' };
     return { dateMs: date.getTime(), dateText: formatDate(date) };
+  };
+
+  // Qiita API v2 で記事を直接取得（認証不要・JSONで安定）
+  const fetchQiitaItemsViaAPI = async () => {
+    const tryDirect = async () => {
+      const res = await fetchWithTimeout(QIITA_API_URL + '?per_page=20', { timeoutMs: 6000 });
+      if (!res.ok) throw new Error(`Qiita API error: ${res.status}`);
+      return res.json();
+    };
+
+    const tryViaProxy = async () => {
+      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(QIITA_API_URL + '?per_page=20')}`;
+      const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 8000 });
+      if (!res.ok) throw new Error(`Proxy error: ${res.status}`);
+      return res.json();
+    };
+
+    try {
+      const items = await tryDirect();
+      return normalizeQiitaApiItems(items);
+    } catch (e1) {
+      debugWarn('Qiita API direct fetch failed, trying proxy:', e1);
+      try {
+        const items = await tryViaProxy();
+        return normalizeQiitaApiItems(items);
+      } catch (e2) {
+        debugWarn('Qiita API proxy fetch failed:', e2);
+        return [];
+      }
+    }
+  };
+
+  const normalizeQiitaApiItems = (items) => {
+    if (!Array.isArray(items)) return [];
+    return items.map((item) => {
+      const { dateMs, dateText } = parseItemDate({ created: item.created_at });
+      let imageUrl = '';
+      const html = item.rendered_body || '';
+      const md = item.body || '';
+      if (html) {
+        const imgMatch = html.match(/<img[^>]+src=["']([^"']+)["']/i);
+        if (imgMatch && imgMatch[1]) {
+          imageUrl = imgMatch[1].replace(/&amp;/g, '&');
+          if (imageUrl.startsWith('//')) imageUrl = 'https:' + imageUrl;
+        }
+      }
+      if (!imageUrl && md) {
+        const mdImgMatch = md.match(/!\[.*?\]\((https?:\/\/[^)\s]+)\)/);
+        if (mdImgMatch && mdImgMatch[1]) imageUrl = mdImgMatch[1];
+      }
+      return {
+        title: item.title || '',
+        link: item.url || '',
+        date: dateText,
+        dateMs,
+        imageUrl,
+        source: 'qiita'
+      };
+    });
   };
 
   // RSS/Atomフィードを取得してパース
@@ -534,10 +595,16 @@
 
   // 初期化
   const init = async () => {
-    const [noteItems, qiitaItems] = await Promise.all([
+    const [noteItems, qiitaItemsFromApi] = await Promise.all([
       fetchFeedItems(NOTE_FEED_URL, 'note'),
-      fetchFeedItems(QIITA_FEED_URL, 'qiita')
+      fetchQiitaItemsViaAPI()
     ]);
+
+    let qiitaItems = qiitaItemsFromApi;
+    if (qiitaItems.length === 0) {
+      debugLog('Qiita API returned empty, falling back to Atom feed');
+      qiitaItems = await fetchFeedItems(QIITA_FEED_URL, 'qiita');
+    }
 
     const articles = [...noteItems, ...qiitaItems]
       .filter((item) => item && item.link && item.title)
