@@ -213,14 +213,15 @@
 
   // Qiita API v2 で記事を直接取得（認証不要・JSONで安定）
   const fetchQiitaItemsViaAPI = async () => {
+    const apiUrl = QIITA_API_URL + '?per_page=20';
     const tryDirect = async () => {
-      const res = await fetchWithTimeout(QIITA_API_URL + '?per_page=20', { timeoutMs: 6000 });
+      const res = await fetchWithTimeout(apiUrl, { timeoutMs: 6000 });
       if (!res.ok) throw new Error(`Qiita API error: ${res.status}`);
       return res.json();
     };
 
     const tryViaProxy = async () => {
-      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(QIITA_API_URL + '?per_page=20')}`;
+      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
       const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 8000 });
       if (!res.ok) throw new Error(`Proxy error: ${res.status}`);
       return res.json();
@@ -239,6 +240,56 @@
         return [];
       }
     }
+  };
+
+  // Qiita Atom をプロキシ経由で取得してパース（RSS2JSONはQiita形式で空になるため）
+  const CORS_PROXIES = [
+    (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`
+  ];
+
+  const fetchQiitaViaAtomRaw = async () => {
+    for (const toProxyUrl of CORS_PROXIES) {
+      try {
+        const proxyUrl = toProxyUrl(QIITA_FEED_URL);
+        const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 8000 });
+        if (!res.ok) continue;
+        const xmlText = await res.text();
+        if (!xmlText || xmlText.length < 100) continue;
+        const items = parseAtomFeed(xmlText, 'qiita');
+        if (items.length > 0) return items;
+      } catch (e) {
+        debugWarn('Qiita Atom proxy failed:', e);
+      }
+    }
+    return [];
+  };
+
+  const parseAtomFeed = (xmlText, source) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(xmlText, 'text/xml');
+    const entries = doc.querySelectorAll('entry');
+    if (!entries.length) return [];
+
+    return Array.from(entries).map((entry) => {
+      const title = entry.querySelector('title')?.textContent?.trim() || '';
+      const linkEl = entry.querySelector('link[href]');
+      const link = linkEl?.getAttribute('href') || entry.querySelector('id')?.textContent || '';
+      const rawDate = entry.querySelector('updated')?.textContent || entry.querySelector('published')?.textContent || '';
+      const { dateMs, dateText } = parseItemDate({ updated: rawDate, published: rawDate });
+
+      let imageUrl = '';
+      const content = entry.querySelector('content')?.textContent || entry.querySelector('summary')?.textContent || '';
+      if (content) {
+        const imgMatch = content.match(/<img[^>]+src=["']([^"']+)["']/i) || content.match(/src=["']([^"']+)["']/i);
+        if (imgMatch && imgMatch[1]) {
+          imageUrl = imgMatch[1].replace(/&amp;/g, '&');
+          if (imageUrl.startsWith('//')) imageUrl = 'https:' + imageUrl;
+        }
+      }
+
+      return { title, link, date: dateText, dateMs, imageUrl, source };
+    }).filter((a) => a.link && a.title);
   };
 
   const normalizeQiitaApiItems = (items) => {
@@ -602,7 +653,11 @@
 
     let qiitaItems = qiitaItemsFromApi;
     if (qiitaItems.length === 0) {
-      debugLog('Qiita API returned empty, falling back to Atom feed');
+      debugLog('Qiita API returned empty, falling back to Atom raw fetch');
+      qiitaItems = await fetchQiitaViaAtomRaw();
+    }
+    if (qiitaItems.length === 0) {
+      debugLog('Qiita Atom raw failed, trying RSS2JSON');
       qiitaItems = await fetchFeedItems(QIITA_FEED_URL, 'qiita');
     }
 
