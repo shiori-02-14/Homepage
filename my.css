@@ -2308,13 +2308,15 @@ html { scroll-behavior: smooth; }
   #works-page .card--work .card__thumb {
     height: auto;
     min-height: 0;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 16 / 9;
     flex: 0 0 clamp(132px, 36vw, 196px);
     width: clamp(132px, 36vw, 196px);
   }
   #articles-page .card--article .card__thumb img,
   #works-page .card--work .card__thumb img:not(.thumb-logo),
   #works-page .card--work .card__thumb svg {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     object-position: center;
   }
