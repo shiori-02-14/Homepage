@@ -2356,6 +2356,14 @@ html { scroll-behavior: smooth; }
   #works-page .cards {
     gap: 1rem;
   }
+  #works-page .card--work .card__link {
+    align-items: stretch;
+  }
+  #works-page .card--work .card__thumb {
+    height: auto;
+    min-height: 100%;
+    aspect-ratio: auto;
+  }
   #works-page .card--work .card__link p {
     margin: 0;
     line-height: 1.35;

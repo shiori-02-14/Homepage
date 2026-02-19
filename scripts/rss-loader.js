@@ -820,7 +820,8 @@
   // - 参照: 最初の .card--article.card--upcoming（通常 RSS の後＝3つ目）
   // - 他のカードは min-height で揃える（長いタイトルで高くなるカードはそのまま）
   let syncCardsRafId = 0;
-  const shouldSyncArticleCardSize = () => window.matchMedia('(min-width: 641px)').matches;
+  // カード高さのJS同期は余白が出やすいため無効化（CSSの自然な高さに任せる）
+  const shouldSyncArticleCardSize = () => false;
   const syncArticleCardMinHeight = (container) => {
     if (!container) return;
     const cards = Array.from(container.querySelectorAll('.card--article'));
