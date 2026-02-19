@@ -820,6 +820,7 @@
   // - 参照: 最初の .card--article.card--upcoming（通常 RSS の後＝3つ目）
   // - 他のカードは min-height で揃える（長いタイトルで高くなるカードはそのまま）
   let syncCardsRafId = 0;
+  const shouldSyncArticleCardSize = () => window.matchMedia('(min-width: 641px)').matches;
   const syncArticleCardMinHeight = (container) => {
     if (!container) return;
     const cards = Array.from(container.querySelectorAll('.card--article'));
@@ -829,6 +830,9 @@
     cards.forEach((card) => {
       card.style.removeProperty('min-height');
     });
+
+    // スマホではCSSの自然な高さに任せる（JS同期は崩れの原因になりやすい）
+    if (!shouldSyncArticleCardSize()) return;
 
     const reference = container.querySelector('.card--article.card--upcoming') || cards[0];
     const targetHeight = Math.round(reference.getBoundingClientRect().height);
@@ -842,6 +846,14 @@
 
   const scheduleSyncArticleCardMinHeight = (container) => {
     if (!container) return;
+    if (!shouldSyncArticleCardSize()) {
+      // モバイルでは過去に設定されたinline min-heightも確実に解除
+      const cards = container.querySelectorAll('.card--article');
+      cards.forEach((card) => {
+        card.style.removeProperty('min-height');
+      });
+      return;
+    }
     if (syncCardsRafId) cancelAnimationFrame(syncCardsRafId);
     syncCardsRafId = requestAnimationFrame(() => {
       syncCardsRafId = 0;
@@ -965,7 +977,11 @@
     if (articlesPageContainer) {
       const latestArticles = merged.slice(0, 10);
       const existing = Array.from(articlesPageContainer.querySelectorAll('.card--article:not([data-rss])'));
-      displayArticles(articlesPageContainer, latestArticles, { mode: 'insertBeforeExisting', existingArticles: existing, enableSizeSync: true });
+      displayArticles(articlesPageContainer, latestArticles, {
+        mode: 'insertBeforeExisting',
+        existingArticles: existing,
+        enableSizeSync: shouldSyncArticleCardSize()
+      });
 
       const activeTab = document.querySelector('.articles-filter__tab[aria-selected="true"]');
       const activeFilter = activeTab?.getAttribute('data-filter') || 'all';

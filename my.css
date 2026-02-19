@@ -2297,24 +2297,24 @@ html { scroll-behavior: smooth; }
 
   /* スマホ：記事カードの高さとテキストサイズを調整 */
   #articles-page .card--article {
-    min-height: 120px;
+    min-height: 0;
   }
   #articles-page .card--article .card__link {
     align-items: flex-start;
   }
   #articles-page .card--article .card__thumb {
-    height: 84px;
-    min-height: 84px;
+    height: clamp(92px, 26vw, 108px);
+    min-height: clamp(92px, 26vw, 108px);
     aspect-ratio: auto;
-    flex: 0 0 clamp(124px, 34vw, 200px);
-    width: clamp(124px, 34vw, 200px);
+    flex: 0 0 clamp(132px, 38vw, 208px);
+    width: clamp(132px, 38vw, 208px);
   }
   #articles-page .card--article .card__thumb img {
     object-fit: cover;
   }
   #articles-page .card--article .card__content {
     min-height: 0;
-    padding: 0.82rem 0.88rem;
+    padding: 0.78rem 0.84rem;
   }
   #articles-page .card--article h3 {
     font-size: 1.02rem;
