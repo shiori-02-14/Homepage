@@ -2300,6 +2300,9 @@ html { scroll-behavior: smooth; }
   #works-page .card--work {
     min-height: 126px;
   }
+  #articles-page .card--article {
+    min-height: 0;
+  }
   #articles-page .card--article .card__link,
   #works-page .card--work .card__link {
     align-items: flex-start;
@@ -2324,6 +2327,11 @@ html { scroll-behavior: smooth; }
   #works-page .card--work .card__content {
     min-height: 0;
     padding: 0.78rem 0.84rem;
+  }
+  #articles-page .card--article .card__content {
+    justify-content: flex-start;
+    gap: 0.32rem;
+    padding: 0.68rem 0.8rem;
   }
   #articles-page .card--article h3,
   #works-page .card--work h3 {
@@ -2467,6 +2475,9 @@ html { scroll-behavior: smooth; }
   #articles-page .card--article .card__content,
   #works-page .card--work .card__content {
     padding: 0.78rem 0.78rem;
+  }
+  #articles-page .card--article .card__content {
+    padding: 0.64rem 0.74rem;
   }
   #articles-page .card--article h3,
   #works-page .card--work h3 {
