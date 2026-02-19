@@ -1632,10 +1632,15 @@ a.friend-card::after {
   color:var(--accent-strong);
 }
 .badge--note {
-  background: rgba(20,184,166,.92);
-  border-color: rgba(255,255,255,.35);
+  background: #0d9488;
+  border-color: rgba(255, 255, 255, 0.4);
   color: #fff;
-  box-shadow: 0 10px 24px -18px rgba(15,23,42,.35);
+  box-shadow: 0 10px 24px -18px rgba(15, 23, 42, 0.35);
+}
+:root[data-theme='dark'] .badge--note {
+  background: #14b8a6;
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
 }
 .badge--platform {
   background: rgba(59,130,246,.95);
@@ -1669,6 +1674,18 @@ a.friend-card::after {
 :root[data-theme='dark'] .badge--qiita {
   background: rgba(163,230,53,.92);
   border-color: rgba(255,255,255,.3);
+}
+.badge--zenn {
+  background: rgba(59, 130, 246, .95);
+  border-color: rgba(255, 255, 255, .4);
+  color: #fff;
+  box-shadow: 0 10px 24px -18px rgba(15, 23, 42, .35);
+  text-transform: none;
+}
+:root[data-theme='dark'] .badge--zenn {
+  background: rgba(96, 165, 250, .92);
+  border-color: rgba(255, 255, 255, .3);
+  color: #fff;
 }
 .badge--crypto {
   background: rgba(245,158,11,.95);

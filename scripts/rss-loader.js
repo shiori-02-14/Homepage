@@ -14,6 +14,11 @@
   const QIITA_FEED_URL = 'https://qiita.com/shiori_02_14_/feed.atom';
   const QIITA_USER_ID = 'shiori_02_14_';
   const QIITA_API_URL = `https://qiita.com/api/v2/users/${QIITA_USER_ID}/items`;
+  const ZENN_USER_ID = 'shiori_02_14';
+  const ZENN_FEED_URL = `https://zenn.dev/${ZENN_USER_ID}/feed`;
+  const ZENN_API_URL = `https://zenn.dev/api/articles?username=${ZENN_USER_ID}&order=latest`;
+  const articleListCacheStorageKey = '__SHIORI_ARTICLES_CACHE_V1__';
+  const articleListCacheTtlMs = 30 * 60 * 1000; // 30分
   
   // CORSプロキシ（必要に応じて変更可能）
   // オプション1: RSS2JSON（無料プランあり）- 現在有効
@@ -29,6 +34,7 @@
   const articlesPageContainer = document.querySelector('#articles-page .cards');
   const homeArticlesContainer = document.querySelector('#top [data-rss="home-articles"]');
   if (!articlesPageContainer && !homeArticlesContainer) return;
+  const isFileProtocol = window.location.protocol === 'file:';
 
   // サムネ取得は遅くなりがちなので、localStorageでキャッシュ（再訪問で爆速に）
   const thumbCacheStorageKey = '__SHIORI_NOTE_EYECATCH_CACHE_V1__';
@@ -121,6 +127,85 @@
         });
     });
   });
+
+  const firstNonEmptyArray = (promises) => new Promise((resolve) => {
+    let done = false;
+    let remaining = promises.length;
+    let fallback = [];
+
+    const finish = (value) => {
+      if (done) return;
+      done = true;
+      resolve(Array.isArray(value) ? value : []);
+    };
+
+    if (remaining === 0) finish([]);
+
+    promises.forEach((promise) => {
+      Promise.resolve(promise)
+        .then((value) => {
+          const items = Array.isArray(value) ? value : [];
+          if (!fallback.length && items.length > 0) {
+            fallback = items;
+          }
+          if (items.length > 0) {
+            finish(items);
+          }
+        })
+        .catch(() => {})
+        .finally(() => {
+          remaining -= 1;
+          if (remaining === 0 && !done) {
+            finish(fallback);
+          }
+        });
+    });
+  });
+
+  const readArticleListCache = () => {
+    try {
+      const raw = localStorage.getItem(articleListCacheStorageKey);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      const ts = typeof parsed?.ts === 'number' ? parsed.ts : 0;
+      const items = Array.isArray(parsed?.items) ? parsed.items : [];
+      if (!ts || Date.now() - ts > articleListCacheTtlMs) return [];
+      return items
+        .filter((item) => item && item.link && item.title)
+        .map((item) => ({
+          title: item.title || '',
+          link: item.link || '',
+          date: item.date || '',
+          dateMs: Number.isFinite(item.dateMs) ? item.dateMs : 0,
+          imageUrl: item.imageUrl || '',
+          source: item.source || ''
+        }));
+    } catch (_) {
+      return [];
+    }
+  };
+
+  const saveArticleListCache = (articles) => {
+    try {
+      const items = (Array.isArray(articles) ? articles : [])
+        .slice(0, 30)
+        .map((item) => ({
+          title: item?.title || '',
+          link: item?.link || '',
+          date: item?.date || '',
+          dateMs: Number.isFinite(item?.dateMs) ? item.dateMs : 0,
+          imageUrl: item?.imageUrl || '',
+          source: item?.source || ''
+        }))
+        .filter((item) => item.link && item.title);
+      localStorage.setItem(articleListCacheStorageKey, JSON.stringify({
+        ts: Date.now(),
+        items
+      }));
+    } catch (_) {
+      // ignore
+    }
+  };
 
   const fetchNoteEyecatch = async (noteKey) => {
     if (!noteKey) return '';
@@ -242,6 +327,36 @@
     }
   };
 
+  // Zenn API で記事を取得（失敗時はプロキシをフォールバック）
+  const fetchZennItemsViaAPI = async () => {
+    const tryDirect = async () => {
+      const res = await fetchWithTimeout(ZENN_API_URL, { timeoutMs: 6000 });
+      if (!res.ok) throw new Error(`Zenn API error: ${res.status}`);
+      return res.json();
+    };
+
+    const tryViaProxy = async () => {
+      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(ZENN_API_URL)}`;
+      const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 8000 });
+      if (!res.ok) throw new Error(`Proxy error: ${res.status}`);
+      return res.json();
+    };
+
+    try {
+      const payload = await tryDirect();
+      return normalizeZennApiItems(payload);
+    } catch (e1) {
+      debugWarn('Zenn API direct fetch failed, trying proxy:', e1);
+      try {
+        const payload = await tryViaProxy();
+        return normalizeZennApiItems(payload);
+      } catch (e2) {
+        debugWarn('Zenn API proxy fetch failed:', e2);
+        return [];
+      }
+    }
+  };
+
   // Qiita Atom をプロキシ経由で取得してパース（RSS2JSONはQiita形式で空になるため）
   const CORS_PROXIES = [
     (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
@@ -252,7 +367,7 @@
     for (const toProxyUrl of CORS_PROXIES) {
       try {
         const proxyUrl = toProxyUrl(QIITA_FEED_URL);
-        const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 8000 });
+        const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 5000 });
         if (!res.ok) continue;
         const xmlText = await res.text();
         if (!xmlText || xmlText.length < 100) continue;
@@ -321,6 +436,152 @@
     });
   };
 
+  const normalizeZennApiItems = (payload) => {
+    const items = Array.isArray(payload?.articles) ? payload.articles : [];
+    return items.map((item) => {
+      const { dateMs, dateText } = parseItemDate({
+        created: item.published_at || item.body_updated_at
+      });
+
+      const rawPath = typeof item.path === 'string' && item.path
+        ? item.path
+        : (item.slug ? `/${ZENN_USER_ID}/articles/${item.slug}` : '');
+      const link = rawPath ? `https://zenn.dev${rawPath}` : '';
+
+      return {
+        title: item.title || '',
+        link,
+        date: dateText,
+        dateMs,
+        imageUrl: '',
+        source: 'zenn'
+      };
+    }).filter((item) => item.link && item.title);
+  };
+
+  const normalizeRss2JsonItems = (data, source) => {
+    if (!data?.items || !Array.isArray(data.items)) return [];
+    return data.items.map(item => {
+      // 画像URLを複数の方法で取得
+      let imageUrl = '';
+      
+      // 1. enclosureから取得
+      if (item.enclosure) {
+        if (typeof item.enclosure === 'string') {
+          imageUrl = item.enclosure;
+        } else if (item.enclosure.link) {
+          imageUrl = item.enclosure.link;
+        } else if (item.enclosure.url) {
+          imageUrl = item.enclosure.url;
+        }
+      }
+      
+      // 2. thumbnailから取得
+      if (!imageUrl && item.thumbnail) {
+        imageUrl = item.thumbnail;
+      }
+      
+      // 3. descriptionのHTMLから画像を抽出（複数のパターンに対応）
+      if (!imageUrl && item.description) {
+        // より柔軟な画像抽出パターン
+        // パターン1: src="..." または src='...'
+        let imgMatch = item.description.match(/<img[^>]+src=["']([^"']+)["']/i);
+        if (!imgMatch) {
+          // パターン2: src=... (クォートなし)
+          imgMatch = item.description.match(/<img[^>]+src=([^\s>]+)/i);
+        }
+        if (!imgMatch) {
+          // パターン3: data-srcやdata-originalなど
+          imgMatch = item.description.match(/<img[^>]+(?:data-src|data-original)=["']([^"']+)["']/i);
+        }
+        if (imgMatch && imgMatch[1]) {
+          imageUrl = imgMatch[1].replace(/["']/g, '').trim();
+          // HTMLエンティティをデコード
+          imageUrl = imageUrl.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+          // 相対URLの場合は絶対URLに変換
+          if (imageUrl.startsWith('//')) {
+            imageUrl = 'https:' + imageUrl;
+          } else if (imageUrl.startsWith('/')) {
+            imageUrl = 'https://note.com' + imageUrl;
+          }
+          // Noteの画像URLの正規化（widthパラメータを追加して高解像度画像を取得）
+          if (imageUrl.includes('assets.st-note.com') && !imageUrl.includes('width=')) {
+            imageUrl += (imageUrl.includes('?') ? '&' : '?') + 'width=640';
+          }
+        }
+      }
+      
+      // 4. contentから取得（RSS2JSONのcontentフィールド）
+      if (!imageUrl && item.content) {
+        let imgMatch = item.content.match(/<img[^>]+src=["']([^"']+)["']/i);
+        if (!imgMatch) {
+          imgMatch = item.content.match(/<img[^>]+src=([^\s>]+)/i);
+        }
+        if (imgMatch && imgMatch[1]) {
+          imageUrl = imgMatch[1].replace(/["']/g, '');
+          if (imageUrl.startsWith('//')) {
+            imageUrl = 'https:' + imageUrl;
+          } else if (imageUrl.startsWith('/')) {
+            imageUrl = 'https://note.com' + imageUrl;
+          }
+        }
+      }
+      
+      const { dateMs, dateText } = parseItemDate(item);
+
+      return {
+        title: item.title || '',
+        link: item.link || item.guid || '',
+        date: dateText,
+        dateMs,
+        imageUrl: imageUrl, // 空の場合は後で取得
+        description: item.description || '',
+        source: source || 'rss'
+      };
+    });
+  };
+
+  const fetchFeedItemsViaJsonp = (feedUrlRaw, source) => new Promise((resolve) => {
+    if (!feedUrlRaw || !RSS_PROXY.includes('rss2json')) {
+      resolve([]);
+      return;
+    }
+
+    const callbackName = `__shioriRss2Jsonp_${Date.now()}_${Math.floor(Math.random() * 1000000)}`;
+    const feedUrl = `${RSS_PROXY}${encodeURIComponent(feedUrlRaw)}&callback=${callbackName}`;
+    const script = document.createElement('script');
+    let settled = false;
+
+    const cleanup = () => {
+      try {
+        delete window[callbackName];
+      } catch (_) {
+        window[callbackName] = undefined;
+      }
+      script.remove();
+    };
+
+    const finish = (items) => {
+      if (settled) return;
+      settled = true;
+      window.clearTimeout(timerId);
+      cleanup();
+      resolve(Array.isArray(items) ? items : []);
+    };
+
+    const timerId = window.setTimeout(() => finish([]), 5000);
+
+    window[callbackName] = (data) => {
+      debugLog('rss2json jsonp items:', Array.isArray(data?.items) ? data.items.length : 0);
+      finish(normalizeRss2JsonItems(data, source));
+    };
+
+    script.async = true;
+    script.src = feedUrl;
+    script.onerror = () => finish([]);
+    document.head.appendChild(script);
+  });
+
   // RSS/Atomフィードを取得してパース
   const fetchFeedItems = async (feedUrlRaw, source) => {
     try {
@@ -329,101 +590,20 @@
       
       // RSS2JSONを使う場合
       if (RSS_PROXY.includes('rss2json')) {
-        const response = await fetchWithTimeout(feedUrl, { timeoutMs: 8000 });
+        if (isFileProtocol) {
+          return await fetchFeedItemsViaJsonp(feedUrlRaw, source);
+        }
+
+        const response = await fetchWithTimeout(feedUrl, { timeoutMs: 5000 });
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
 
         debugLog('rss2json items:', Array.isArray(data.items) ? data.items.length : 0);
-        
-        // RSS2JSONのレスポンス形式に合わせて変換
-        if (data.items && Array.isArray(data.items)) {
-          return data.items.map(item => {
-            // 画像URLを複数の方法で取得
-            let imageUrl = '';
-            
-            // 1. enclosureから取得
-            if (item.enclosure) {
-              if (typeof item.enclosure === 'string') {
-                imageUrl = item.enclosure;
-              } else if (item.enclosure.link) {
-                imageUrl = item.enclosure.link;
-              } else if (item.enclosure.url) {
-                imageUrl = item.enclosure.url;
-              }
-            }
-            
-            // 2. thumbnailから取得
-            if (!imageUrl && item.thumbnail) {
-              imageUrl = item.thumbnail;
-            }
-            
-            // 3. descriptionのHTMLから画像を抽出（複数のパターンに対応）
-            if (!imageUrl && item.description) {
-              // より柔軟な画像抽出パターン
-              // パターン1: src="..." または src='...'
-              let imgMatch = item.description.match(/<img[^>]+src=["']([^"']+)["']/i);
-              if (!imgMatch) {
-                // パターン2: src=... (クォートなし)
-                imgMatch = item.description.match(/<img[^>]+src=([^\s>]+)/i);
-              }
-              if (!imgMatch) {
-                // パターン3: data-srcやdata-originalなど
-                imgMatch = item.description.match(/<img[^>]+(?:data-src|data-original)=["']([^"']+)["']/i);
-              }
-              if (imgMatch && imgMatch[1]) {
-                imageUrl = imgMatch[1].replace(/["']/g, '').trim();
-                // HTMLエンティティをデコード
-                imageUrl = imageUrl.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
-                // 相対URLの場合は絶対URLに変換
-                if (imageUrl.startsWith('//')) {
-                  imageUrl = 'https:' + imageUrl;
-                } else if (imageUrl.startsWith('/')) {
-                  imageUrl = 'https://note.com' + imageUrl;
-                }
-                // Noteの画像URLの正規化（widthパラメータを追加して高解像度画像を取得）
-                if (imageUrl.includes('assets.st-note.com') && !imageUrl.includes('width=')) {
-                  imageUrl += (imageUrl.includes('?') ? '&' : '?') + 'width=640';
-                }
-              }
-            }
-            
-            // 4. contentから取得（RSS2JSONのcontentフィールド）
-            if (!imageUrl && item.content) {
-              let imgMatch = item.content.match(/<img[^>]+src=["']([^"']+)["']/i);
-              if (!imgMatch) {
-                imgMatch = item.content.match(/<img[^>]+src=([^\s>]+)/i);
-              }
-              if (imgMatch && imgMatch[1]) {
-                imageUrl = imgMatch[1].replace(/["']/g, '');
-                if (imageUrl.startsWith('//')) {
-                  imageUrl = 'https:' + imageUrl;
-                } else if (imageUrl.startsWith('/')) {
-                  imageUrl = 'https://note.com' + imageUrl;
-                }
-              }
-            }
-            
-            // 5. 画像URLが見つからない場合、記事URLからOGP画像を取得（非同期）
-            // ただし、ここでは一旦空にして、後で取得する
-            
-            const { dateMs, dateText } = parseItemDate(item);
-
-            return {
-              title: item.title || '',
-              link: item.link || item.guid || '',
-              date: dateText,
-              dateMs,
-              imageUrl: imageUrl, // 空の場合は後で取得
-              description: item.description || '',
-              source: source || 'rss'
-            };
-          });
-        }
-        return [];
+        return normalizeRss2JsonItems(data, source);
       }
       
       // 直接RSSを取得する場合
-      const response = await fetchWithTimeout(feedUrl, { timeoutMs: 8000 });
+      const response = await fetchWithTimeout(feedUrl, { timeoutMs: 5000 });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const xmlText = await response.text();
       return parseRSS(xmlText).map((entry) => ({
@@ -487,7 +667,8 @@
     // バッジ
     const badgeConfigBySource = {
       note: { label: 'note', className: 'badge--note' },
-      qiita: { label: 'QIITA', className: 'badge--qiita' }
+      qiita: { label: 'QIITA', className: 'badge--qiita' },
+      zenn: { label: 'ZENN', className: 'badge--zenn' }
     };
     const badgeConfig = badgeConfigBySource[article.source] || { label: 'ARTICLE', className: 'badge--source' };
 
@@ -575,6 +756,18 @@
     });
   };
 
+  const mergeAndSortArticles = (articles) => {
+    const seenLinks = new Set();
+    return (Array.isArray(articles) ? articles : [])
+      .filter((item) => item && item.link && item.title)
+      .filter((item) => {
+        if (seenLinks.has(item.link)) return false;
+        seenLinks.add(item.link);
+        return true;
+      })
+      .sort((a, b) => (b.dateMs || 0) - (a.dateMs || 0));
+  };
+
   // 記事を表示
   const displayArticles = (container, articles, { mode = 'insertBeforeExisting', existingArticles = [], enableSizeSync = false } = {}) => {
     if (!container) return;
@@ -644,48 +837,116 @@
     }
   };
 
-  // 初期化
-  const init = async () => {
-    const [noteItems, qiitaItemsFromApi] = await Promise.all([
-      fetchFeedItems(NOTE_FEED_URL, 'note'),
-      fetchQiitaItemsViaAPI()
-    ]);
+  let articleSizeSyncInitialized = false;
 
-    let qiitaItems = qiitaItemsFromApi;
-    if (qiitaItems.length === 0) {
-      debugLog('Qiita API returned empty, falling back to Atom raw fetch');
-      qiitaItems = await fetchQiitaViaAtomRaw();
-    }
-    if (qiitaItems.length === 0) {
-      debugLog('Qiita Atom raw failed, trying RSS2JSON');
-      qiitaItems = await fetchFeedItems(QIITA_FEED_URL, 'qiita');
-    }
+  const renderArticlesToContainers = (articles) => {
+    const merged = mergeAndSortArticles(articles);
+    if (merged.length === 0) return [];
 
-    const articles = [...noteItems, ...qiitaItems]
-      .filter((item) => item && item.link && item.title)
-      .sort((a, b) => (b.dateMs || 0) - (a.dateMs || 0));
+    // Articlesページ（縦リスト）
+    if (articlesPageContainer) {
+      const latestArticles = merged.slice(0, 10);
+      const existing = Array.from(articlesPageContainer.querySelectorAll('.card--article:not([data-rss])'));
+      displayArticles(articlesPageContainer, latestArticles, { mode: 'insertBeforeExisting', existingArticles: existing, enableSizeSync: true });
 
-    if (articles.length > 0) {
-      // Articlesページ（縦リスト）
-      if (articlesPageContainer) {
-        const latestArticles = articles.slice(0, 10);
-        const existing = Array.from(articlesPageContainer.querySelectorAll('.card--article:not([data-rss])'));
-        displayArticles(articlesPageContainer, latestArticles, { mode: 'insertBeforeExisting', existingArticles: existing, enableSizeSync: true });
+      const activeTab = document.querySelector('.articles-filter__tab[aria-selected="true"]');
+      const activeFilter = activeTab?.getAttribute('data-filter') || 'all';
+      const allCards = articlesPageContainer.querySelectorAll('.card--article');
+      allCards.forEach((card) => {
+        if (activeFilter === 'all') {
+          card.style.display = '';
+          return;
+        }
+        const source = card.getAttribute('data-source');
+        card.style.display = source === activeFilter ? '' : 'none';
+      });
+      updateEmptyState(articlesPageContainer, activeFilter);
 
-        // リサイズやフォントロード後も崩れないように再計算（Articlesページのみ）
+      if (!articleSizeSyncInitialized) {
         const schedule = () => scheduleSyncArticleCardMinHeight(articlesPageContainer);
         window.addEventListener('resize', schedule, { passive: true });
         if ('fonts' in document && document.fonts && document.fonts.ready) {
           document.fonts.ready.then(schedule).catch(() => {});
         }
+        articleSizeSyncInitialized = true;
       }
+    }
 
-      // トップページ（横スクロール）：RSS記事のみ表示
-      if (homeArticlesContainer) {
-        const latestHome = articles.slice(0, 10);
-        displayArticles(homeArticlesContainer, latestHome, { mode: 'replaceAll' });
+    // トップページ（横スクロール）
+    if (homeArticlesContainer) {
+      const latestHome = merged.slice(0, 10);
+      displayArticles(homeArticlesContainer, latestHome, { mode: 'replaceAll' });
+    }
+
+    return merged;
+  };
+
+  // 初期化
+  const init = async () => {
+    const cachedArticles = readArticleListCache();
+    if (cachedArticles.length > 0) {
+      renderArticlesToContainers(cachedArticles);
+    }
+
+    const sourceArticles = {
+      note: [],
+      qiita: [],
+      zenn: []
+    };
+
+    const renderAndCache = () => {
+      const rendered = renderArticlesToContainers([
+        ...sourceArticles.note,
+        ...sourceArticles.qiita,
+        ...sourceArticles.zenn
+      ]);
+      if (rendered.length > 0) {
+        saveArticleListCache(rendered);
       }
-    } else {
+      return rendered;
+    };
+
+    const noteTask = fetchFeedItems(NOTE_FEED_URL, 'note')
+      .then((items) => {
+        sourceArticles.note = Array.isArray(items) ? items : [];
+        renderAndCache();
+      })
+      .catch((error) => {
+        sourceArticles.note = [];
+        debugWarn('note fetch failed:', error);
+      });
+
+    const qiitaTask = firstNonEmptyArray([
+      fetchQiitaItemsViaAPI(),
+      fetchQiitaViaAtomRaw(),
+      fetchFeedItems(QIITA_FEED_URL, 'qiita')
+    ])
+      .then((items) => {
+        sourceArticles.qiita = Array.isArray(items) ? items : [];
+        renderAndCache();
+      })
+      .catch((error) => {
+        sourceArticles.qiita = [];
+        debugWarn('qiita fetch failed:', error);
+      });
+
+    const zennTask = firstNonEmptyArray([
+      fetchZennItemsViaAPI(),
+      fetchFeedItems(ZENN_FEED_URL, 'zenn')
+    ])
+      .then((items) => {
+        sourceArticles.zenn = Array.isArray(items) ? items : [];
+        renderAndCache();
+      })
+      .catch((error) => {
+        sourceArticles.zenn = [];
+        debugWarn('zenn fetch failed:', error);
+      });
+
+    await Promise.allSettled([noteTask, qiitaTask, zennTask]);
+
+    const finalArticles = renderAndCache();
+    if (finalArticles.length === 0 && cachedArticles.length === 0) {
       console.warn('RSSから記事を取得できませんでした');
     }
   };
@@ -714,6 +975,8 @@
       
       if (filter === 'qiita') {
         emptyDiv.innerHTML = '<p class="articles-empty__text">まだ記事何もないです<br>毎日投稿で何か書きたいです</p>';
+      } else if (filter === 'zenn') {
+        emptyDiv.innerHTML = '<p class="articles-empty__text">Zennの記事がまだありません</p>';
       } else {
         emptyDiv.innerHTML = '<p class="articles-empty__text">記事がありません</p>';
       }
