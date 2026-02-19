@@ -2295,33 +2295,41 @@ html { scroll-behavior: smooth; }
     font-size: 0.9rem;
   }
 
-  /* スマホ：記事カードの高さとテキストサイズを調整 */
-  #articles-page .card--article {
-    min-height: 0;
+  /* スマホ：Articles/Works のカードサイズを統一 */
+  #articles-page .card--article,
+  #works-page .card--work {
+    min-height: 126px;
   }
-  #articles-page .card--article .card__link {
+  #articles-page .card--article .card__link,
+  #works-page .card--work .card__link {
     align-items: flex-start;
   }
-  #articles-page .card--article .card__thumb {
+  #articles-page .card--article .card__thumb,
+  #works-page .card--work .card__thumb {
     height: auto;
     min-height: 0;
-    aspect-ratio: 16 / 9;
-    flex: 0 0 clamp(138px, 39vw, 208px);
-    width: clamp(138px, 39vw, 208px);
+    aspect-ratio: 4 / 3;
+    flex: 0 0 clamp(132px, 36vw, 196px);
+    width: clamp(132px, 36vw, 196px);
   }
-  #articles-page .card--article .card__thumb img {
+  #articles-page .card--article .card__thumb img,
+  #works-page .card--work .card__thumb img:not(.thumb-logo),
+  #works-page .card--work .card__thumb svg {
     object-fit: cover;
     object-position: center;
   }
-  #articles-page .card--article .card__content {
+  #articles-page .card--article .card__content,
+  #works-page .card--work .card__content {
     min-height: 0;
     padding: 0.78rem 0.84rem;
   }
-  #articles-page .card--article h3 {
+  #articles-page .card--article h3,
+  #works-page .card--work h3 {
     font-size: 1.02rem;
     line-height: 1.3;
   }
-  #articles-page .card__date {
+  #articles-page .card__date,
+  #works-page .card__date {
     font-size: 0.84rem;
   }
   /* スマホ：NOTEバッジの文字が大きく見えるので少し小さく */
@@ -2338,34 +2346,13 @@ html { scroll-behavior: smooth; }
   #works-page .cards {
     gap: 1rem;
   }
-  #works-page .card--work {
-    min-height: 0;
-  }
-  #works-page .card--work .card__link {
-    align-items: flex-start;
-  }
-  #works-page .card--work .card__thumb {
-    height: clamp(92px, 26vw, 108px);
-    min-height: clamp(92px, 26vw, 108px);
-    aspect-ratio: auto;
-    flex: 0 0 clamp(132px, 38vw, 208px);
-    width: clamp(132px, 38vw, 208px);
-  }
-  #works-page .card--work .card__thumb img:not(.thumb-logo),
-  #works-page .card--work .card__thumb svg {
-    object-fit: cover;
-    object-position: center;
-  }
-  #works-page .card--work .card__content {
-    min-height: 0;
-    padding: 0.78rem 0.84rem;
-  }
   #works-page .card--work .card__link p {
     margin: 0;
     line-height: 1.35;
   }
   #works-page .card--work .card__content > p:not(.card__note) {
     font-size: 0.94rem;
+    margin-top: 0.14rem;
     display: -webkit-box;
     line-clamp: 1;
     -webkit-line-clamp: 1;
@@ -2373,7 +2360,7 @@ html { scroll-behavior: smooth; }
     overflow: hidden;
   }
   #works-page .card--work .card__note {
-    margin-top: 0.2rem !important;
+    margin-top: 0.16rem !important;
     font-size: 0.8rem !important;
     line-height: 1.3;
     display: -webkit-box;
@@ -2381,13 +2368,6 @@ html { scroll-behavior: smooth; }
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     overflow: hidden;
-  }
-  #works-page .card--work h3 {
-    font-size: 1.02rem;
-    line-height: 1.3;
-  }
-  #works-page .card__date {
-    font-size: 0.84rem;
   }
   #works-page .badge--corner {
     top: 0.75rem;
@@ -2482,18 +2462,18 @@ html { scroll-behavior: smooth; }
     padding: 0.75rem 0.55rem;
     border-radius: 16px;
   }
-  #articles-page .card--article .card__content {
+  #articles-page .card--article .card__content,
+  #works-page .card--work .card__content {
     padding: 0.78rem 0.78rem;
   }
-  #articles-page .card--article h3 {
+  #articles-page .card--article h3,
+  #works-page .card--work h3 {
     font-size: 0.96rem;
     line-height: 1.28;
   }
-  #articles-page .card__date {
+  #articles-page .card__date,
+  #works-page .card__date {
     font-size: 0.8rem;
-  }
-  #works-page .card--work .card__content {
-    padding: 0.78rem 0.78rem;
   }
   #works-page .card--work .card__content > p:not(.card__note) {
     font-size: 0.9rem;
@@ -2503,13 +2483,6 @@ html { scroll-behavior: smooth; }
   }
   #works-page .cards {
     gap: 0.85rem;
-  }
-  #works-page .card--work h3 {
-    font-size: 0.96rem;
-    line-height: 1.28;
-  }
-  #works-page .card__date {
-    font-size: 0.8rem;
   }
   /* 極小画面：COMING SOON/LATERバッジをさらに小さく */
   .badge--soon {
