@@ -2313,8 +2313,8 @@ html { scroll-behavior: smooth; }
     height: 100%;
     min-height: 100%;
     aspect-ratio: unset;
-    flex: 0 0 35%;
-    width: 35%;
+    flex: 0 0 40%;
+    width: 40%;
   }
   #articles-page .card--article .card__thumb img,
   #works-page .card--work .card__thumb img:not(.thumb-logo),
