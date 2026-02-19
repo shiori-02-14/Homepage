@@ -2298,22 +2298,23 @@ html { scroll-behavior: smooth; }
   /* スマホ：Articles/Works のカードサイズを統一 */
   #articles-page .card--article,
   #works-page .card--work {
-    min-height: 126px;
-  }
-  #articles-page .card--article {
-    min-height: 0;
+    height: 120px;
+    min-height: 120px;
+    max-height: 120px;
+    overflow: hidden;
   }
   #articles-page .card--article .card__link,
   #works-page .card--work .card__link {
-    align-items: flex-start;
+    align-items: stretch;
+    height: 100%;
   }
   #articles-page .card--article .card__thumb,
   #works-page .card--work .card__thumb {
-    height: auto;
-    min-height: 0;
-    aspect-ratio: 1 / 1;
-    flex: 0 0 clamp(96px, 25vw, 130px);
-    width: clamp(96px, 25vw, 130px);
+    height: 100%;
+    min-height: 100%;
+    aspect-ratio: unset;
+    flex: 0 0 35%;
+    width: 35%;
   }
   #articles-page .card--article .card__thumb img,
   #works-page .card--work .card__thumb img:not(.thumb-logo),
@@ -2326,21 +2327,23 @@ html { scroll-behavior: smooth; }
   #articles-page .card--article .card__content,
   #works-page .card--work .card__content {
     min-height: 0;
-    padding: 0.78rem 0.84rem;
+    padding: 0.5rem 0.75rem;
+    justify-content: center;
+    gap: 0.18rem;
+    overflow: hidden;
   }
   #articles-page .card--article .card__content {
-    justify-content: flex-start;
-    gap: 0.32rem;
-    padding: 0.68rem 0.8rem;
+    justify-content: center;
+    gap: 0.2rem;
   }
   #articles-page .card--article h3,
   #works-page .card--work h3 {
-    font-size: 1.02rem;
+    font-size: 0.98rem;
     line-height: 1.3;
   }
   #articles-page .card__date,
   #works-page .card__date {
-    font-size: 0.84rem;
+    font-size: 0.82rem;
   }
   /* スマホ：NOTEバッジの文字が大きく見えるので少し小さく */
   #articles-page .badge--note {
