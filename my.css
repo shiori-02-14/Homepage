@@ -2106,6 +2106,26 @@ a.friend-card::after {
   margin-top: 0;
 }
 
+/* Articles・Worksページ：スマホで横余白を抑える（共通） */
+@media (max-width: 640px) {
+  #articles-page main,
+  #works-page main {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  #articles-page .narrow,
+  #works-page .narrow {
+    max-width: 100%;
+  }
+}
+@media (max-width: 420px) {
+  #articles-page main,
+  #works-page main {
+    padding-left: 0.45rem;
+    padding-right: 0.45rem;
+  }
+}
+
 /* プロフィール専用ページ */
 #profile-page .wrap {
   /* 他ページと同じく、上下の「謎の余白」を作らない */
