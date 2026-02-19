@@ -2300,12 +2300,12 @@ html { scroll-behavior: smooth; }
     min-height: 120px;
   }
   #articles-page .card--article .card__link {
-    align-items: stretch;
+    align-items: flex-start;
   }
   #articles-page .card--article .card__thumb {
-    height: auto;
-    min-height: 100%;
-    aspect-ratio: unset;
+    height: 84px;
+    min-height: 84px;
+    aspect-ratio: auto;
     flex: 0 0 clamp(124px, 34vw, 200px);
     width: clamp(124px, 34vw, 200px);
   }
@@ -2313,7 +2313,7 @@ html { scroll-behavior: smooth; }
     object-fit: cover;
   }
   #articles-page .card--article .card__content {
-    min-height: 74px;
+    min-height: 0;
     padding: 0.82rem 0.88rem;
   }
   #articles-page .card--article h3 {
