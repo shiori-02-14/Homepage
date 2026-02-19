@@ -2311,9 +2311,9 @@ html { scroll-behavior: smooth; }
   #works-page .card--work .card__thumb {
     height: auto;
     min-height: 0;
-    aspect-ratio: 16 / 9;
-    flex: 0 0 clamp(132px, 36vw, 196px);
-    width: clamp(132px, 36vw, 196px);
+    aspect-ratio: 1 / 1;
+    flex: 0 0 clamp(96px, 25vw, 130px);
+    width: clamp(96px, 25vw, 130px);
   }
   #articles-page .card--article .card__thumb img,
   #works-page .card--work .card__thumb img:not(.thumb-logo),
