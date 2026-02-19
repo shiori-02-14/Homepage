@@ -2311,6 +2311,7 @@ html { scroll-behavior: smooth; }
   }
   #articles-page .card--article .card__thumb img {
     object-fit: cover;
+    object-position: center;
   }
   #articles-page .card--article .card__content {
     min-height: 0;
@@ -2338,25 +2339,26 @@ html { scroll-behavior: smooth; }
     gap: 1rem;
   }
   #works-page .card--work {
-    min-height: 120px;
+    min-height: 0;
   }
   #works-page .card--work .card__link {
-    align-items: stretch;
+    align-items: flex-start;
   }
   #works-page .card--work .card__thumb {
-    height: auto;
-    min-height: 100%;
-    aspect-ratio: unset;
-    flex: 0 0 clamp(124px, 34vw, 200px);
-    width: clamp(124px, 34vw, 200px);
+    height: clamp(92px, 26vw, 108px);
+    min-height: clamp(92px, 26vw, 108px);
+    aspect-ratio: auto;
+    flex: 0 0 clamp(132px, 38vw, 208px);
+    width: clamp(132px, 38vw, 208px);
   }
   #works-page .card--work .card__thumb img:not(.thumb-logo),
   #works-page .card--work .card__thumb svg {
     object-fit: cover;
+    object-position: center;
   }
   #works-page .card--work .card__content {
     min-height: 0;
-    padding: 0.82rem 0.88rem;
+    padding: 0.78rem 0.84rem;
   }
   #works-page .card--work h3 {
     font-size: 1.02rem;
@@ -2470,9 +2472,6 @@ html { scroll-behavior: smooth; }
   }
   #works-page .card--work .card__content {
     padding: 0.78rem 0.78rem;
-  }
-  #works-page .card--work {
-    min-height: 166px;
   }
   #works-page .cards {
     gap: 0.85rem;
