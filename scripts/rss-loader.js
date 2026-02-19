@@ -289,6 +289,59 @@
     thumbEl.appendChild(img);
   };
 
+  // OGP画像キャッシュ（記事URL → { url, ts }）、24時間
+  const ogpCacheStorageKey = '__SHIORI_OGP_IMAGE_CACHE_V1__';
+  const ogpCacheTtlMs = 24 * 60 * 60 * 1000;
+  const ogpCache = (() => {
+    try {
+      const raw = localStorage.getItem(ogpCacheStorageKey);
+      const parsed = raw ? JSON.parse(raw) : {};
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (_) {
+      return {};
+    }
+  })();
+
+  const getCachedOgp = (articleUrl) => {
+    const entry = ogpCache?.[articleUrl];
+    if (!entry || typeof entry !== 'object') return '';
+    const url = typeof entry.url === 'string' ? entry.url : '';
+    const ts = typeof entry.ts === 'number' ? entry.ts : 0;
+    if (!url || !ts || Date.now() - ts > ogpCacheTtlMs) return '';
+    return url;
+  };
+
+  const setCachedOgp = (articleUrl, imageUrl) => {
+    if (!articleUrl || !imageUrl) return;
+    try {
+      ogpCache[articleUrl] = { url: imageUrl, ts: Date.now() };
+      localStorage.setItem(ogpCacheStorageKey, JSON.stringify(ogpCache));
+    } catch (_) {}
+  };
+
+  const fetchOgpImage = async (articleUrl) => {
+    if (!articleUrl || !articleUrl.startsWith('http')) return '';
+    const cached = getCachedOgp(articleUrl);
+    if (cached) return cached;
+
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(articleUrl)}`;
+    try {
+      const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 5000 });
+      if (!res.ok) return '';
+      const html = await res.text();
+      const match = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)
+        || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
+      const imageUrl = match && match[1] ? match[1].replace(/&amp;/g, '&').trim() : '';
+      if (imageUrl && (imageUrl.startsWith('http://') || imageUrl.startsWith('https://'))) {
+        setCachedOgp(articleUrl, imageUrl);
+        return imageUrl;
+      }
+    } catch (e) {
+      debugWarn('OGP fetch failed:', articleUrl, e);
+    }
+    return '';
+  };
+
   const parseItemDate = (item) => {
     const raw = item?.pubDate || item?.published || item?.updated || item?.created || '';
     const date = raw ? new Date(raw) : null;
@@ -782,6 +835,7 @@
     // 新しい記事を追加（既存の記事の前に挿入）
     const firstExisting = mode === 'insertBeforeExisting' ? (existingArticles[0] || null) : null;
     const notesToHydrate = new Map(); // noteKey -> { title, thumbEls: [] }
+    const ogpToHydrate = []; // { link, title, thumbEl }（画像がない Qiita / Zenn など）
 
     articles.forEach(article => {
       const card = createArticleCard(article);
@@ -791,13 +845,16 @@
         container.appendChild(card);
       }
 
-      if (!article.imageUrl) {
-        const noteKey = extractNoteKey(article.link);
+      if (!article.imageUrl || !article.imageUrl.trim()) {
         const thumbEl = card.querySelector('.card__thumb');
-        if (noteKey && thumbEl) {
+        if (!thumbEl) return;
+        const noteKey = extractNoteKey(article.link);
+        if (noteKey) {
           const existing = notesToHydrate.get(noteKey) || { title: article.title, thumbEls: [] };
           existing.thumbEls.push(thumbEl);
           notesToHydrate.set(noteKey, existing);
+        } else {
+          ogpToHydrate.push({ link: article.link, title: article.title, thumbEl });
         }
       }
     });
@@ -834,6 +891,27 @@
       };
 
       void Promise.allSettled(Array.from({ length: Math.min(concurrency, entries.length) }, worker));
+    }
+
+    // 画像がない Qiita / Zenn は OGP（og:image）を取得して表示
+    if (ogpToHydrate.length > 0) {
+      const concurrency = 3;
+      let idx = 0;
+      const ogpWorker = async () => {
+        while (idx < ogpToHydrate.length) {
+          const current = ogpToHydrate[idx];
+          idx += 1;
+          try {
+            const imageUrl = await fetchOgpImage(current.link);
+            if (imageUrl) {
+              setThumbImage(current.thumbEl, imageUrl, current.title);
+            }
+          } catch (err) {
+            debugWarn('OGP hydrate failed:', current.link, err);
+          }
+        }
+      };
+      void Promise.allSettled(Array.from({ length: Math.min(concurrency, ogpToHydrate.length) }, ogpWorker));
     }
   };
 
