@@ -2275,26 +2275,6 @@ html { scroll-behavior: smooth; }
     font-size: 0.9rem;
   }
 
-  /* スマホ：記事カードの高さを統一（サムネ固定高さ + カード min-height） */
-  #articles-page .card--article {
-    min-height: 195px;
-  }
-  #articles-page .card--article .card__link {
-    align-items: flex-start;
-  }
-  #articles-page .card--article .card__thumb {
-    height: 100px;
-    min-height: 100px;
-    aspect-ratio: auto;
-    flex: 0 0 clamp(140px, 40vw, 260px);
-    width: clamp(140px, 40vw, 260px);
-  }
-  #articles-page .card--article .card__thumb img {
-    object-fit: cover;
-  }
-  #articles-page .card--article .card__content {
-    min-height: 95px;
-  }
   /* スマホ：NOTEバッジの文字が大きく見えるので少し小さく */
   #articles-page .badge--note {
     font-size: 0.64rem;

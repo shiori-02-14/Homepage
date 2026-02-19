@@ -319,25 +319,49 @@
     } catch (_) {}
   };
 
+  const extractOgpImageFromHtml = (html) => {
+    if (!html || typeof html !== 'string') return '';
+    const patterns = [
+      /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
+      /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i,
+      /<meta[^>]+property=['"]og:image['"][^>]+content=['"]([^'"]+)['"]/i,
+      /<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i,
+      /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:image["']/i
+    ];
+    for (const re of patterns) {
+      const m = html.match(re);
+      if (m && m[1]) {
+        const url = m[1].replace(/&amp;/g, '&').trim();
+        if (url && (url.startsWith('http://') || url.startsWith('https://'))) return url;
+      }
+    }
+    return '';
+  };
+
+  const OGP_PROXIES = [
+    (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`
+  ];
+
   const fetchOgpImage = async (articleUrl) => {
     if (!articleUrl || !articleUrl.startsWith('http')) return '';
     const cached = getCachedOgp(articleUrl);
     if (cached) return cached;
 
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(articleUrl)}`;
-    try {
-      const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 5000 });
-      if (!res.ok) return '';
-      const html = await res.text();
-      const match = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)
-        || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
-      const imageUrl = match && match[1] ? match[1].replace(/&amp;/g, '&').trim() : '';
-      if (imageUrl && (imageUrl.startsWith('http://') || imageUrl.startsWith('https://'))) {
-        setCachedOgp(articleUrl, imageUrl);
-        return imageUrl;
+    for (const toProxyUrl of OGP_PROXIES) {
+      try {
+        const proxyUrl = toProxyUrl(articleUrl);
+        const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 6000 });
+        if (!res.ok) continue;
+        const html = await res.text();
+        const imageUrl = extractOgpImageFromHtml(html);
+        if (imageUrl) {
+          setCachedOgp(articleUrl, imageUrl);
+          return imageUrl;
+        }
+      } catch (e) {
+        debugWarn('OGP fetch failed:', articleUrl, e);
       }
-    } catch (e) {
-      debugWarn('OGP fetch failed:', articleUrl, e);
     }
     return '';
   };
@@ -460,24 +484,40 @@
     }).filter((a) => a.link && a.title);
   };
 
+  const extractFirstImageUrl = (html, md) => {
+    let imageUrl = '';
+    if (html) {
+      const imgPatterns = [
+        /<img[^>]+src=["']([^"']+)["']/i,
+        /<img[^>]+src=([^\s>]+)/i,
+        /src=["'](https?:\/\/[^"']+)["']/i
+      ];
+      for (const re of imgPatterns) {
+        const m = html.match(re);
+        if (m && m[1]) {
+          let u = m[1].replace(/&amp;/g, '&').trim().replace(/^["']|["']$/g, '');
+          if (u.startsWith('//')) u = 'https:' + u;
+          if (u.startsWith('http') && !u.startsWith('data:')) {
+            imageUrl = u;
+            break;
+          }
+        }
+      }
+    }
+    if (!imageUrl && md) {
+      const mdImgMatch = md.match(/!\[.*?\]\((https?:\/\/[^)\s]+)\)/);
+      if (mdImgMatch && mdImgMatch[1]) imageUrl = mdImgMatch[1];
+    }
+    return imageUrl;
+  };
+
   const normalizeQiitaApiItems = (items) => {
     if (!Array.isArray(items)) return [];
     return items.map((item) => {
       const { dateMs, dateText } = parseItemDate({ created: item.created_at });
-      let imageUrl = '';
       const html = item.rendered_body || '';
       const md = item.body || '';
-      if (html) {
-        const imgMatch = html.match(/<img[^>]+src=["']([^"']+)["']/i);
-        if (imgMatch && imgMatch[1]) {
-          imageUrl = imgMatch[1].replace(/&amp;/g, '&');
-          if (imageUrl.startsWith('//')) imageUrl = 'https:' + imageUrl;
-        }
-      }
-      if (!imageUrl && md) {
-        const mdImgMatch = md.match(/!\[.*?\]\((https?:\/\/[^)\s]+)\)/);
-        if (mdImgMatch && mdImgMatch[1]) imageUrl = mdImgMatch[1];
-      }
+      const imageUrl = extractFirstImageUrl(html, md);
       return {
         title: item.title || '',
         link: item.url || '',
