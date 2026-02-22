@@ -63,7 +63,7 @@
 
     // noteのサムネはデカいので width を落として軽量化（体感速度が大きく上がる）
     if (next.includes('assets.st-note.com') && /[?&]width=\d+/.test(next)) {
-      next = next.replace(/([?&]width=)\d+/, '$1640');
+      next = next.replace(/([?&]width=)\d+/, (_, prefix) => `${prefix}640`);
     } else if (next.includes('assets.st-note.com') && !next.includes('width=')) {
       next += (next.includes('?') ? '&' : '?') + 'width=640';
     }
