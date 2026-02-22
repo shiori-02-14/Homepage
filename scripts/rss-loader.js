@@ -440,6 +440,24 @@
     (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`
   ];
 
+  // noteは rss2json 単独だと更新遅延・取得失敗時に止まりやすいため、直接RSS取得も併用
+  const fetchNoteViaRssRaw = async () => {
+    for (const toProxyUrl of CORS_PROXIES) {
+      try {
+        const proxyUrl = toProxyUrl(NOTE_FEED_URL);
+        const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 5000 });
+        if (!res.ok) continue;
+        const xmlText = await res.text();
+        if (!xmlText || xmlText.length < 100) continue;
+        const items = mapParsedRssItems(parseRSS(xmlText), 'note');
+        if (items.length > 0) return items;
+      } catch (e) {
+        debugWarn('note RSS proxy failed:', e);
+      }
+    }
+    return [];
+  };
+
   const fetchQiitaViaAtomRaw = async () => {
     for (const toProxyUrl of CORS_PROXIES) {
       try {
@@ -452,6 +470,23 @@
         if (items.length > 0) return items;
       } catch (e) {
         debugWarn('Qiita Atom proxy failed:', e);
+      }
+    }
+    return [];
+  };
+
+  const fetchZennViaAtomRaw = async () => {
+    for (const toProxyUrl of CORS_PROXIES) {
+      try {
+        const proxyUrl = toProxyUrl(ZENN_FEED_URL);
+        const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 5000 });
+        if (!res.ok) continue;
+        const xmlText = await res.text();
+        if (!xmlText || xmlText.length < 100) continue;
+        const items = parseAtomFeed(xmlText, 'zenn');
+        if (items.length > 0) return items;
+      } catch (e) {
+        debugWarn('Zenn Atom proxy failed:', e);
       }
     }
     return [];
@@ -675,6 +710,18 @@
     document.head.appendChild(script);
   });
 
+  const mapParsedRssItems = (entries, source) => {
+    return (Array.isArray(entries) ? entries : []).map((entry) => {
+      const fallbackDate = entry?.date ? new Date(String(entry.date).replace(/\//g, '-')) : null;
+      const fallbackDateMs = fallbackDate && !Number.isNaN(fallbackDate.getTime()) ? fallbackDate.getTime() : 0;
+      return {
+        ...entry,
+        dateMs: Number.isFinite(entry?.dateMs) ? entry.dateMs : fallbackDateMs,
+        source: source || entry?.source || 'rss'
+      };
+    });
+  };
+
   // RSS/Atomフィードを取得してパース
   const fetchFeedItems = async (feedUrlRaw, source) => {
     try {
@@ -699,11 +746,7 @@
       const response = await fetchWithTimeout(feedUrl, { timeoutMs: 5000 });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const xmlText = await response.text();
-      return parseRSS(xmlText).map((entry) => ({
-        ...entry,
-        dateMs: entry.date ? new Date(entry.date).getTime() : 0,
-        source: source || 'rss'
-      }));
+      return mapParsedRssItems(parseRSS(xmlText), source);
     } catch (error) {
       console.error(`RSS取得エラー(${source || 'rss'}):`, error);
       return [];
@@ -727,9 +770,11 @@
       const imageUrl = imgMatch ? imgMatch[1] : '';
       
       // 日付をフォーマット
-      const date = pubDate ? formatDate(new Date(pubDate)) : '';
+      const parsedDate = pubDate ? new Date(pubDate) : null;
+      const date = parsedDate ? formatDate(parsedDate) : '';
+      const dateMs = parsedDate && !Number.isNaN(parsedDate.getTime()) ? parsedDate.getTime() : 0;
       
-      return { title, link, date, imageUrl, description };
+      return { title, link, date, dateMs, imageUrl, description };
     });
   };
 
@@ -1041,9 +1086,20 @@
       return rendered;
     };
 
-    const noteTask = fetchFeedItems(NOTE_FEED_URL, 'note')
-      .then((items) => {
-        sourceArticles.note = Array.isArray(items) ? items : [];
+    const noteTask = Promise.allSettled([
+      fetchFeedItems(NOTE_FEED_URL, 'note'),
+      fetchNoteViaRssRaw()
+    ])
+      .then(([rss2jsonResult, rawRssResult]) => {
+        const viaRss2Json = rss2jsonResult.status === 'fulfilled' && Array.isArray(rss2jsonResult.value)
+          ? rss2jsonResult.value
+          : [];
+        const viaRawRss = rawRssResult.status === 'fulfilled' && Array.isArray(rawRssResult.value)
+          ? rawRssResult.value
+          : [];
+
+        // 重複時に新鮮な経路を優先しやすいよう raw RSS を前に置く
+        sourceArticles.note = mergeAndSortArticles([...viaRawRss, ...viaRss2Json]);
         renderAndCache();
       })
       .catch((error) => {
@@ -1067,6 +1123,7 @@
 
     const zennTask = firstNonEmptyArray([
       fetchZennItemsViaAPI(),
+      fetchZennViaAtomRaw(),
       fetchFeedItems(ZENN_FEED_URL, 'zenn')
     ])
       .then((items) => {
