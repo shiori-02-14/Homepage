@@ -1086,20 +1086,13 @@
       return rendered;
     };
 
-    const noteTask = Promise.allSettled([
+    const noteTask = firstNonEmptyArray([
       fetchFeedItems(NOTE_FEED_URL, 'note'),
       fetchNoteViaRssRaw()
     ])
-      .then(([rss2jsonResult, rawRssResult]) => {
-        const viaRss2Json = rss2jsonResult.status === 'fulfilled' && Array.isArray(rss2jsonResult.value)
-          ? rss2jsonResult.value
-          : [];
-        const viaRawRss = rawRssResult.status === 'fulfilled' && Array.isArray(rawRssResult.value)
-          ? rawRssResult.value
-          : [];
-
-        // 重複時に新鮮な経路を優先しやすいよう raw RSS を前に置く
-        sourceArticles.note = mergeAndSortArticles([...viaRawRss, ...viaRss2Json]);
+      .then((items) => {
+        // 最初に取得できた結果を即描画して、待ち時間を最小化
+        sourceArticles.note = Array.isArray(items) ? items : [];
         renderAndCache();
       })
       .catch((error) => {
