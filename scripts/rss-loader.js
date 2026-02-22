@@ -87,14 +87,44 @@
     saveThumbCache();
   };
 
-  const fetchWithTimeout = async (url, { timeoutMs = 8000 } = {}) => {
-    const controller = new AbortController();
-    const timerId = window.setTimeout(() => controller.abort(), timeoutMs);
-    try {
-      return await fetch(url, { signal: controller.signal });
-    } finally {
-      window.clearTimeout(timerId);
+  const fetchWithTimeout = (url, { timeoutMs = 8000 } = {}) => {
+    if (typeof AbortController === 'function') {
+      const controller = new AbortController();
+      const timerId = window.setTimeout(() => controller.abort(), timeoutMs);
+      return fetch(url, { signal: controller.signal })
+        .then((response) => {
+          window.clearTimeout(timerId);
+          return response;
+        })
+        .catch((error) => {
+          window.clearTimeout(timerId);
+          throw error;
+        });
     }
+
+    // 古いブラウザ向け: AbortController 非対応時は Promise.race でタイムアウトを模擬
+    return new Promise((resolve, reject) => {
+      let settled = false;
+      const timerId = window.setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        reject(new Error(`fetch timeout (${timeoutMs}ms)`));
+      }, timeoutMs);
+
+      Promise.resolve(fetch(url))
+        .then((response) => {
+          if (settled) return;
+          settled = true;
+          window.clearTimeout(timerId);
+          resolve(response);
+        })
+        .catch((error) => {
+          if (settled) return;
+          settled = true;
+          window.clearTimeout(timerId);
+          reject(error);
+        });
+    });
   };
 
   const extractNoteKey = (url) => {
@@ -161,6 +191,18 @@
         });
     });
   });
+
+  const promiseAllSettled = (promises) => {
+    if (typeof Promise.allSettled === 'function') {
+      return Promise.allSettled(promises);
+    }
+    return Promise.all((Array.isArray(promises) ? promises : []).map((promise) =>
+      Promise.resolve(promise).then(
+        (value) => ({ status: 'fulfilled', value }),
+        (reason) => ({ status: 'rejected', reason })
+      )
+    ));
+  };
 
   const readArticleListCache = () => {
     try {
@@ -734,12 +776,16 @@
           return await fetchFeedItemsViaJsonp(feedUrlRaw, source);
         }
 
-        const response = await fetchWithTimeout(feedUrl, { timeoutMs: 5000 });
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
+        const viaFetch = (async () => {
+          const response = await fetchWithTimeout(feedUrl, { timeoutMs: 5000 });
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          const data = await response.json();
+          debugLog('rss2json items:', Array.isArray(data.items) ? data.items.length : 0);
+          return normalizeRss2JsonItems(data, source);
+        })();
 
-        debugLog('rss2json items:', Array.isArray(data.items) ? data.items.length : 0);
-        return normalizeRss2JsonItems(data, source);
+        // fetch が失敗するブラウザ向けに JSONP も同時に試し、早く取れた方を使う
+        return await firstNonEmptyArray([viaFetch, fetchFeedItemsViaJsonp(feedUrlRaw, source)]);
       }
       
       // 直接RSSを取得する場合
@@ -988,7 +1034,7 @@
         }
       };
 
-      void Promise.allSettled(Array.from({ length: Math.min(concurrency, entries.length) }, worker));
+      void promiseAllSettled(Array.from({ length: Math.min(concurrency, entries.length) }, worker));
     }
 
     // 画像がない Qiita / Zenn は OGP（og:image）を取得して表示
@@ -1009,7 +1055,7 @@
           }
         }
       };
-      void Promise.allSettled(Array.from({ length: Math.min(concurrency, ogpToHydrate.length) }, ogpWorker));
+      void promiseAllSettled(Array.from({ length: Math.min(concurrency, ogpToHydrate.length) }, ogpWorker));
     }
   };
 
@@ -1128,7 +1174,7 @@
         debugWarn('zenn fetch failed:', error);
       });
 
-    await Promise.allSettled([noteTask, qiitaTask, zennTask]);
+    await promiseAllSettled([noteTask, qiitaTask, zennTask]);
 
     const finalArticles = renderAndCache();
     if (finalArticles.length === 0 && cachedArticles.length === 0) {
