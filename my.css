@@ -17,7 +17,20 @@
   --accent-strong:#0b1220;
   --line:#e2e8f0;
   --shadow: 0 24px 60px -32px rgba(0,0,0,.12);
-  --main-overlay: linear-gradient(180deg, rgba(255,255,255,.72), rgba(255,255,255,0) 44%);
+  --main-grid-size: 32px;
+  --main-grid-line: rgba(148,163,184,.18);
+  --main-overlay:
+    repeating-linear-gradient(
+      0deg,
+      var(--main-grid-line) 0 1px,
+      transparent 1px var(--main-grid-size)
+    ),
+    repeating-linear-gradient(
+      90deg,
+      var(--main-grid-line) 0 1px,
+      transparent 1px var(--main-grid-size)
+    ),
+    linear-gradient(180deg, rgba(255,255,255,.72), rgba(255,255,255,0) 44%);
   --elev-1: 0 18px 42px -36px rgba(15,23,42,.18);
   --elev-2: 0 30px 70px -54px rgba(15,23,42,.24);
   --selection-bg: rgba(47,47,47,.18);
@@ -92,7 +105,19 @@
   --accent-strong:#f8fafc;
   --line:rgba(255,255,255,.14);
   --shadow: 0 32px 80px -48px rgba(0,0,0,.9);
-  --main-overlay: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 44%);
+  --main-grid-line: rgba(148,163,184,.16);
+  --main-overlay:
+    repeating-linear-gradient(
+      0deg,
+      var(--main-grid-line) 0 1px,
+      transparent 1px var(--main-grid-size)
+    ),
+    repeating-linear-gradient(
+      90deg,
+      var(--main-grid-line) 0 1px,
+      transparent 1px var(--main-grid-size)
+    ),
+    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 44%);
   --elev-1: 0 18px 42px -36px rgba(0,0,0,.75);
   --elev-2: 0 30px 70px -54px rgba(0,0,0,.92);
   --selection-bg: rgba(251,191,36,.22);
@@ -112,6 +137,12 @@
   --section-bar-bg: rgba(15,23,42,.78);
   --section-bar-border: rgba(226,232,240,.22);
   --section-bar-shadow: 0 18px 40px -30px rgba(0,0,0,.75);
+  /* しおりタグ装飾 */
+  --bookmark-tag-top: #fcd34d;
+  --bookmark-tag-bottom: #f59e0b;
+  --bookmark-tag-border: rgba(251,191,36,.52);
+  --bookmark-tag-hole: rgba(255,255,255,.66);
+  --bookmark-tag-shadow: 0 10px 18px -12px rgba(245,158,11,.75);
   --meta-bg: rgba(255,255,255,.1);
   --avatar-bg: rgba(255,255,255,.08);
   --avatar-border: rgba(255,255,255,.12);
@@ -574,6 +605,8 @@ main > section:first-child {
 .section__intro--bar {
   justify-content: flex-start;
 }
+.section__intro--bar > h1,
+.section__intro--split > h1,
 .section__intro--bar > h2,
 .section__intro--split > h2 {
   margin: 0;
@@ -581,6 +614,25 @@ main > section:first-child {
   background: transparent;
   padding: 0;
   border-radius: 0;
+}
+.section__intro--bar > h1::after,
+.section__intro--split > h1::after,
+.section__intro--bar > h2::after,
+.section__intro--split > h2::after {
+  content: "";
+  display: block;
+  width: 0.72rem;
+  height: 0.98rem;
+  margin-left: 0.28rem;
+  border: 1px solid var(--bookmark-tag-border);
+  border-radius: 4px 4px 2px 2px;
+  background:
+    radial-gradient(circle at 50% 24%, var(--bookmark-tag-hole) 0 1.5px, transparent 1.6px),
+    linear-gradient(180deg, var(--bookmark-tag-top), var(--bookmark-tag-bottom));
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 74%, 0 100%);
+  box-shadow: var(--bookmark-tag-shadow);
+  transform: translateY(-1px);
+  flex: 0 0 auto;
 }
 .section__intro--bar > h1 .icon,
 .section__intro--split > h1 .icon,
@@ -774,7 +826,9 @@ h2 .icon svg {
   grid-auto-rows: auto;
   gap: clamp(1.2rem, 2.4vw, 2.1rem);
   padding: clamp(1.6rem, 4.2vw, 3.2rem);
-  background: linear-gradient(125deg, rgba(0,0,0,.02), rgba(0,0,0,.04));
+  background:
+    linear-gradient(125deg, rgba(0,0,0,.02), rgba(0,0,0,.04)),
+    var(--surface);
   /* 角丸なしに統一 */
   border-radius: 0;
   border:1px solid var(--line);
@@ -783,7 +837,9 @@ h2 .icon svg {
   position: relative;
 }
 :root[data-theme='dark'] .hero {
-  background: linear-gradient(145deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
+    var(--surface);
 }
 .hero::before {
   content: "";
@@ -1504,7 +1560,26 @@ a.friend-card::after {
   border-radius: 24px;
   transition: background .2s ease, border .2s ease, transform .18s ease, box-shadow .25s ease;
   position: relative;
+  isolation: isolate;
   box-shadow: var(--elev-1);
+}
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0.72rem;
+  right: 0.72rem;
+  width: 13px;
+  height: 17px;
+  border: 1px solid var(--bookmark-tag-border);
+  border-radius: 4px 4px 2px 2px;
+  background:
+    radial-gradient(circle at 50% 24%, var(--bookmark-tag-hole) 0 1.4px, transparent 1.5px),
+    linear-gradient(180deg, var(--bookmark-tag-top), var(--bookmark-tag-bottom));
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 74%, 0 100%);
+  box-shadow: var(--bookmark-tag-shadow);
+  opacity: 0.95;
+  pointer-events: none;
+  z-index: 3;
 }
 .card::after {
   content:"";
@@ -1515,9 +1590,15 @@ a.friend-card::after {
   background: radial-gradient(circle at center, rgba(0,0,0,.06), transparent 70%);
   opacity:0;
   transition: opacity .28s ease;
+  z-index: 1;
 }
 :root[data-theme='dark'] .card::after {
   background: radial-gradient(circle at center, rgba(255,255,255,.08), transparent 70%);
+}
+@supports selector(.card:has(.badge--corner)) {
+  .card:has(.badge--corner)::before {
+    right: 4rem;
+  }
 }
 .card:hover,
 .card:focus-within {
@@ -1547,6 +1628,8 @@ a.friend-card::after {
   text-decoration:none;
   color:inherit;
   height:100%;
+  position: relative;
+  z-index: 2;
 }
 .card__link p {
   margin: 0;
@@ -2357,6 +2440,17 @@ html { scroll-behavior: smooth; }
     top: 0.75rem;
     right: 0.75rem;
     left: auto;
+  }
+  .card::before {
+    top: 0.62rem;
+    right: 0.62rem;
+    width: 11px;
+    height: 15px;
+  }
+  @supports selector(.card:has(.badge--corner)) {
+    .card:has(.badge--corner)::before {
+      right: 3.3rem;
+    }
   }
   #works-page .cards {
     gap: 1rem;
