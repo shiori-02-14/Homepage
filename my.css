@@ -137,12 +137,6 @@
   --section-bar-bg: rgba(15,23,42,.78);
   --section-bar-border: rgba(226,232,240,.22);
   --section-bar-shadow: 0 18px 40px -30px rgba(0,0,0,.75);
-  /* しおりタグ装飾 */
-  --bookmark-tag-top: #fcd34d;
-  --bookmark-tag-bottom: #f59e0b;
-  --bookmark-tag-border: rgba(251,191,36,.52);
-  --bookmark-tag-hole: rgba(255,255,255,.66);
-  --bookmark-tag-shadow: 0 10px 18px -12px rgba(245,158,11,.75);
   --meta-bg: rgba(255,255,255,.1);
   --avatar-bg: rgba(255,255,255,.08);
   --avatar-border: rgba(255,255,255,.12);
@@ -605,8 +599,6 @@ main > section:first-child {
 .section__intro--bar {
   justify-content: flex-start;
 }
-.section__intro--bar > h1,
-.section__intro--split > h1,
 .section__intro--bar > h2,
 .section__intro--split > h2 {
   margin: 0;
@@ -614,25 +606,6 @@ main > section:first-child {
   background: transparent;
   padding: 0;
   border-radius: 0;
-}
-.section__intro--bar > h1::after,
-.section__intro--split > h1::after,
-.section__intro--bar > h2::after,
-.section__intro--split > h2::after {
-  content: "";
-  display: block;
-  width: 0.72rem;
-  height: 0.98rem;
-  margin-left: 0.28rem;
-  border: 1px solid var(--bookmark-tag-border);
-  border-radius: 4px 4px 2px 2px;
-  background:
-    radial-gradient(circle at 50% 24%, var(--bookmark-tag-hole) 0 1.5px, transparent 1.6px),
-    linear-gradient(180deg, var(--bookmark-tag-top), var(--bookmark-tag-bottom));
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 74%, 0 100%);
-  box-shadow: var(--bookmark-tag-shadow);
-  transform: translateY(-1px);
-  flex: 0 0 auto;
 }
 .section__intro--bar > h1 .icon,
 .section__intro--split > h1 .icon,
@@ -1560,26 +1533,7 @@ a.friend-card::after {
   border-radius: 24px;
   transition: background .2s ease, border .2s ease, transform .18s ease, box-shadow .25s ease;
   position: relative;
-  isolation: isolate;
   box-shadow: var(--elev-1);
-}
-.card::before {
-  content: "";
-  position: absolute;
-  top: 0.72rem;
-  right: 0.72rem;
-  width: 13px;
-  height: 17px;
-  border: 1px solid var(--bookmark-tag-border);
-  border-radius: 4px 4px 2px 2px;
-  background:
-    radial-gradient(circle at 50% 24%, var(--bookmark-tag-hole) 0 1.4px, transparent 1.5px),
-    linear-gradient(180deg, var(--bookmark-tag-top), var(--bookmark-tag-bottom));
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 74%, 0 100%);
-  box-shadow: var(--bookmark-tag-shadow);
-  opacity: 0.95;
-  pointer-events: none;
-  z-index: 3;
 }
 .card::after {
   content:"";
@@ -1590,15 +1544,9 @@ a.friend-card::after {
   background: radial-gradient(circle at center, rgba(0,0,0,.06), transparent 70%);
   opacity:0;
   transition: opacity .28s ease;
-  z-index: 1;
 }
 :root[data-theme='dark'] .card::after {
   background: radial-gradient(circle at center, rgba(255,255,255,.08), transparent 70%);
-}
-@supports selector(.card:has(.badge--corner)) {
-  .card:has(.badge--corner)::before {
-    right: 4rem;
-  }
 }
 .card:hover,
 .card:focus-within {
@@ -1628,8 +1576,6 @@ a.friend-card::after {
   text-decoration:none;
   color:inherit;
   height:100%;
-  position: relative;
-  z-index: 2;
 }
 .card__link p {
   margin: 0;
@@ -2440,17 +2386,6 @@ html { scroll-behavior: smooth; }
     top: 0.75rem;
     right: 0.75rem;
     left: auto;
-  }
-  .card::before {
-    top: 0.62rem;
-    right: 0.62rem;
-    width: 11px;
-    height: 15px;
-  }
-  @supports selector(.card:has(.badge--corner)) {
-    .card:has(.badge--corner)::before {
-      right: 3.3rem;
-    }
   }
   #works-page .cards {
     gap: 1rem;
