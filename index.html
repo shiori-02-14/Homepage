@@ -64,9 +64,18 @@
     </div>
   </header>
 
+  <div class="scroll-progress" aria-hidden="true">
+    <span class="scroll-progress__bar" id="scroll-progress-bar"></span>
+  </div>
+
   <main id="main-content" class="wrap">
 
     <header class="hero">
+      <div class="hero__ambient" aria-hidden="true">
+        <span class="hero__orb hero__orb--a"></span>
+        <span class="hero__orb hero__orb--b"></span>
+        <span class="hero__orb hero__orb--c"></span>
+      </div>
       <div class="hero__body">
         <h1>しおり🔖</h1>
         <p class="note">アイドルと黄色い看板のラーメン屋が好きです。</p>
@@ -98,7 +107,7 @@
       </div>
     </header>
 
-    <section class="narrow" aria-labelledby="social">
+    <section class="narrow reveal-target" aria-labelledby="social">
       <div class="section__intro section__intro--bar">
         <h2 id="social"><span class="icon icon--social" aria-hidden="true">
           <svg viewBox="0 0 24 24" role="presentation">
@@ -141,7 +150,7 @@
       </ul>
     </section>
 
-    <section class="narrow" aria-labelledby="links">
+    <section class="narrow reveal-target" aria-labelledby="links">
       <div class="section__intro section__intro--bar">
         <h2 id="links"><span class="icon icon--links" aria-hidden="true">
           <svg viewBox="0 0 24 24" role="presentation">
@@ -204,7 +213,7 @@
       <p class="links-note">募集中（DM来てください）<br>サイト作ってるやつは多分勝手に追加します<br>選定基準は一緒にご飯行きたいかです</p>
     </section>
 
-    <section class="narrow" aria-labelledby="works">
+    <section class="narrow reveal-target" aria-labelledby="works">
       <div class="section__intro section__intro--split">
         <h2 id="works"><span class="icon icon--works" aria-hidden="true">
           <svg viewBox="0 0 24 24" role="presentation">
@@ -245,7 +254,7 @@
       </ul>
     </section>
 
-    <section class="narrow" aria-labelledby="articles">
+    <section class="narrow reveal-target" aria-labelledby="articles">
       <div class="section__intro section__intro--split">
         <h2 id="articles"><span class="icon icon--articles" aria-hidden="true">
           <svg viewBox="0 0 24 24" role="presentation">
@@ -282,6 +291,12 @@
 
     <footer class="foot">© <span id="y"></span> しおり🔖</footer>
   </main>
+
+  <nav class="quick-dock" aria-label="クイックリンク">
+    <a class="quick-dock__item" href="https://x.com/shiori_tech" target="_blank" rel="noopener noreferrer" aria-label="X（Twitter）を開く">X</a>
+    <a class="quick-dock__item" href="https://github.com/shiori-02-14" target="_blank" rel="noopener noreferrer" aria-label="GitHubを開く">GH</a>
+    <a class="quick-dock__item" href="https://note.com/shiori_02_14_" target="_blank" rel="noopener noreferrer" aria-label="noteを開く">note</a>
+  </nav>
 
   <script src="scripts/main.js" defer></script>
   <script src="scripts/rss-loader.js" defer></script>

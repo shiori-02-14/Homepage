@@ -14,6 +14,12 @@ const applyReducedEffectsHint = () => {
   }
 };
 
+const isReducedEffects = () => {
+  const root = document.documentElement;
+  return root.getAttribute('data-reduced-effects') === 'true'
+    || Boolean(reduceMotionQuery && reduceMotionQuery.matches);
+};
+
 const fortuneDataKey = '__SHIORI_FORTUNE_DATA__';
 const scriptBaseUrl = (() => {
   const current = document.currentScript;
@@ -263,6 +269,75 @@ const initAnchorScroll = () => {
       });
     });
   });
+};
+
+const initScrollReveal = () => {
+  const targets = Array.from(document.querySelectorAll('.reveal-target'));
+  if (!targets.length) return;
+
+  targets.forEach((target, index) => {
+    target.style.setProperty('--reveal-delay', `${Math.min(index, 5) * 70}ms`);
+  });
+
+  const showAll = () => {
+    targets.forEach((target) => {
+      target.classList.add('is-visible');
+    });
+  };
+
+  if (isReducedEffects()) {
+    showAll();
+    return;
+  }
+
+  const root = document.documentElement;
+  root.classList.add('has-reveal');
+
+  if (!('IntersectionObserver' in window)) {
+    showAll();
+    return;
+  }
+
+  const observer = new IntersectionObserver((entries, obs) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      obs.unobserve(entry.target);
+    });
+  }, {
+    root: null,
+    rootMargin: '0px 0px -8% 0px',
+    threshold: 0.16
+  });
+
+  targets.forEach((target) => observer.observe(target));
+};
+
+const initScrollProgress = () => {
+  const bar = document.getElementById('scroll-progress-bar');
+  if (!bar) return;
+
+  const root = document.documentElement;
+  let rafId = 0;
+
+  const update = () => {
+    const scrollTop = window.pageYOffset || root.scrollTop || 0;
+    const scrollRange = Math.max(root.scrollHeight - window.innerHeight, 0);
+    const progress = scrollRange > 0 ? Math.min(scrollTop / scrollRange, 1) : 0;
+    bar.style.transform = `scaleX(${progress})`;
+  };
+
+  const onScrollOrResize = () => {
+    if (rafId) return;
+    rafId = requestAnimationFrame(() => {
+      rafId = 0;
+      update();
+    });
+  };
+
+  update();
+  window.addEventListener('scroll', onScrollOrResize, { passive: true });
+  window.addEventListener('resize', onScrollOrResize, { passive: true });
 };
 
 const initFortune = () => {
@@ -668,6 +743,8 @@ const initPage = () => {
   initReloadButton();
   setupHeaderAutoFit();
   initAnchorScroll();
+  initScrollReveal();
+  initScrollProgress();
   initFortune();
   initWorksFilter();
 };
