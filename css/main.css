@@ -888,9 +888,13 @@ main > section:first-child {
 /* ローカル記事ページ */
 #article-page {
   --main-overlay: transparent;
+  --page-bg: var(--surface);
+  background: var(--surface);
 }
 :root[data-theme='dark'] #article-page {
   --main-overlay: transparent;
+  --page-bg: var(--bg);
+  background: var(--bg);
 }
 #article-page main {
   padding: clamp(1.2rem, 3vw, 2.2rem) 0 clamp(2.8rem, 6vw, 4rem);
@@ -968,11 +972,11 @@ main > section:first-child {
   border: none;
   border-left: 3px solid var(--line);
   border-radius: 0;
-  background: rgba(15,23,42,.028);
+  background: transparent;
   box-shadow: none;
 }
 :root[data-theme='dark'] #article-page .article-toc {
-  background: rgba(255,255,255,.03);
+  background: transparent;
 }
 #article-page .article-toc__header {
   margin-bottom: 0.5rem;
@@ -1183,11 +1187,11 @@ main > section:first-child {
   border-collapse: separate;
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: var(--surface);
+  background: transparent;
   box-shadow: none;
 }
 :root[data-theme='dark'] #article-page .article-content table {
-  background: rgba(15,23,42,.96);
+  background: transparent;
 }
 #article-page .article-content th:first-child,
 #article-page .article-content td:first-child {
@@ -1213,13 +1217,13 @@ main > section:first-child {
 }
 #article-page .article-content th {
   font-weight: 700;
-  background: rgba(15,23,42,.04);
+  background: transparent;
 }
 #article-page .article-content tbody tr:nth-child(even) {
-  background: rgba(15,23,42,.03);
+  background: transparent;
 }
 :root[data-theme='dark'] #article-page .article-content tbody tr:nth-child(even) {
-  background: rgba(255,255,255,.04);
+  background: transparent;
 }
 #article-page .article-content tbody tr:last-child td {
   border-bottom: none;
@@ -1304,17 +1308,17 @@ main > section:first-child {
   }
   #article-page .article-content tbody {
     display: grid;
-    gap: 0.9rem;
+    gap: 1rem;
   }
   #article-page .article-content tbody tr {
     display: block;
     border: 1px solid var(--line);
-    border-radius: 14px;
-    background: var(--surface);
+    border-radius: 16px;
+    background: transparent;
     overflow: hidden;
   }
   :root[data-theme='dark'] #article-page .article-content tbody tr {
-    background: rgba(15,23,42,.96);
+    background: transparent;
   }
   #article-page .article-content th,
   #article-page .article-content td {
@@ -1323,7 +1327,8 @@ main > section:first-child {
   #article-page .article-content tbody td {
     display: block;
     width: 100%;
-    padding: 0.78rem 0.9rem;
+    min-width: 0;
+    padding: 0.82rem 0.95rem;
   }
   #article-page .article-content tbody td::before {
     content: attr(data-label);
@@ -1335,10 +1340,29 @@ main > section:first-child {
     color: var(--muted);
   }
   #article-page .article-content tbody td:first-child {
-    background: rgba(56,189,248,.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    width: auto;
+    min-width: 0;
+    padding: 0.85rem 0.95rem;
+    background: transparent;
+  }
+  #article-page .article-content tbody td:first-child::before {
+    margin-bottom: 0;
+  }
+  #article-page .article-content tbody td:first-child strong {
+    font-size: 1.28rem;
+    line-height: 1;
+    letter-spacing: 0.01em;
+  }
+  #article-page .article-content tbody td:nth-child(2),
+  #article-page .article-content tbody td:last-child {
+    min-width: 0;
   }
   :root[data-theme='dark'] #article-page .article-content tbody td:first-child {
-    background: rgba(56,189,248,.12);
+    background: transparent;
   }
   #article-page .article-content tbody tr:last-child td {
     border-bottom: 1px solid var(--line);
