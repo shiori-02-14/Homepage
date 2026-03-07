@@ -2,7 +2,6 @@
 title: 電通大生が一人暮らしで住むならどこ？
 slug: tier
 date: 2026-03-07
-description: 電通大から通学1時間以内で住めるエリアを、京王線・京王相模原線を中心に広めに整理したローカル記事です。
 excerpt: 通学時間、家賃、街の便利さの3軸で、調布から橋本までの住みやすさを学生目線でまとめました。
 image: assets/tier-cover-chizuru.png
 imageAlt: 彼女、お借りしますの一ノ瀬千鶴の画像

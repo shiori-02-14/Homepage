@@ -372,6 +372,7 @@ const buildTocHtml = (headings) => {
 const buildArticleHtml = (article) => {
   const tocHtml = buildTocHtml(article.headings);
   const articleImageSrc = article.image ? `../${article.image}` : '';
+  const shareUrl = `${SITE_URL}/articles/${article.slug}.html`;
   const coverImage = article.image
     ? [
         '      <figure class="article-cover">',
@@ -392,7 +393,7 @@ const buildArticleHtml = (article) => {
       '@type': 'Person',
       name: SITE_TITLE
     },
-    mainEntityOfPage: `${SITE_URL}/articles/${article.slug}.html`
+    mainEntityOfPage: shareUrl
   }, null, 2);
 
   return `<!doctype html>
@@ -403,17 +404,24 @@ const buildArticleHtml = (article) => {
   <title>${escapeHtml(article.title)} | ${SITE_TITLE}</title>
   <meta name="description" content="${escapeAttr(article.description || SITE_DESCRIPTION)}" />
   <meta name="keywords" content="しおり,記事,ブログ,電気通信大学" />
+  <link rel="canonical" href="${escapeAttr(shareUrl)}" />
 
+  <meta property="og:site_name" content="${escapeAttr(SITE_TITLE)}" />
   <meta property="og:title" content="${escapeAttr(article.title)} | ${SITE_TITLE}" />
   <meta property="og:description" content="${escapeAttr(article.description || SITE_DESCRIPTION)}" />
   <meta property="og:type" content="article" />
+  <meta property="og:url" content="${escapeAttr(shareUrl)}" />
   <meta property="og:locale" content="ja_JP" />
   <meta property="og:image" content="${escapeAttr(shareImage)}" />
+  <meta property="og:image:secure_url" content="${escapeAttr(shareImage)}" />
+  <meta property="og:image:alt" content="${escapeAttr(article.imageAlt || `${article.title} の画像`)}" />
 
-  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${escapeAttr(article.title)} | ${SITE_TITLE}" />
   <meta name="twitter:description" content="${escapeAttr(article.description || SITE_DESCRIPTION)}" />
+  <meta name="twitter:url" content="${escapeAttr(shareUrl)}" />
   <meta name="twitter:image" content="${escapeAttr(shareImage)}" />
+  <meta name="twitter:image:alt" content="${escapeAttr(article.imageAlt || `${article.title} の画像`)}" />
 
   <link rel="stylesheet" href="../css/main.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
