@@ -17,7 +17,7 @@
   const ZENN_USER_ID = 'shiori_02_14';
   const ZENN_FEED_URL = `https://zenn.dev/${ZENN_USER_ID}/feed`;
   const ZENN_API_URL = `https://zenn.dev/api/articles?username=${ZENN_USER_ID}&order=latest`;
-  const articleListCacheStorageKey = '__SHIORI_ARTICLES_CACHE_V1__';
+  const articleListCacheStorageKey = '__SHIORI_ARTICLES_CACHE_V2__';
   const articleListCacheTtlMs = 30 * 60 * 1000; // 30分
   
   // CORSプロキシ（必要に応じて変更可能）
@@ -220,7 +220,10 @@
           date: item.date || '',
           dateMs: Number.isFinite(item.dateMs) ? item.dateMs : 0,
           imageUrl: item.imageUrl || '',
-          source: item.source || ''
+          source: item.source || '',
+          description: item.description || '',
+          excerpt: item.excerpt || '',
+          external: item.external !== false && item.source !== 'local'
         }));
     } catch (_) {
       return [];
@@ -237,7 +240,10 @@
           date: item?.date || '',
           dateMs: Number.isFinite(item?.dateMs) ? item.dateMs : 0,
           imageUrl: item?.imageUrl || '',
-          source: item?.source || ''
+          source: item?.source || '',
+          description: item?.description || '',
+          excerpt: item?.excerpt || '',
+          external: item?.external !== false && item?.source !== 'local'
         }))
         .filter((item) => item.link && item.title);
       localStorage.setItem(articleListCacheStorageKey, JSON.stringify({
@@ -247,6 +253,46 @@
     } catch (_) {
       // ignore
     }
+  };
+
+  const normalizeLocalArticle = (item) => {
+    const title = String(item?.title || '').trim();
+    const link = String(item?.link || '').trim();
+    return {
+      title,
+      link,
+      date: String(item?.date || '').trim(),
+      dateMs: Number.isFinite(item?.dateMs) ? item.dateMs : 0,
+      imageUrl: String(item?.imageUrl || '').trim(),
+      source: 'local',
+      description: String(item?.description || '').trim(),
+      excerpt: String(item?.excerpt || '').trim(),
+      external: false
+    };
+  };
+
+  const readSeededLocalArticles = () => {
+    const seeded = window.__LOCAL_ARTICLES__;
+    return (Array.isArray(seeded) ? seeded : [])
+      .map(normalizeLocalArticle)
+      .filter((item) => item.title && item.link);
+  };
+
+  const fetchLocalArticles = async () => {
+    const seeded = readSeededLocalArticles();
+    if (seeded.length > 0) return seeded;
+    if (isFileProtocol) return [];
+
+    const response = await fetchWithTimeout('data/local-articles.json', { timeoutMs: 4000 });
+    if (!response.ok) {
+      throw new Error(`local manifest request failed: ${response.status}`);
+    }
+
+    const payload = await response.json();
+    const items = Array.isArray(payload) ? payload : (Array.isArray(payload?.items) ? payload.items : []);
+    return items
+      .map(normalizeLocalArticle)
+      .filter((item) => item.title && item.link);
   };
 
   const fetchNoteEyecatch = async (noteKey) => {
@@ -845,14 +891,18 @@
     const link = document.createElement('a');
     link.className = 'card__link';
     link.href = article.link;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
+    const isExternal = article.external !== false && article.source !== 'local';
+    if (isExternal) {
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+    }
     
     // バッジ
     const badgeConfigBySource = {
       note: { label: 'note', className: 'badge--note' },
       qiita: { label: 'QIITA', className: 'badge--qiita' },
-      zenn: { label: 'ZENN', className: 'badge--zenn' }
+      zenn: { label: 'ZENN', className: 'badge--zenn' },
+      local: { label: 'Local', className: 'badge--local' }
     };
     const badgeConfig = badgeConfigBySource[article.source] || { label: 'ARTICLE', className: 'badge--source' };
 
@@ -989,7 +1039,12 @@
         container.appendChild(card);
       }
 
-      if (!article.imageUrl || !article.imageUrl.trim()) {
+      const shouldHydrateThumbnail = (
+        (!article.imageUrl || !article.imageUrl.trim()) &&
+        article.external !== false &&
+        /^https?:\/\//i.test(article.link || '')
+      );
+      if (shouldHydrateThumbnail) {
         const thumbEl = card.querySelector('.card__thumb');
         if (!thumbEl) return;
         const noteKey = extractNoteKey(article.link);
@@ -1115,6 +1170,7 @@
     }
 
     const sourceArticles = {
+      local: readSeededLocalArticles(),
       note: [],
       qiita: [],
       zenn: []
@@ -1122,6 +1178,7 @@
 
     const renderAndCache = () => {
       const rendered = renderArticlesToContainers([
+        ...sourceArticles.local,
         ...sourceArticles.note,
         ...sourceArticles.qiita,
         ...sourceArticles.zenn
@@ -1131,6 +1188,22 @@
       }
       return rendered;
     };
+
+    if (sourceArticles.local.length > 0) {
+      renderAndCache();
+    }
+
+    const localTask = fetchLocalArticles()
+      .then((items) => {
+        sourceArticles.local = Array.isArray(items) ? items : [];
+        renderAndCache();
+      })
+      .catch((error) => {
+        if (sourceArticles.local.length === 0) {
+          sourceArticles.local = [];
+        }
+        debugWarn('local fetch failed:', error);
+      });
 
     const noteTask = firstNonEmptyArray([
       fetchFeedItems(NOTE_FEED_URL, 'note'),
@@ -1174,11 +1247,11 @@
         debugWarn('zenn fetch failed:', error);
       });
 
-    await promiseAllSettled([noteTask, qiitaTask, zennTask]);
+    await promiseAllSettled([localTask, noteTask, qiitaTask, zennTask]);
 
     const finalArticles = renderAndCache();
     if (finalArticles.length === 0 && cachedArticles.length === 0) {
-      console.warn('RSSから記事を取得できませんでした');
+      console.warn('記事を取得できませんでした');
     }
   };
 
@@ -1208,6 +1281,8 @@
         emptyDiv.innerHTML = '<p class="articles-empty__text">まだ記事何もないです<br>毎日投稿で何か書きたいです</p>';
       } else if (filter === 'zenn') {
         emptyDiv.innerHTML = '<p class="articles-empty__text">Zennの記事がまだありません</p>';
+      } else if (filter === 'local') {
+        emptyDiv.innerHTML = '<p class="articles-empty__text">ローカル記事がありません</p>';
       } else {
         emptyDiv.innerHTML = '<p class="articles-empty__text">記事がありません</p>';
       }
