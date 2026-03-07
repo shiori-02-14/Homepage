@@ -259,8 +259,15 @@ const renderMarkdown = (source) => {
         rows.push(parseTableRow(lines[index]));
         index += 1;
       }
-      const headHtml = headerCells.map((cell) => `<th>${renderInline(cell)}</th>`).join('');
-      const bodyHtml = rows.map((row) => `<tr>${row.map((cell) => `<td>${renderInline(cell)}</td>`).join('')}</tr>`).join('\n');
+      const headHtml = headerCells.map((cell) => `<th scope="col">${renderInline(cell)}</th>`).join('');
+      const bodyHtml = rows.map((row) => {
+        const cellsHtml = row.map((cell, cellIndex) => {
+          const headerLabel = stripInlineMarkdown(headerCells[cellIndex] || '');
+          const labelAttr = headerLabel ? ` data-label="${escapeAttr(headerLabel)}"` : '';
+          return `<td${labelAttr}>${renderInline(cell)}</td>`;
+        }).join('');
+        return `<tr>${cellsHtml}</tr>`;
+      }).join('\n');
       htmlParts.push(`<table><thead><tr>${headHtml}</tr></thead><tbody>${bodyHtml}</tbody></table>`);
       continue;
     }
@@ -373,6 +380,7 @@ const buildArticleHtml = (article) => {
   const tocHtml = buildTocHtml(article.headings);
   const articleImageSrc = article.image ? `../${article.image}` : '';
   const shareUrl = `${SITE_URL}/articles/${article.slug}.html`;
+  const pageDescription = String(article.description || '').trim();
   const coverImage = article.image
     ? [
         '      <figure class="article-cover">',
@@ -381,11 +389,10 @@ const buildArticleHtml = (article) => {
       ].join('\n')
     : '';
   const shareImage = toAbsoluteSiteUrl(article.image || SITE_IMAGE);
-  const jsonLd = JSON.stringify({
+  const jsonLdObject = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: article.title,
-    description: article.description,
     image: shareImage,
     datePublished: article.dateIso,
     dateModified: article.dateIso,
@@ -394,7 +401,11 @@ const buildArticleHtml = (article) => {
       name: SITE_TITLE
     },
     mainEntityOfPage: shareUrl
-  }, null, 2);
+  };
+  if (pageDescription) {
+    jsonLdObject.description = pageDescription;
+  }
+  const jsonLd = JSON.stringify(jsonLdObject, null, 2);
 
   return `<!doctype html>
 <html lang="ja" data-theme="light">
@@ -402,26 +413,26 @@ const buildArticleHtml = (article) => {
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>${escapeHtml(article.title)} | ${SITE_TITLE}</title>
-  <meta name="description" content="${escapeAttr(article.description || SITE_DESCRIPTION)}" />
   <meta name="keywords" content="しおり,記事,ブログ,電気通信大学" />
   <link rel="canonical" href="${escapeAttr(shareUrl)}" />
+${pageDescription ? `  <meta name="description" content="${escapeAttr(pageDescription)}" />` : ''}
 
   <meta property="og:site_name" content="${escapeAttr(SITE_TITLE)}" />
   <meta property="og:title" content="${escapeAttr(article.title)} | ${SITE_TITLE}" />
-  <meta property="og:description" content="${escapeAttr(article.description || SITE_DESCRIPTION)}" />
   <meta property="og:type" content="article" />
   <meta property="og:url" content="${escapeAttr(shareUrl)}" />
   <meta property="og:locale" content="ja_JP" />
   <meta property="og:image" content="${escapeAttr(shareImage)}" />
   <meta property="og:image:secure_url" content="${escapeAttr(shareImage)}" />
   <meta property="og:image:alt" content="${escapeAttr(article.imageAlt || `${article.title} の画像`)}" />
+${pageDescription ? `  <meta property="og:description" content="${escapeAttr(pageDescription)}" />` : ''}
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${escapeAttr(article.title)} | ${SITE_TITLE}" />
-  <meta name="twitter:description" content="${escapeAttr(article.description || SITE_DESCRIPTION)}" />
   <meta name="twitter:url" content="${escapeAttr(shareUrl)}" />
   <meta name="twitter:image" content="${escapeAttr(shareImage)}" />
   <meta name="twitter:image:alt" content="${escapeAttr(article.imageAlt || `${article.title} の画像`)}" />
+${pageDescription ? `  <meta name="twitter:description" content="${escapeAttr(pageDescription)}" />` : ''}
 
   <link rel="stylesheet" href="../css/main.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -509,7 +520,7 @@ const createArticleMeta = (filePath) => {
   const slug = slugify(data.slug || path.basename(filePath, path.extname(filePath)));
   const date = parseDate(data.date);
   const description = String(data.description || '').trim();
-  const excerpt = String(data.excerpt || description).trim();
+  const excerpt = String(data.excerpt || '').trim();
   const image = String(data.image || '').trim();
   const imageAlt = String(data.imageAlt || `${title} の画像`).trim();
 
@@ -525,7 +536,7 @@ const createArticleMeta = (filePath) => {
   return {
     title,
     slug,
-    description: description || excerpt || excerptFallback || title,
+    description,
     excerpt: excerpt || description || excerptFallback || title,
     bodyHtml: html,
     headings,
