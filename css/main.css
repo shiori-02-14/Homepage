@@ -2041,6 +2041,23 @@ a.friend-card::after {
 #articles-page .card--article h3 {
   font-size: clamp(1.05rem, 1.4vw, 1.2rem);
   line-height: 1.35;
+  min-width: 0;
+  white-space: nowrap; /* 勝手に改行させない */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#top [data-rss="home-articles"] .card--article h3 {
+  font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+  line-height: 1.35;
+  min-width: 0;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-wrap: unset; /* balance を外してカード幅を素直に使う */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 #works-page .card--work h3 {
   font-size: clamp(1.05rem, 1.4vw, 1.2rem);
@@ -2065,9 +2082,9 @@ a.friend-card::after {
   gap: 0;
 }
 #articles-page .card--article .card__thumb {
-  /* スマホ〜タブレットで自然に伸縮するサムネ幅 */
-  flex: 0 0 clamp(140px, 40vw, 260px);
-  width: clamp(140px, 40vw, 260px);
+  /* テキスト領域を広くしてタイトルが幅いっぱい・変な改行にならないように */
+  flex: 0 0 clamp(100px, 28vw, 200px);
+  width: clamp(100px, 28vw, 200px);
   padding-top: 0;
   aspect-ratio: 16 / 9;
   border-radius: 20px 0 0 20px;
@@ -2090,11 +2107,11 @@ a.friend-card::after {
   justify-content: center;
 }
 
-/* 画面が広い時はサムネを固定幅にして、より「記事一覧」感を出す */
+/* 画面が広い時もテキスト領域を広めに（タイトルが幅いっぱい使えるように） */
 @media (min-width: 760px) {
   #articles-page .card--article .card__thumb {
-    flex: 0 0 320px;
-    width: 320px;
+    flex: 0 0 200px;
+    width: 200px;
   }
   #articles-page .card--article .card__content {
     padding: 1.25rem 1.4rem;
