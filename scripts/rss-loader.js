@@ -895,11 +895,11 @@
     // バッジ
     const badgeConfigBySource = {
       note: { label: 'note', className: 'badge--note' },
-      qiita: { label: 'QIITA', className: 'badge--qiita' },
-      zenn: { label: 'ZENN', className: 'badge--zenn' },
+      qiita: { label: 'Qiita', className: 'badge--qiita' },
+      zenn: { label: 'Zenn', className: 'badge--zenn' },
       local: { label: 'Local', className: 'badge--local' }
     };
-    const badgeConfig = badgeConfigBySource[article.source] || { label: 'ARTICLE', className: 'badge--source' };
+    const badgeConfig = badgeConfigBySource[article.source] || { label: 'Article', className: 'badge--source' };
 
     const badge = document.createElement('span');
     badge.className = `badge ${badgeConfig.className} badge--corner`;

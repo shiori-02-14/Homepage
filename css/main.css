@@ -2500,6 +2500,7 @@ a.friend-card::after {
   right: 0.9rem;
   left: auto;
   z-index: 2;
+  text-transform: none;
 }
 /* Articlesページではカード全体の右上に配置 */
 #articles-page .card--article .badge--corner {
