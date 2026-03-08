@@ -2164,9 +2164,9 @@ a.friend-card::after {
   gap: 0;
 }
 #articles-page .card--article .card__thumb {
-  /* テキスト領域を広くしてタイトルが幅いっぱい・変な改行にならないように */
-  flex: 0 0 clamp(100px, 28vw, 200px);
-  width: clamp(100px, 28vw, 200px);
+  /* Worksカードと同じ寸法 */
+  flex: 0 0 clamp(140px, 40vw, 260px);
+  width: clamp(140px, 40vw, 260px);
   padding-top: 0;
   aspect-ratio: 16 / 9;
   border-radius: 20px 0 0 20px;
@@ -2189,11 +2189,11 @@ a.friend-card::after {
   justify-content: center;
 }
 
-/* 画面が広い時もテキスト領域を広めに（タイトルが幅いっぱい使えるように） */
+/* 画面が広い時も Worksカードと同じ幅 */
 @media (min-width: 760px) {
   #articles-page .card--article .card__thumb {
-    flex: 0 0 200px;
-    width: 200px;
+    flex: 0 0 320px;
+    width: 320px;
   }
   #articles-page .card--article .card__content {
     padding: 1.25rem 1.4rem;
@@ -3309,9 +3309,6 @@ html { scroll-behavior: smooth; }
   #articles-page .card--article .card__content,
   #works-page .card--work .card__content {
     padding: 0.78rem 0.78rem;
-  }
-  #articles-page .card--article .card__content {
-    padding: 0.64rem 0.74rem;
   }
   #articles-page .card--article h3,
   #works-page .card--work h3 {
