@@ -427,8 +427,8 @@
   };
 
   const OGP_PROXIES = [
-    (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-    (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`
+    (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+    (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
   ];
 
   const fetchOgpImage = async (articleUrl) => {
@@ -492,92 +492,80 @@
     }
   };
 
-  // Zenn API で記事を取得（失敗時はプロキシをフォールバック）
+  // Zenn API で記事を取得（直アクセス + プロキシを並列で試して最速の有効結果を使う）
   const fetchZennItemsViaAPI = async () => {
-    const tryDirect = async () => {
-      const res = await fetchWithTimeout(ZENN_API_URL, { timeoutMs: 6000 });
-      if (!res.ok) throw new Error(`Zenn API error: ${res.status}`);
-      return res.json();
-    };
-
-    const tryViaProxy = async () => {
-      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(ZENN_API_URL)}`;
-      const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 8000 });
-      if (!res.ok) throw new Error(`Proxy error: ${res.status}`);
-      return res.json();
-    };
-
-    try {
-      const payload = await tryDirect();
-      return normalizeZennApiItems(payload);
-    } catch (e1) {
-      debugWarn('Zenn API direct fetch failed, trying proxy:', e1);
+    const fetchAndNormalize = async (url, label, timeoutMs) => {
       try {
-        const payload = await tryViaProxy();
+        const res = await fetchWithTimeout(url, { timeoutMs });
+        if (!res.ok) throw new Error(`${label} error: ${res.status}`);
+        const payload = await res.json();
         return normalizeZennApiItems(payload);
-      } catch (e2) {
-        debugWarn('Zenn API proxy fetch failed:', e2);
+      } catch (error) {
+        debugWarn(`Zenn API ${label} fetch failed:`, error);
         return [];
       }
-    }
+    };
+
+    return firstNonEmptyArray([
+      fetchAndNormalize(ZENN_API_URL, 'direct', 4500),
+      fetchAndNormalize(`https://corsproxy.io/?${encodeURIComponent(ZENN_API_URL)}`, 'corsproxy', 4500),
+      fetchAndNormalize(`https://api.allorigins.win/raw?url=${encodeURIComponent(ZENN_API_URL)}`, 'allorigins', 4500)
+    ]);
   };
 
   // Qiita Atom をプロキシ経由で取得してパース（RSS2JSONはQiita形式で空になるため）
   const CORS_PROXIES = [
-    (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-    (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`
+    (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+    (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
   ];
 
   // noteは rss2json 単独だと更新遅延・取得失敗時に止まりやすいため、直接RSS取得も併用
   const fetchNoteViaRssRaw = async () => {
-    for (const toProxyUrl of CORS_PROXIES) {
+    return firstNonEmptyArray(CORS_PROXIES.map((toProxyUrl) => (async () => {
       try {
         const proxyUrl = toProxyUrl(NOTE_FEED_URL);
-        const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 5000 });
-        if (!res.ok) continue;
+        const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 4000 });
+        if (!res.ok) return [];
         const xmlText = await res.text();
-        if (!xmlText || xmlText.length < 100) continue;
-        const items = mapParsedRssItems(parseRSS(xmlText), 'note');
-        if (items.length > 0) return items;
+        if (!xmlText || xmlText.length < 100) return [];
+        return mapParsedRssItems(parseRSS(xmlText), 'note');
       } catch (e) {
         debugWarn('note RSS proxy failed:', e);
+        return [];
       }
-    }
-    return [];
+    })()));
   };
 
   const fetchQiitaViaAtomRaw = async () => {
-    for (const toProxyUrl of CORS_PROXIES) {
+    return firstNonEmptyArray(CORS_PROXIES.map((toProxyUrl) => (async () => {
       try {
         const proxyUrl = toProxyUrl(QIITA_FEED_URL);
-        const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 5000 });
-        if (!res.ok) continue;
+        const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 4000 });
+        if (!res.ok) return [];
         const xmlText = await res.text();
-        if (!xmlText || xmlText.length < 100) continue;
-        const items = parseAtomFeed(xmlText, 'qiita');
-        if (items.length > 0) return items;
+        if (!xmlText || xmlText.length < 100) return [];
+        return parseAtomFeed(xmlText, 'qiita');
       } catch (e) {
         debugWarn('Qiita Atom proxy failed:', e);
+        return [];
       }
-    }
-    return [];
+    })()));
   };
 
-  const fetchZennViaAtomRaw = async () => {
-    for (const toProxyUrl of CORS_PROXIES) {
+  const fetchZennViaFeedRaw = async () => {
+    return firstNonEmptyArray(CORS_PROXIES.map((toProxyUrl) => (async () => {
       try {
         const proxyUrl = toProxyUrl(ZENN_FEED_URL);
-        const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 5000 });
-        if (!res.ok) continue;
+        const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 4000 });
+        if (!res.ok) return [];
         const xmlText = await res.text();
-        if (!xmlText || xmlText.length < 100) continue;
-        const items = parseAtomFeed(xmlText, 'zenn');
-        if (items.length > 0) return items;
+        if (!xmlText || xmlText.length < 100) return [];
+        return parseFeedItemsAuto(xmlText, 'zenn');
       } catch (e) {
-        debugWarn('Zenn Atom proxy failed:', e);
+        debugWarn('Zenn feed proxy failed:', e);
+        return [];
       }
-    }
-    return [];
+    })()));
   };
 
   const parseAtomFeed = (xmlText, source) => {
@@ -605,6 +593,13 @@
 
       return { title, link, date: dateText, dateMs, imageUrl, source };
     }).filter((a) => a.link && a.title);
+  };
+
+  // フィード形式が Atom/RSS のどちらでも扱えるようにする（Zenn は RSS のことがある）
+  const parseFeedItemsAuto = (xmlText, source) => {
+    const atomItems = parseAtomFeed(xmlText, source);
+    if (atomItems.length > 0) return atomItems;
+    return mapParsedRssItems(parseRSS(xmlText), source);
   };
 
   const extractFirstImageUrl = (html, md) => {
@@ -1235,7 +1230,7 @@
 
     const zennTask = firstNonEmptyArray([
       fetchZennItemsViaAPI(),
-      fetchZennViaAtomRaw(),
+      fetchZennViaFeedRaw(),
       fetchFeedItems(ZENN_FEED_URL, 'zenn')
     ])
       .then((items) => {
