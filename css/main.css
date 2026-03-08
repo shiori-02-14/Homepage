@@ -3006,6 +3006,17 @@ html { scroll-behavior: smooth; }
   /* スマホでも詰まりすぎないように上下の余白を確保 */
   main { padding: 0.85rem clamp(0.375rem, 1vw, 0.625rem) 1rem; }
   .list:not(.list--icons) { grid-template-columns: 1fr; }
+  .list--icons {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+  .list--icons a {
+    padding: 0.72rem 0.45rem;
+  }
+  .social-label,
+  .list--icons .friend-card__name {
+    font-size: 0.82rem;
+  }
   .cards { grid-template-columns: 1fr; }
   .profile {
     grid-template-columns: 1fr;
@@ -3275,12 +3286,16 @@ html { scroll-behavior: smooth; }
     bottom: 0.1rem;
   }
   .list--icons {
-    grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
-    gap: 0.65rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.5rem;
   }
   .list--icons a {
-    padding: 0.75rem 0.55rem;
+    padding: 0.68rem 0.35rem;
     border-radius: 16px;
+  }
+  .social-label,
+  .list--icons .friend-card__name {
+    font-size: 0.78rem;
   }
   #articles-page .card--article .card__content,
   #works-page .card--work .card__content {
