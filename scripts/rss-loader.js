@@ -17,8 +17,6 @@
   const ZENN_USER_ID = 'shiori_02_14';
   const ZENN_FEED_URL = `https://zenn.dev/${ZENN_USER_ID}/feed`;
   const ZENN_API_URL = `https://zenn.dev/api/articles?username=${ZENN_USER_ID}&order=latest`;
-  /** Qiita のみローカルSVG。Zenn は各記事の og:image（自動生成プレビュー）を後から取得 */
-  const DEFAULT_THUMB_QIITA = 'assets/thumb-default-qiita.svg';
   const PREVIEW_DEFAULT_AUTHOR = 'しおり🔖';
   const PREVIEW_FALLBACK_AVATAR = 'https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg';
   const articleListCacheStorageKey = '__SHIORI_ARTICLES_CACHE_V2__';
@@ -967,13 +965,10 @@
     badge.textContent = badgeConfig.label;
     link.appendChild(badge);
     
-    // サムネイル（Qiita はロゴSVG。Zenn は記事ごとの og:image＝自動プレビューを hydrate で表示）
+    // サムネイル（Zenn は記事URLの og:image を hydrate。Qiita は画像なしのときプレースホルダ）
     const thumb = document.createElement('div');
     thumb.className = 'card__thumb';
-    let thumbSrc = (article.imageUrl || '').trim();
-    if (!thumbSrc && article.source === 'qiita') {
-      thumbSrc = DEFAULT_THUMB_QIITA;
-    }
+    const thumbSrc = (article.imageUrl || '').trim();
 
     if (thumbSrc) {
       const img = document.createElement('img');
@@ -981,9 +976,6 @@
       img.alt = `${article.title}のサムネ`;
       img.loading = 'lazy';
       img.decoding = 'async';
-      if (article.source === 'qiita') {
-        img.classList.add('card__thumb--brand');
-      }
       img.onerror = function() {
         console.warn('画像の読み込みに失敗:', thumbSrc);
         thumb.className = 'card__thumb card__thumb--placeholder';
