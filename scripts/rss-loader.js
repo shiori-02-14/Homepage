@@ -553,6 +553,38 @@
     })()));
   };
 
+  const normalizeArticleLink = (url) => String(url || '').trim().replace(/\/$/, '');
+
+  // rss2json が先に返るとサムネ無しで確定してしまうため、生RSSの imageUrl をリンク単位で上書きマージする
+  const mergeNoteFeedWithRawThumbs = (rawItems, jsonItems) => {
+    const raw = Array.isArray(rawItems) ? rawItems : [];
+    const json = Array.isArray(jsonItems) ? jsonItems : [];
+    const thumbByLink = new Map();
+    raw.forEach((item) => {
+      const link = normalizeArticleLink(item?.link);
+      const url = String(item?.imageUrl || '').trim();
+      if (link && url) thumbByLink.set(link, url);
+    });
+    const base = json.length ? json : raw;
+    if (!base.length) return [];
+    return base.map((item) => {
+      const link = normalizeArticleLink(item?.link);
+      const fromRaw = link ? thumbByLink.get(link) : '';
+      return {
+        ...item,
+        imageUrl: fromRaw || String(item?.imageUrl || '').trim()
+      };
+    });
+  };
+
+  const fetchNoteArticlesMerged = async () => {
+    const [raw, json] = await Promise.all([
+      fetchNoteViaRssRaw().catch(() => []),
+      fetchFeedItems(NOTE_FEED_URL, 'note').catch(() => [])
+    ]);
+    return mergeNoteFeedWithRawThumbs(raw, json);
+  };
+
   const fetchQiitaViaAtomRaw = async () => {
     return firstNonEmptyArray(CORS_PROXIES.map((toProxyUrl) => (async () => {
       try {
@@ -1221,14 +1253,9 @@
           debugWarn('local fetch failed:', error);
         });
 
-      // rss2json は note の media:thumbnail を渡さないためサムネが空になりやすい → 生RSS（MRSS）を優先
-      const noteTask = (async () => {
-        const raw = await fetchNoteViaRssRaw().catch(() => []);
-        if (Array.isArray(raw) && raw.length > 0) return raw;
-        return fetchFeedItems(NOTE_FEED_URL, 'note').catch(() => []);
-      })()
+      // 生RSS と rss2json を並列取得し、MRSS のサムネをリンクでマージ（先勝ちレースだとサムネが落ちる）
+      const noteTask = fetchNoteArticlesMerged()
         .then((items) => {
-          // 最初に取得できた結果を即描画して、待ち時間を最小化
           sourceArticles.note = Array.isArray(items) ? items : [];
           renderAndCache();
         })
