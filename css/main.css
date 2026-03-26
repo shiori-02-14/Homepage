@@ -2177,6 +2177,9 @@ a.friend-card::after {
   font-size: clamp(1.05rem, 1.4vw, 1.2rem);
   line-height: 1.35;
   min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  align-self: stretch;
   white-space: normal;
   overflow: hidden;
   display: -webkit-box;
@@ -2185,7 +2188,8 @@ a.friend-card::after {
   line-clamp: 2;
   text-overflow: ellipsis;
   word-break: normal;
-  line-break: strict;
+  /* strict より通常の和文禁則で行末を決める */
+  line-break: normal;
 }
 #top [data-rss="home-articles"] .card--article h3 {
   font-size: clamp(1.05rem, 1.4vw, 1.2rem);
@@ -3231,10 +3235,10 @@ html { scroll-behavior: smooth; }
     width: 40%;
     padding-top: 0;
   }
-  /* サムネをやや狭め、タイトル列を広げて長い見出しの改行位置を改善 */
+  /* タイトル列を広げる（サムネを抑えて折り返し位置を改善） */
   #articles-page .card--article .card__thumb {
-    flex: 0 0 40%;
-    width: 40%;
+    flex: 0 0 36%;
+    width: 36%;
     min-width: 0;
     padding-top: 0;
     height: auto;
@@ -3260,8 +3264,8 @@ html { scroll-behavior: smooth; }
   }
   #articles-page .card--article .card__content {
     justify-content: center; /* サムネよりテキストが低いとき、右列を縦中央に */
-    /* 右上バッジと重ならないよう右に余白（タイトル幅を確保） */
-    padding: 0.72rem 3.35rem 0.76rem 0.68rem;
+    /* バッジ分のみ確保（広すぎると1行目で早く改行される） */
+    padding: 0.72rem 2.55rem 0.76rem 0.68rem;
     gap: 0.28rem;
   }
   #articles-page .card--article h3 {
@@ -3425,7 +3429,7 @@ html { scroll-behavior: smooth; }
     font-size: 0.78rem;
   }
   #articles-page .card--article .card__content {
-    padding: 0.64rem 3.2rem 0.7rem 0.52rem;
+    padding: 0.64rem 2.45rem 0.7rem 0.52rem;
     gap: 0.24rem;
   }
   #works-page .card--work .card__content {
