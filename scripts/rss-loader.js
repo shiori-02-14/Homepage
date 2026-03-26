@@ -17,6 +17,10 @@
   const ZENN_USER_ID = 'shiori_02_14';
   const ZENN_FEED_URL = `https://zenn.dev/${ZENN_USER_ID}/feed`;
   const ZENN_API_URL = `https://zenn.dev/api/articles?username=${ZENN_USER_ID}&order=latest`;
+  /** Qiita のみローカルSVG。Zenn は各記事の og:image（自動生成プレビュー）を後から取得 */
+  const DEFAULT_THUMB_QIITA = 'assets/thumb-default-qiita.svg';
+  const PREVIEW_DEFAULT_AUTHOR = 'しおり🔖';
+  const PREVIEW_FALLBACK_AVATAR = 'https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg';
   const articleListCacheStorageKey = '__SHIORI_ARTICLES_CACHE_V2__';
   const articleListCacheTtlMs = 30 * 60 * 1000; // 30分
   
@@ -225,6 +229,8 @@
           source: item.source || '',
           description: item.description || '',
           excerpt: item.excerpt || '',
+          authorName: item.authorName || '',
+          authorAvatarUrl: item.authorAvatarUrl || '',
           external: item.external !== false && item.source !== 'local'
         }));
     } catch (_) {
@@ -245,6 +251,8 @@
           source: item?.source || '',
           description: item?.description || '',
           excerpt: item?.excerpt || '',
+          authorName: item?.authorName || '',
+          authorAvatarUrl: item?.authorAvatarUrl || '',
           external: item?.external !== false && item?.source !== 'local'
         }))
         .filter((item) => item.link && item.title);
@@ -482,14 +490,14 @@
   const fetchQiitaItemsViaAPI = async () => {
     const apiUrl = QIITA_API_URL + '?per_page=20';
     const tryDirect = async () => {
-      const res = await fetchWithTimeout(apiUrl, { timeoutMs: 6000 });
+      const res = await fetchWithTimeout(apiUrl, { timeoutMs: 4500 });
       if (!res.ok) throw new Error(`Qiita API error: ${res.status}`);
       return res.json();
     };
 
     const tryViaProxy = async () => {
       const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
-      const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 8000 });
+      const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 5500 });
       if (!res.ok) throw new Error(`Proxy error: ${res.status}`);
       return res.json();
     };
@@ -509,7 +517,7 @@
     }
   };
 
-  // Zenn API で記事を取得（直アクセス + プロキシを並列で試して最速の有効結果を使う）
+  // Zenn API（直アクセス + 1 プロキシのみ・タイムアウト短めで体感を優先）
   const fetchZennItemsViaAPI = async () => {
     const fetchAndNormalize = async (url, label, timeoutMs) => {
       try {
@@ -524,9 +532,8 @@
     };
 
     return firstNonEmptyArray([
-      fetchAndNormalize(ZENN_API_URL, 'direct', 4500),
-      fetchAndNormalize(`https://corsproxy.io/?${encodeURIComponent(ZENN_API_URL)}`, 'corsproxy', 4500),
-      fetchAndNormalize(`https://api.allorigins.win/raw?url=${encodeURIComponent(ZENN_API_URL)}`, 'allorigins', 4500)
+      fetchAndNormalize(ZENN_API_URL, 'direct', 3800),
+      fetchAndNormalize(`https://api.allorigins.win/raw?url=${encodeURIComponent(ZENN_API_URL)}`, 'allorigins', 3800)
     ]);
   };
 
@@ -541,7 +548,7 @@
     return firstNonEmptyArray(CORS_PROXIES.map((toProxyUrl) => (async () => {
       try {
         const proxyUrl = toProxyUrl(NOTE_FEED_URL);
-        const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 4000 });
+        const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 3200 });
         if (!res.ok) return [];
         const xmlText = await res.text();
         if (!xmlText || xmlText.length < 100) return [];
@@ -580,7 +587,7 @@
   const fetchNoteArticlesMerged = async () => {
     const [raw, json] = await Promise.all([
       fetchNoteViaRssRaw().catch(() => []),
-      fetchFeedItems(NOTE_FEED_URL, 'note').catch(() => [])
+      fetchFeedItems(NOTE_FEED_URL, 'note', { timeoutMs: 3800 }).catch(() => [])
     ]);
     return mergeNoteFeedWithRawThumbs(raw, json);
   };
@@ -657,12 +664,15 @@
     if (!Array.isArray(items)) return [];
     return items.map((item) => {
       const { dateMs, dateText } = parseItemDate({ created: item.created_at });
+      const u = item.user || {};
       return {
         title: item.title || '',
         link: item.url || '',
         date: dateText,
         dateMs,
         imageUrl: '',
+        authorName: (u.name && String(u.name).trim()) || u.id || PREVIEW_DEFAULT_AUTHOR,
+        authorAvatarUrl: u.profile_image_url || '',
         source: 'qiita'
       };
     });
@@ -680,12 +690,15 @@
         : (item.slug ? `/${ZENN_USER_ID}/articles/${item.slug}` : '');
       const link = rawPath ? `https://zenn.dev${rawPath}` : '';
 
+      const u = item.user || {};
       return {
         title: item.title || '',
         link,
         date: dateText,
         dateMs,
         imageUrl: '',
+        authorName: (u.name && String(u.name).trim()) || PREVIEW_DEFAULT_AUTHOR,
+        authorAvatarUrl: u.avatar_small_url || u.avatar_url || '',
         source: 'zenn'
       };
     }).filter((item) => item.link && item.title);
@@ -777,7 +790,7 @@
     });
   };
 
-  const fetchFeedItemsViaJsonp = (feedUrlRaw, source) => new Promise((resolve) => {
+  const fetchFeedItemsViaJsonp = (feedUrlRaw, source, timeoutMs = 4000) => new Promise((resolve) => {
     if (!feedUrlRaw || !RSS_PROXY.includes('rss2json')) {
       resolve([]);
       return;
@@ -805,7 +818,7 @@
       resolve(Array.isArray(items) ? items : []);
     };
 
-    const timerId = window.setTimeout(() => finish([]), 5000);
+    const timerId = window.setTimeout(() => finish([]), timeoutMs);
 
     window[callbackName] = (data) => {
       debugLog('rss2json jsonp items:', Array.isArray(data?.items) ? data.items.length : 0);
@@ -830,8 +843,9 @@
     });
   };
 
-  // RSS/Atomフィードを取得してパース
-  const fetchFeedItems = async (feedUrlRaw, source) => {
+  // RSS/Atomフィードを取得してパース（options.timeoutMs で待ち上限を調整可能）
+  const fetchFeedItems = async (feedUrlRaw, source, options = {}) => {
+    const timeoutMs = typeof options.timeoutMs === 'number' ? options.timeoutMs : 4200;
     try {
       if (!feedUrlRaw) return [];
       const feedUrl = RSS_PROXY ? `${RSS_PROXY}${encodeURIComponent(feedUrlRaw)}` : feedUrlRaw;
@@ -839,11 +853,11 @@
       // RSS2JSONを使う場合
       if (RSS_PROXY.includes('rss2json')) {
         if (isFileProtocol) {
-          return await fetchFeedItemsViaJsonp(feedUrlRaw, source);
+          return await fetchFeedItemsViaJsonp(feedUrlRaw, source, timeoutMs);
         }
 
         const viaFetch = (async () => {
-          const response = await fetchWithTimeout(feedUrl, { timeoutMs: 5000 });
+          const response = await fetchWithTimeout(feedUrl, { timeoutMs });
           if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
           const data = await response.json();
           debugLog('rss2json items:', Array.isArray(data.items) ? data.items.length : 0);
@@ -851,11 +865,11 @@
         })();
 
         // fetch が失敗するブラウザ向けに JSONP も同時に試し、早く取れた方を使う
-        return await firstNonEmptyArray([viaFetch, fetchFeedItemsViaJsonp(feedUrlRaw, source)]);
+        return await firstNonEmptyArray([viaFetch, fetchFeedItemsViaJsonp(feedUrlRaw, source, timeoutMs)]);
       }
       
       // 直接RSSを取得する場合
-      const response = await fetchWithTimeout(feedUrl, { timeoutMs: 5000 });
+      const response = await fetchWithTimeout(feedUrl, { timeoutMs });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const xmlText = await response.text();
       return mapParsedRssItems(parseRSS(xmlText), source);
@@ -953,21 +967,30 @@
     badge.textContent = badgeConfig.label;
     link.appendChild(badge);
     
-    // サムネイル
+    // サムネイル（Qiita はロゴSVG。Zenn は記事ごとの og:image＝自動プレビューを hydrate で表示）
     const thumb = document.createElement('div');
     thumb.className = 'card__thumb';
-    
-    if (article.imageUrl && article.imageUrl.trim() !== '') {
+    let thumbSrc = (article.imageUrl || '').trim();
+    if (!thumbSrc && article.source === 'qiita') {
+      thumbSrc = DEFAULT_THUMB_QIITA;
+    }
+
+    if (thumbSrc) {
       const img = document.createElement('img');
-      img.src = article.imageUrl;
+      img.src = thumbSrc;
       img.alt = `${article.title}のサムネ`;
       img.loading = 'lazy';
       img.decoding = 'async';
+      if (article.source === 'qiita') {
+        img.classList.add('card__thumb--brand');
+      }
       img.onerror = function() {
-        // 画像の読み込みに失敗した場合はプレースホルダーに変更
-        console.warn('画像の読み込みに失敗:', article.imageUrl);
+        console.warn('画像の読み込みに失敗:', thumbSrc);
         thumb.className = 'card__thumb card__thumb--placeholder';
-        thumb.removeChild(img);
+        img.remove();
+        if (!thumb.querySelector('img')) {
+          thumb.classList.add('card__thumb--placeholder');
+        }
       };
       thumb.appendChild(img);
     } else {
@@ -1070,7 +1093,7 @@
     // 新しい記事を追加（既存の記事の前に挿入）
     const firstExisting = mode === 'insertBeforeExisting' ? (existingArticles[0] || null) : null;
     const notesToHydrate = new Map(); // noteKey -> { title, thumbEls: [] }
-    const ogpToHydrate = []; // { link, title, thumbEl }（note 以外で OGP 補完が必要なソース向け・現状ほぼ未使用）
+    const ogpToHydrate = []; // { link, title, thumbEl }（Zenn の og:image 等・Qiita は除く）
 
     articles.forEach(article => {
       const card = createArticleCard(article);
@@ -1094,8 +1117,8 @@
           if (!existing.link && article.link) existing.link = article.link;
           existing.thumbEls.push(thumbEl);
           notesToHydrate.set(noteKey, existing);
-        } else if (article.source !== 'qiita' && article.source !== 'zenn') {
-          // Qiita/Zenn はサムネを別取得しない（OGP も使わない）
+        } else if (article.source !== 'qiita') {
+          // Qiita はロゴのみ。Zenn は記事URLの og:image（自動プレビュー画像）を取得
           ogpToHydrate.push({ link: article.link, title: article.title, thumbEl });
         }
       }
@@ -1139,7 +1162,7 @@
       void promiseAllSettled(Array.from({ length: Math.min(concurrency, entries.length) }, worker));
     }
 
-    // 画像がないその他ソースは OGP（og:image）を取得して表示（Qiita/Zenn は上で除外）
+    // 画像がないソースは OGP（og:image）を取得（Zenn の自動プレビュー含む）
     if (ogpToHydrate.length > 0) {
       const concurrency = 3;
       let idx = 0;
@@ -1266,8 +1289,7 @@
 
       const qiitaTask = firstNonEmptyArray([
         fetchQiitaItemsViaAPI(),
-        fetchQiitaViaAtomRaw(),
-        fetchFeedItems(QIITA_FEED_URL, 'qiita')
+        fetchQiitaViaAtomRaw()
       ])
         .then((items) => {
           sourceArticles.qiita = Array.isArray(items) ? items : [];
@@ -1280,8 +1302,7 @@
 
       const zennTask = firstNonEmptyArray([
         fetchZennItemsViaAPI(),
-        fetchZennViaFeedRaw(),
-        fetchFeedItems(ZENN_FEED_URL, 'zenn')
+        fetchZennViaFeedRaw()
       ])
         .then((items) => {
           sourceArticles.zenn = Array.isArray(items) ? items : [];

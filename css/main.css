@@ -2424,6 +2424,17 @@ a.friend-card::after {
 .card:focus-within .card__thumb::after {
   transform: translateX(130%);
 }
+/* Qiita / Zenn のデフォルト（サービスロゴ） */
+.card__thumb img.card__thumb--brand {
+  object-fit: contain;
+  object-position: center;
+  padding: 12%;
+  box-sizing: border-box;
+  background: var(--glass-bg-strong);
+}
+#articles-page .card--article .card__thumb img.card__thumb--brand {
+  padding: 10%;
+}
 .card__thumb img.thumb-logo {
   /* アプリアイコンっぽく（角丸 + 枠 + 影 + 中央配置） */
   object-fit: contain;
