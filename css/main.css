@@ -2559,7 +2559,7 @@ a.friend-card::after {
   z-index: 2;
   text-transform: none;
 }
-/* Articlesページではカード全体の右上に配置 */
+/* Articles（ワイド）：カード右上。スマホは max-width:640px でサムネ左上に上書き */
 #articles-page .card--article .badge--corner {
   position: absolute;
   top: 0.9rem;
@@ -3250,8 +3250,8 @@ html { scroll-behavior: smooth; }
   }
   #articles-page .card--article .card__content {
     justify-content: center; /* サムネよりテキストが低いとき、右列を縦中央に */
-    /* 右上のバッジとタイトルが重ならないよう確保（.badge--corner はカード基準の絶対配置） */
-    padding: 0.72rem 3.85rem 0.76rem 0.68rem;
+    /* バッジはサムネ左上のため右パディングを詰め、テキストはカード右端まで */
+    padding: 0.72rem 0.72rem 0.76rem 0.68rem;
     gap: 0.28rem;
   }
   #articles-page .card--article h3 {
@@ -3279,10 +3279,11 @@ html { scroll-behavior: smooth; }
     padding: 0.12rem 0.48rem;
     letter-spacing: 0.05em;
   }
+  /* テキスト列を広げるため、プラットフォームバッジはサムネ側（カード左上）に重ねる */
   #articles-page .card--article .badge--corner {
     top: 0.48rem;
-    right: 0.52rem;
-    left: auto;
+    left: 0.52rem;
+    right: auto;
     font-size: 0.62rem;
     padding: 0.12rem 0.48rem;
     letter-spacing: 0.05em;
@@ -3422,7 +3423,7 @@ html { scroll-behavior: smooth; }
     font-size: 0.78rem;
   }
   #articles-page .card--article .card__content {
-    padding: 0.64rem 3.65rem 0.7rem 0.52rem;
+    padding: 0.64rem 0.6rem 0.7rem 0.52rem;
     gap: 0.24rem;
   }
   #works-page .card--work .card__content {
