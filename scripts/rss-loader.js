@@ -1059,7 +1059,7 @@
     // 新しい記事を追加（既存の記事の前に挿入）
     const firstExisting = mode === 'insertBeforeExisting' ? (existingArticles[0] || null) : null;
     const notesToHydrate = new Map(); // noteKey -> { title, thumbEls: [] }
-    const ogpToHydrate = []; // { link, title, thumbEl }（画像がない Qiita / Zenn など）
+    const ogpToHydrate = []; // { link, title, thumbEl }（note 以外で OGP 補完が必要なソース向け・現状ほぼ未使用）
 
     articles.forEach(article => {
       const card = createArticleCard(article);
@@ -1083,7 +1083,8 @@
           if (!existing.link && article.link) existing.link = article.link;
           existing.thumbEls.push(thumbEl);
           notesToHydrate.set(noteKey, existing);
-        } else {
+        } else if (article.source !== 'qiita' && article.source !== 'zenn') {
+          // Qiita/Zenn は OGP でトップ画像を取りに行かない（プロキシ負荷・失敗を減らす。Qiita 本文先頭画像は API 応答に含まれる場合のみ表示）
           ogpToHydrate.push({ link: article.link, title: article.title, thumbEl });
         }
       }
@@ -1127,7 +1128,7 @@
       void promiseAllSettled(Array.from({ length: Math.min(concurrency, entries.length) }, worker));
     }
 
-    // 画像がない Qiita / Zenn は OGP（og:image）を取得して表示
+    // 画像がないその他ソースは OGP（og:image）を取得して表示（Qiita/Zenn は上で除外）
     if (ogpToHydrate.length > 0) {
       const concurrency = 3;
       let idx = 0;
