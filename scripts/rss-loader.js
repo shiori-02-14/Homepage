@@ -353,7 +353,21 @@
       }
     })();
 
-    const eyecatch = await firstTruthy([tryDirect, tryJina, tryAllOriginsRaw]);
+    const tryCorsProxyIo = (async () => {
+      try {
+        const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(apiUrl)}`;
+        const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 4500 });
+        if (!res.ok) return '';
+        const json = await res.json();
+        const eyecatch = json?.data?.eyecatch;
+        return typeof eyecatch === 'string' ? normalizeThumbnailUrl(eyecatch) : '';
+      } catch (error) {
+        debugWarn('corsproxy.io note api failed:', error);
+        return '';
+      }
+    })();
+
+    const eyecatch = await firstTruthy([tryDirect, tryCorsProxyIo, tryJina, tryAllOriginsRaw]);
     if (eyecatch) setCachedEyecatch(noteKey, eyecatch);
     return eyecatch;
   };
@@ -840,6 +854,20 @@
     }
   };
 
+  // Yahoo Media RSS（note の <media:thumbnail> など）
+  const MRSS_NS = 'http://search.yahoo.com/mrss/';
+
+  const extractMrssThumbnail = (itemEl) => {
+    if (!itemEl || !itemEl.getElementsByTagNameNS) return '';
+    const nodes = itemEl.getElementsByTagNameNS(MRSS_NS, 'thumbnail');
+    if (!nodes.length) return '';
+    const el = nodes[0];
+    const fromAttr = el.getAttribute && el.getAttribute('url');
+    const fromText = (el.textContent || '').trim();
+    const raw = (fromAttr || fromText || '').trim();
+    return raw;
+  };
+
   // RSS XMLをパース
   const parseRSS = (xmlText) => {
     const parser = new DOMParser();
@@ -852,9 +880,16 @@
       const pubDate = item.querySelector('pubDate')?.textContent || '';
       const description = item.querySelector('description')?.textContent || '';
       
-      // 画像URLを抽出（descriptionから）
-      const imgMatch = description.match(/<img[^>]+src="([^"]+)"/i);
-      const imageUrl = imgMatch ? imgMatch[1] : '';
+      // note 等: アイキャッチは media:thumbnail に入る（description には img が無いことが多い）
+      let imageUrl = extractMrssThumbnail(item);
+      if (!imageUrl) {
+        const imgMatch = description.match(/<img[^>]+src=["']([^"']+)["']/i)
+          || description.match(/<img[^>]+src="([^"]+)"/i);
+        imageUrl = imgMatch ? imgMatch[1].replace(/&amp;/g, '&').trim() : '';
+      }
+      if (imageUrl && imageUrl.includes('assets.st-note.com') && !imageUrl.includes('width=')) {
+        imageUrl += (imageUrl.includes('?') ? '&' : '?') + 'width=640';
+      }
       
       // 日付をフォーマット
       const parsedDate = pubDate ? new Date(pubDate) : null;
@@ -1044,7 +1079,8 @@
         if (!thumbEl) return;
         const noteKey = extractNoteKey(article.link);
         if (noteKey) {
-          const existing = notesToHydrate.get(noteKey) || { title: article.title, thumbEls: [] };
+          const existing = notesToHydrate.get(noteKey) || { title: article.title, link: article.link || '', thumbEls: [] };
+          if (!existing.link && article.link) existing.link = article.link;
           existing.thumbEls.push(thumbEl);
           notesToHydrate.set(noteKey, existing);
         } else {
@@ -1063,6 +1099,7 @@
       const entries = Array.from(notesToHydrate.entries()).map(([noteKey, value]) => ({
         noteKey,
         title: value.title,
+        link: value.link || '',
         thumbEls: value.thumbEls
       }));
       const concurrency = 4;
@@ -1074,9 +1111,12 @@
           index += 1;
 
           try {
-            const eyecatch = await fetchNoteEyecatch(current.noteKey);
-            if (eyecatch) {
-              current.thumbEls.forEach((thumbEl) => setThumbImage(thumbEl, eyecatch, current.title));
+            let imageUrl = await fetchNoteEyecatch(current.noteKey);
+            if (!imageUrl && current.link) {
+              imageUrl = await fetchOgpImage(current.link);
+            }
+            if (imageUrl) {
+              current.thumbEls.forEach((thumbEl) => setThumbImage(thumbEl, imageUrl, current.title));
             }
           } catch (error) {
             debugWarn('thumbnail hydrate failed:', error);
@@ -1200,10 +1240,12 @@
         debugWarn('local fetch failed:', error);
       });
 
-    const noteTask = firstNonEmptyArray([
-      fetchFeedItems(NOTE_FEED_URL, 'note'),
-      fetchNoteViaRssRaw()
-    ])
+    // rss2json は note の media:thumbnail を渡さないためサムネが空になりやすい → 生RSS（MRSS）を優先
+    const noteTask = (async () => {
+      const raw = await fetchNoteViaRssRaw().catch(() => []);
+      if (Array.isArray(raw) && raw.length > 0) return raw;
+      return fetchFeedItems(NOTE_FEED_URL, 'note').catch(() => []);
+    })()
       .then((items) => {
         // 最初に取得できた結果を即描画して、待ち時間を最小化
         sourceArticles.note = Array.isArray(items) ? items : [];
