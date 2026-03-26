@@ -3196,13 +3196,18 @@ html { scroll-behavior: smooth; }
     max-height: 120px;
     overflow: hidden;
   }
+  /* note サムネと同じ 16:9（幅 48% に連動した高さ。固定 px は使わない） */
   #articles-page .card--article {
-    height: 124px;
-    min-height: 124px;
-    max-height: 124px;
+    height: auto;
+    min-height: 0;
+    max-height: none;
     overflow: hidden;
   }
-  #articles-page .card--article .card__link,
+  #articles-page .card--article .card__link {
+    align-items: stretch;
+    height: auto;
+    min-height: 0;
+  }
   #works-page .card--work .card__link {
     align-items: stretch;
     height: 100%;
@@ -3217,14 +3222,15 @@ html { scroll-behavior: smooth; }
     padding-top: 0;
   }
   #articles-page .card--article .card__thumb {
-    height: 124px;
-    min-height: 124px;
-    max-height: 124px;
-    aspect-ratio: unset;
     flex: 0 0 48%;
     width: 48%;
     min-width: 0;
     padding-top: 0;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    aspect-ratio: 16 / 9;
+    align-self: flex-start;
   }
   #articles-page .card--article .card__thumb img {
     object-fit: contain;
@@ -3250,7 +3256,16 @@ html { scroll-behavior: smooth; }
     padding: 0.38rem 0.55rem 0.42rem 0.65rem;
     gap: 0.12rem;
   }
-  #articles-page .card--article h3,
+  #articles-page .card--article h3 {
+    font-size: 0.98rem;
+    line-height: 1.3;
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+  }
   #works-page .card--work h3 {
     font-size: 0.98rem;
     line-height: 1.3;

@@ -965,7 +965,7 @@
     badge.textContent = badgeConfig.label;
     link.appendChild(badge);
     
-    // サムネイル（Zenn は記事URLの og:image を hydrate。Qiita は画像なしのときプレースホルダ）
+    // サムネイル（Qiita / Zenn は記事URLの og:image を hydrate。Qiita は公式のデフォルトOGカード）
     const thumb = document.createElement('div');
     thumb.className = 'card__thumb';
     const thumbSrc = (article.imageUrl || '').trim();
@@ -1085,7 +1085,7 @@
     // 新しい記事を追加（既存の記事の前に挿入）
     const firstExisting = mode === 'insertBeforeExisting' ? (existingArticles[0] || null) : null;
     const notesToHydrate = new Map(); // noteKey -> { title, thumbEls: [] }
-    const ogpToHydrate = []; // { link, title, thumbEl }（Zenn の og:image 等・Qiita は除く）
+    const ogpToHydrate = []; // { link, title, thumbEl }（Qiita / Zenn の og:image）
 
     articles.forEach(article => {
       const card = createArticleCard(article);
@@ -1109,8 +1109,8 @@
           if (!existing.link && article.link) existing.link = article.link;
           existing.thumbEls.push(thumbEl);
           notesToHydrate.set(noteKey, existing);
-        } else if (article.source !== 'qiita') {
-          // Qiita はロゴのみ。Zenn は記事URLの og:image（自動プレビュー画像）を取得
+        } else {
+          // Qiita / Zenn：記事URLの og:image（Qiita はタイトル入りのデフォルトプレビュー画像）
           ogpToHydrate.push({ link: article.link, title: article.title, thumbEl });
         }
       }
@@ -1154,7 +1154,7 @@
       void promiseAllSettled(Array.from({ length: Math.min(concurrency, entries.length) }, worker));
     }
 
-    // 画像がないソースは OGP（og:image）を取得（Zenn の自動プレビュー含む）
+    // 画像がないソースは OGP（og:image）を取得（Qiita / Zenn の自動プレビュー含む）
     if (ogpToHydrate.length > 0) {
       const concurrency = 3;
       let idx = 0;
