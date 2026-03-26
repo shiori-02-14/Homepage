@@ -2177,9 +2177,15 @@ a.friend-card::after {
   font-size: clamp(1.05rem, 1.4vw, 1.2rem);
   line-height: 1.35;
   min-width: 0;
-  white-space: nowrap; /* 勝手に改行させない */
+  white-space: normal;
   overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   text-overflow: ellipsis;
+  word-break: normal;
+  line-break: strict;
 }
 #top [data-rss="home-articles"] .card--article h3 {
   font-size: clamp(1.05rem, 1.4vw, 1.2rem);
@@ -3261,16 +3267,6 @@ html { scroll-behavior: smooth; }
   #articles-page .card--article h3 {
     font-size: 0.94rem;
     line-height: 1.34;
-    white-space: normal;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    overflow: hidden;
-    /* break-word は和文で単語途中の不自然な分割を招きやすい */
-    word-break: normal;
-    line-break: strict;
-    text-wrap: pretty;
   }
   #works-page .card--work h3 {
     font-size: 0.98rem;

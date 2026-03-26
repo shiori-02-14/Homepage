@@ -944,6 +944,7 @@
     const link = document.createElement('a');
     link.className = 'card__link';
     link.href = article.link;
+    link.title = article.title;
     const isExternal = article.external !== false && article.source !== 'local';
     if (isExternal) {
       link.target = '_blank';
