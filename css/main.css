@@ -3196,7 +3196,7 @@ html { scroll-behavior: smooth; }
     max-height: 120px;
     overflow: hidden;
   }
-  /* note サムネと同じ 16:9（幅 48% に連動した高さ。固定 px は使わない） */
+  /* note サムネと同じ 16:9（幅 40% に連動した高さ。固定 px は使わない） */
   #articles-page .card--article {
     height: auto;
     min-height: 0;
@@ -3222,8 +3222,8 @@ html { scroll-behavior: smooth; }
     padding-top: 0;
   }
   #articles-page .card--article .card__thumb {
-    flex: 0 0 48%;
-    width: 48%;
+    flex: 0 0 40%;
+    width: 40%;
     min-width: 0;
     padding-top: 0;
     height: auto;
