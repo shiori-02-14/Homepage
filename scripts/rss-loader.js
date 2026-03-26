@@ -31,10 +31,12 @@
   // const RSS_PROXY = '';
 
   // 記事を表示するコンテナ（Articlesページ / トップページ）
-  const articlesPageContainer = document.querySelector('#articles-page .cards');
-  const homeArticlesContainer = document.querySelector('#top [data-rss="home-articles"]');
+  // ホームは #top 配下に限定しない（body の id 変更・テンプレ差で取りこぼさない）
+  const articlesPageContainer = document.querySelector('#articles-page .cards, #articles-list.cards');
+  const homeArticlesContainer = document.querySelector('[data-rss="home-articles"]');
   if (!articlesPageContainer && !homeArticlesContainer) return;
   const isFileProtocol = window.location.protocol === 'file:';
+  const canUseFetch = typeof window.fetch === 'function';
 
   // サムネ取得は遅くなりがちなので、localStorageでキャッシュ（再訪問で爆速に）
   const thumbCacheStorageKey = '__SHIORI_NOTE_EYECATCH_CACHE_V1__';
@@ -281,6 +283,7 @@
   const fetchLocalArticles = async () => {
     const seeded = readSeededLocalArticles();
     if (seeded.length > 0) return seeded;
+    if (!canUseFetch) return [];
     if (isFileProtocol) return [];
 
     const response = await fetchWithTimeout('data/local-articles.json', { timeoutMs: 4000 });
@@ -1200,96 +1203,115 @@
 
   // 初期化
   const init = async () => {
-    const cachedArticles = readArticleListCache();
-    if (cachedArticles.length > 0) {
-      renderArticlesToContainers(cachedArticles);
-    }
-
-    const sourceArticles = {
-      local: readSeededLocalArticles(),
-      note: [],
-      qiita: [],
-      zenn: []
-    };
-
-    const renderAndCache = () => {
-      const rendered = renderArticlesToContainers([
-        ...sourceArticles.local,
-        ...sourceArticles.note,
-        ...sourceArticles.qiita,
-        ...sourceArticles.zenn
-      ]);
-      if (rendered.length > 0) {
-        saveArticleListCache(rendered);
+    try {
+      const cachedArticles = readArticleListCache();
+      if (cachedArticles.length > 0) {
+        renderArticlesToContainers(cachedArticles);
       }
-      return rendered;
-    };
 
-    if (sourceArticles.local.length > 0) {
-      renderAndCache();
-    }
+      const sourceArticles = {
+        local: readSeededLocalArticles(),
+        note: [],
+        qiita: [],
+        zenn: []
+      };
 
-    const localTask = fetchLocalArticles()
-      .then((items) => {
-        sourceArticles.local = Array.isArray(items) ? items : [];
-        renderAndCache();
-      })
-      .catch((error) => {
-        if (sourceArticles.local.length === 0) {
-          sourceArticles.local = [];
+      const renderAndCache = () => {
+        const rendered = renderArticlesToContainers([
+          ...sourceArticles.local,
+          ...sourceArticles.note,
+          ...sourceArticles.qiita,
+          ...sourceArticles.zenn
+        ]);
+        if (rendered.length > 0) {
+          saveArticleListCache(rendered);
         }
-        debugWarn('local fetch failed:', error);
-      });
+        return rendered;
+      };
 
-    // rss2json は note の media:thumbnail を渡さないためサムネが空になりやすい → 生RSS（MRSS）を優先
-    const noteTask = (async () => {
-      const raw = await fetchNoteViaRssRaw().catch(() => []);
-      if (Array.isArray(raw) && raw.length > 0) return raw;
-      return fetchFeedItems(NOTE_FEED_URL, 'note').catch(() => []);
-    })()
-      .then((items) => {
-        // 最初に取得できた結果を即描画して、待ち時間を最小化
-        sourceArticles.note = Array.isArray(items) ? items : [];
+      if (sourceArticles.local.length > 0) {
         renderAndCache();
-      })
-      .catch((error) => {
-        sourceArticles.note = [];
-        debugWarn('note fetch failed:', error);
-      });
+      }
 
-    const qiitaTask = firstNonEmptyArray([
-      fetchQiitaItemsViaAPI(),
-      fetchQiitaViaAtomRaw(),
-      fetchFeedItems(QIITA_FEED_URL, 'qiita')
-    ])
-      .then((items) => {
-        sourceArticles.qiita = Array.isArray(items) ? items : [];
-        renderAndCache();
-      })
-      .catch((error) => {
-        sourceArticles.qiita = [];
-        debugWarn('qiita fetch failed:', error);
-      });
+      const localTask = fetchLocalArticles()
+        .then((items) => {
+          sourceArticles.local = Array.isArray(items) ? items : [];
+          renderAndCache();
+        })
+        .catch((error) => {
+          if (sourceArticles.local.length === 0) {
+            sourceArticles.local = [];
+          }
+          debugWarn('local fetch failed:', error);
+        });
 
-    const zennTask = firstNonEmptyArray([
-      fetchZennItemsViaAPI(),
-      fetchZennViaFeedRaw(),
-      fetchFeedItems(ZENN_FEED_URL, 'zenn')
-    ])
-      .then((items) => {
-        sourceArticles.zenn = Array.isArray(items) ? items : [];
-        renderAndCache();
-      })
-      .catch((error) => {
-        sourceArticles.zenn = [];
-        debugWarn('zenn fetch failed:', error);
-      });
+      // rss2json は note の media:thumbnail を渡さないためサムネが空になりやすい → 生RSS（MRSS）を優先
+      const noteTask = (async () => {
+        const raw = await fetchNoteViaRssRaw().catch(() => []);
+        if (Array.isArray(raw) && raw.length > 0) return raw;
+        return fetchFeedItems(NOTE_FEED_URL, 'note').catch(() => []);
+      })()
+        .then((items) => {
+          // 最初に取得できた結果を即描画して、待ち時間を最小化
+          sourceArticles.note = Array.isArray(items) ? items : [];
+          renderAndCache();
+        })
+        .catch((error) => {
+          sourceArticles.note = [];
+          debugWarn('note fetch failed:', error);
+        });
 
-    await promiseAllSettled([localTask, noteTask, qiitaTask, zennTask]);
+      const qiitaTask = firstNonEmptyArray([
+        fetchQiitaItemsViaAPI(),
+        fetchQiitaViaAtomRaw(),
+        fetchFeedItems(QIITA_FEED_URL, 'qiita')
+      ])
+        .then((items) => {
+          sourceArticles.qiita = Array.isArray(items) ? items : [];
+          renderAndCache();
+        })
+        .catch((error) => {
+          sourceArticles.qiita = [];
+          debugWarn('qiita fetch failed:', error);
+        });
 
-    const finalArticles = renderAndCache();
-    if (finalArticles.length === 0 && cachedArticles.length === 0) {
-      console.warn('記事を取得できませんでした');
+      const zennTask = firstNonEmptyArray([
+        fetchZennItemsViaAPI(),
+        fetchZennViaFeedRaw(),
+        fetchFeedItems(ZENN_FEED_URL, 'zenn')
+      ])
+        .then((items) => {
+          sourceArticles.zenn = Array.isArray(items) ? items : [];
+          renderAndCache();
+        })
+        .catch((error) => {
+          sourceArticles.zenn = [];
+          debugWarn('zenn fetch failed:', error);
+        });
+
+      await promiseAllSettled([localTask, noteTask, qiitaTask, zennTask]);
+
+      const finalArticles = renderAndCache();
+      if (finalArticles.length === 0 && cachedArticles.length === 0) {
+        console.warn('記事を取得できませんでした');
+      }
+
+      if (articlesPageContainer) {
+        const activeTab = document.querySelector('.articles-filter__tab[aria-selected="true"]');
+        const activeFilter = activeTab?.getAttribute('data-filter') || 'all';
+        updateEmptyState(articlesPageContainer, activeFilter);
+      }
+    } catch (err) {
+      console.warn('[rss-loader] init failed:', err);
+      try {
+        const merged = mergeAndSortArticles([
+          ...readSeededLocalArticles(),
+          ...readArticleListCache()
+        ]);
+        if (merged.length > 0) {
+          renderArticlesToContainers(merged);
+        }
+      } catch (_) {}
     }
   };
 
@@ -1372,10 +1394,13 @@
       });
     });
 
-    // 初期状態でも空の状態をチェック
-    setTimeout(() => {
-      updateEmptyState(articlesList, 'all');
-    }, 100);
+    // load 後に再計算（defer スクリプトと遅延 fetch の完了タイミングがブラウザで差が出るため）
+    const runInitialEmptyCheck = () => updateEmptyState(articlesList, 'all');
+    if (document.readyState === 'complete') {
+      window.requestAnimationFrame(runInitialEmptyCheck);
+    } else {
+      window.addEventListener('load', () => window.requestAnimationFrame(runInitialEmptyCheck), { once: true });
+    }
   };
 
   // ページ読み込み時に実行

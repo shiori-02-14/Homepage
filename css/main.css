@@ -3163,12 +3163,17 @@ html { scroll-behavior: smooth; }
     font-size: 0.9rem;
   }
 
-  /* スマホ：Articles/Works のカードサイズを統一 */
-  #articles-page .card--article,
+  /* スマホ：Works はコンパクト、Articles はサムネをやや大きく（左画像が見やすい幅） */
   #works-page .card--work {
     height: 120px;
     min-height: 120px;
     max-height: 120px;
+    overflow: hidden;
+  }
+  #articles-page .card--article {
+    height: 140px;
+    min-height: 140px;
+    max-height: 140px;
     overflow: hidden;
   }
   #articles-page .card--article .card__link,
@@ -3176,7 +3181,6 @@ html { scroll-behavior: smooth; }
     align-items: stretch;
     height: 100%;
   }
-  #articles-page .card--article .card__thumb,
   #works-page .card--work .card__thumb {
     height: 120px;
     min-height: 120px;
@@ -3184,6 +3188,16 @@ html { scroll-behavior: smooth; }
     aspect-ratio: unset;
     flex: 0 0 40%;
     width: 40%;
+    padding-top: 0;
+  }
+  #articles-page .card--article .card__thumb {
+    height: 140px;
+    min-height: 140px;
+    max-height: 140px;
+    aspect-ratio: unset;
+    flex: 0 0 48%;
+    width: 48%;
+    min-width: 0;
     padding-top: 0;
   }
   #articles-page .card--article .card__thumb img,
