@@ -2224,14 +2224,16 @@ a.friend-card::after {
 }
 #articles-page .card--article .card__link {
   flex-direction: row;
+  align-items: stretch;
   gap: 0;
 }
 #articles-page .card--article .card__thumb {
-  /* Worksカードと同じ寸法 */
+  /* Worksカードと同じ幅。高さは右列に合わせて伸ばし、上下の余白を出さない */
   flex: 0 0 clamp(140px, 40vw, 260px);
   width: clamp(140px, 40vw, 260px);
   padding-top: 0;
-  aspect-ratio: 16 / 9;
+  align-self: stretch;
+  min-height: 0;
   border-radius: 20px 0 0 20px;
   position: relative;
   overflow: hidden;
@@ -3220,7 +3222,7 @@ html { scroll-behavior: smooth; }
     align-items: stretch;
     height: auto;
     min-height: 0;
-    padding-block: 0.4rem;
+    padding-block: 0;
   }
   #works-page .card--work .card__link {
     align-items: stretch;
@@ -3235,7 +3237,7 @@ html { scroll-behavior: smooth; }
     width: 40%;
     padding-top: 0;
   }
-  /* タイトル列を広げる（サムネを抑えて折り返し位置を改善） */
+  /* タイトル列を広げる（サムネを抑えて折り返し位置を改善）。サムネは行の高さいっぱいに伸ばす */
   #articles-page .card--article .card__thumb {
     flex: 0 0 36%;
     width: 36%;
@@ -3244,8 +3246,7 @@ html { scroll-behavior: smooth; }
     height: auto;
     min-height: 0;
     max-height: none;
-    aspect-ratio: 16 / 9;
-    align-self: flex-start;
+    align-self: stretch;
   }
   #works-page .card--work .card__thumb img:not(.thumb-logo),
   #works-page .card--work .card__thumb svg {
