@@ -1,5 +1,17 @@
 [
   {
+    "title": "みんなホームページを作ろう",
+    "slug": "homepage",
+    "link": "articles/homepage.html",
+    "date": "2026/03/26",
+    "dateMs": 1774450800000,
+    "imageUrl": "assets/homepage-cover-nhk.png",
+    "source": "local",
+    "description": "",
+    "excerpt": "みんなのホームページを見てみたいから書いた記事。個性やモチベの話が本筋。就活の話も一応あるけど、自分は普段から働きたくない派。",
+    "external": false
+  },
+  {
     "title": "電通大生が一人暮らしで住むならどこ？",
     "slug": "tier",
     "link": "articles/tier.html",
