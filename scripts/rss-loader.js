@@ -599,12 +599,14 @@
       const { dateMs, dateText } = parseItemDate({ updated: rawDate, published: rawDate });
 
       let imageUrl = '';
-      const content = entry.querySelector('content')?.textContent || entry.querySelector('summary')?.textContent || '';
-      if (content) {
-        const imgMatch = content.match(/<img[^>]+src=["']([^"']+)["']/i) || content.match(/src=["']([^"']+)["']/i);
-        if (imgMatch && imgMatch[1]) {
-          imageUrl = imgMatch[1].replace(/&amp;/g, '&');
-          if (imageUrl.startsWith('//')) imageUrl = 'https:' + imageUrl;
+      if (source !== 'qiita') {
+        const content = entry.querySelector('content')?.textContent || entry.querySelector('summary')?.textContent || '';
+        if (content) {
+          const imgMatch = content.match(/<img[^>]+src=["']([^"']+)["']/i) || content.match(/src=["']([^"']+)["']/i);
+          if (imgMatch && imgMatch[1]) {
+            imageUrl = imgMatch[1].replace(/&amp;/g, '&');
+            if (imageUrl.startsWith('//')) imageUrl = 'https:' + imageUrl;
+          }
         }
       }
 
@@ -619,46 +621,16 @@
     return mapParsedRssItems(parseRSS(xmlText), source);
   };
 
-  const extractFirstImageUrl = (html, md) => {
-    let imageUrl = '';
-    if (html) {
-      const imgPatterns = [
-        /<img[^>]+src=["']([^"']+)["']/i,
-        /<img[^>]+src=([^\s>]+)/i,
-        /src=["'](https?:\/\/[^"']+)["']/i
-      ];
-      for (const re of imgPatterns) {
-        const m = html.match(re);
-        if (m && m[1]) {
-          let u = m[1].replace(/&amp;/g, '&').trim().replace(/^["']|["']$/g, '');
-          if (u.startsWith('//')) u = 'https:' + u;
-          if (u.startsWith('http') && !u.startsWith('data:')) {
-            imageUrl = u;
-            break;
-          }
-        }
-      }
-    }
-    if (!imageUrl && md) {
-      const mdImgMatch = md.match(/!\[.*?\]\((https?:\/\/[^)\s]+)\)/);
-      if (mdImgMatch && mdImgMatch[1]) imageUrl = mdImgMatch[1];
-    }
-    return imageUrl;
-  };
-
   const normalizeQiitaApiItems = (items) => {
     if (!Array.isArray(items)) return [];
     return items.map((item) => {
       const { dateMs, dateText } = parseItemDate({ created: item.created_at });
-      const html = item.rendered_body || '';
-      const md = item.body || '';
-      const imageUrl = extractFirstImageUrl(html, md);
       return {
         title: item.title || '',
         link: item.url || '',
         date: dateText,
         dateMs,
-        imageUrl,
+        imageUrl: '',
         source: 'qiita'
       };
     });
@@ -756,6 +728,10 @@
       }
       
       const { dateMs, dateText } = parseItemDate(item);
+
+      if (source === 'qiita') {
+        imageUrl = '';
+      }
 
       return {
         title: item.title || '',
@@ -1087,7 +1063,7 @@
           existing.thumbEls.push(thumbEl);
           notesToHydrate.set(noteKey, existing);
         } else if (article.source !== 'qiita' && article.source !== 'zenn') {
-          // Qiita/Zenn は OGP でトップ画像を取りに行かない（プロキシ負荷・失敗を減らす。Qiita 本文先頭画像は API 応答に含まれる場合のみ表示）
+          // Qiita/Zenn はサムネを別取得しない（OGP も使わない）
           ogpToHydrate.push({ link: article.link, title: article.title, thumbEl });
         }
       }

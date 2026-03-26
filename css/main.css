@@ -2225,13 +2225,17 @@ a.friend-card::after {
   border-radius: 20px 0 0 20px;
   position: relative;
   overflow: hidden;
+  /* contain 時の余白を目立たなくする */
+  background: var(--glass-bg-strong);
 }
 #articles-page .card--article .card__thumb img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  /* cover だと縦横比で端が欠けやすい → 枠内に全体が収まるようにする */
+  object-fit: contain;
+  object-position: center;
   display: block;
 }
 #articles-page .card--article .card__content {
@@ -2665,6 +2669,11 @@ a.friend-card::after {
 .card--article:hover .card__thumb img,
 .card--article:focus-within .card__thumb img {
   transform: scale(1.03);
+}
+/* Articles（横並びサムネ）はホバー拡大で欠けが目立つので無効化 */
+#articles-page .card--article:hover .card__thumb img,
+#articles-page .card--article:focus-within .card__thumb img {
+  transform: none;
 }
 .card--work {
   padding: 0;
@@ -3200,7 +3209,10 @@ html { scroll-behavior: smooth; }
     min-width: 0;
     padding-top: 0;
   }
-  #articles-page .card--article .card__thumb img,
+  #articles-page .card--article .card__thumb img {
+    object-fit: contain;
+    object-position: center;
+  }
   #works-page .card--work .card__thumb img:not(.thumb-logo),
   #works-page .card--work .card__thumb svg {
     width: 100%;
