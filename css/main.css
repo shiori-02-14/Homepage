@@ -2225,7 +2225,7 @@ a.friend-card::after {
   border-radius: 20px 0 0 20px;
   position: relative;
   overflow: hidden;
-  /* contain 時の余白を目立たなくする */
+  /* 読み込み前・透過時の下地 */
   background: var(--glass-bg-strong);
 }
 #articles-page .card--article .card__thumb img {
@@ -2233,8 +2233,8 @@ a.friend-card::after {
   inset: 0;
   width: 100%;
   height: 100%;
-  /* cover だと縦横比で端が欠けやすい → 枠内に全体が収まるようにする */
-  object-fit: contain;
+  /* 枠いっぱいに表示（アスペクト比の差は中央トリミング） */
+  object-fit: cover;
   object-position: center;
   display: block;
 }
@@ -3232,10 +3232,6 @@ html { scroll-behavior: smooth; }
     max-height: none;
     aspect-ratio: 16 / 9;
     align-self: flex-start;
-  }
-  #articles-page .card--article .card__thumb img {
-    object-fit: contain;
-    object-position: center;
   }
   #works-page .card--work .card__thumb img:not(.thumb-logo),
   #works-page .card--work .card__thumb svg {
