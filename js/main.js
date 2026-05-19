@@ -26,7 +26,7 @@ const scriptBaseUrl = (() => {
   if (current && current.src) {
     return new URL('.', current.src);
   }
-  return new URL('./scripts/', window.location.href);
+  return new URL('./js/', window.location.href);
 })();
 
 let fortuneDataPromise = null;

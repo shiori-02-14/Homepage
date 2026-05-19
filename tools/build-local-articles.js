@@ -5,6 +5,8 @@ const fs = require('fs');
 const path = require('path');
 
 const rootDir = path.resolve(__dirname, '..');
+// 外部記事のサムネは `node js/build-article-images.js` で別途生成
+
 const contentDir = path.join(rootDir, 'content', 'articles');
 const dataDir = path.join(rootDir, 'data');
 const articlesOutDir = path.join(rootDir, 'articles');
@@ -434,7 +436,7 @@ ${pageDescription ? `  <meta property="og:description" content="${escapeAttr(pag
   <meta name="twitter:image:alt" content="${escapeAttr(article.imageAlt || `${article.title} の画像`)}" />
 ${pageDescription ? `  <meta name="twitter:description" content="${escapeAttr(pageDescription)}" />` : ''}
 
-  <link rel="stylesheet" href="../css/main.css?v=20260326-articles-badge-top-right" />
+  <link rel="stylesheet" href="../css/main.css?v=20260520-article-thumb-works" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -504,7 +506,7 @@ ${article.bodyHtml.split('\n').map((line) => `        ${line}`).join('\n')}
     <footer class="foot">© <span id="y"></span> ${SITE_TITLE}</footer>
   </main>
 
-  <script src="../scripts/main.js" defer></script>
+  <script src="../js/main.js" defer></script>
   <script type="application/ld+json">
 ${jsonLd}
   </script>

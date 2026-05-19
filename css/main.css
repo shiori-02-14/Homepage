@@ -1563,7 +1563,7 @@ h2 .icon svg {
   position: absolute;
   inset: 0;
   /* ヒーロー背景：モバイルは軽量版 / 大きい画面は高解像度 */
-  background: url("../assets/IMG_4573-small.jpg") 85% 20%/cover no-repeat;
+  background: url("../assets/profile/IMG_4573-small.jpg") 85% 20%/cover no-repeat;
   opacity: .28;
   filter: saturate(.9);
     /* transform: scaleX(-1); */
@@ -1574,13 +1574,13 @@ h2 .icon svg {
 
 @media (min-width: 821px) {
   .hero::before {
-    background-image: url("../assets/IMG_4573-medium.jpg");
+    background-image: url("../assets/profile/IMG_4573-medium.jpg");
   }
 }
 
 @media (min-width: 821px) and (min-resolution: 2dppx) {
   .hero::before {
-    background-image: url("../assets/IMG_4573.jpg");
+    background-image: url("../assets/profile/IMG_4573.jpg");
   }
 }
 :root[data-theme='dark'] .hero::before {
@@ -2219,7 +2219,7 @@ a.friend-card::after {
   font-size: 0.9rem;
 }
 
-/* Articlesページ: スマホでも「左サムネ + 右テキスト」に寄せる（スクショの見た目） */
+/* Articlesページ: 左サムネ + 右テキスト（Works と同じサムネ幅・16:9） */
 #articles-page .card--article {
   padding: 0;
   overflow: hidden;
@@ -2232,24 +2232,35 @@ a.friend-card::after {
   gap: 0;
 }
 #articles-page .card--article .card__thumb {
-  /* Worksカードと同じ幅。高さは右列に合わせて伸ばし、上下の余白を出さない */
+  display: grid;
+  grid-template: 1fr / 1fr;
   flex: 0 0 clamp(140px, 40vw, 260px);
   width: clamp(140px, 40vw, 260px);
   padding-top: 0;
+  aspect-ratio: 16 / 9;
+  height: auto;
   align-self: stretch;
-  min-height: 0;
+  flex-shrink: 0;
+  border: none;
   border-radius: 20px 0 0 20px;
-  position: relative;
   overflow: hidden;
-  /* 読み込み前・透過時の下地 */
   background: var(--glass-bg-strong);
+  box-sizing: border-box;
+  position: relative;
+}
+#articles-page .card--article .card__thumb--placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
 }
 #articles-page .card--article .card__thumb img {
+  grid-area: 1 / 1;
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  /* 枠いっぱいに表示（アスペクト比の差は中央トリミング） */
+  min-width: 0;
+  min-height: 0;
   object-fit: cover;
   object-position: center;
   display: block;
@@ -2262,7 +2273,6 @@ a.friend-card::after {
   justify-content: center;
 }
 
-/* 画面が広い時も Worksカードと同じ幅 */
 @media (min-width: 760px) {
   #articles-page .card--article .card__thumb {
     flex: 0 0 320px;
@@ -2665,6 +2675,9 @@ a.friend-card::after {
   gap: 0;
 }
 .card--article .card__thumb {
+  aspect-ratio: 16 / 9;
+  padding-top: 0;
+  height: auto;
   border-radius: 24px 24px 0 0;
   border: none;
 }
@@ -3413,31 +3426,22 @@ html { scroll-behavior: smooth; }
     margin-bottom: 1.1rem;
   }
 
-  /* スマホ：Works はコンパクト、Articles はサムネをやや大きく（左画像が見やすい幅） */
-  #works-page .card--work {
+  /* スマホ：Works / Articles とも左サムネ 40%・カード高 120px */
+  #works-page .card--work,
+  #articles-page .card--article {
     height: 120px;
     min-height: 120px;
     max-height: 120px;
     overflow: hidden;
   }
-  /* note サムネと同じ 16:9（幅 42% に連動した高さ。固定 px は使わない） */
-  #articles-page .card--article {
-    height: auto;
-    min-height: 0;
-    max-height: none;
-    overflow: hidden;
-  }
+  #works-page .card--work .card__link,
   #articles-page .card--article .card__link {
     align-items: stretch;
-    height: auto;
-    min-height: 0;
+    height: 100%;
     padding-block: 0;
   }
-  #works-page .card--work .card__link {
-    align-items: stretch;
-    height: 100%;
-  }
-  #works-page .card--work .card__thumb {
+  #works-page .card--work .card__thumb,
+  #articles-page .card--article .card__thumb {
     height: 120px;
     min-height: 120px;
     max-height: 120px;
@@ -3445,17 +3449,8 @@ html { scroll-behavior: smooth; }
     flex: 0 0 40%;
     width: 40%;
     padding-top: 0;
-  }
-  /* タイトル列を広げる（サムネを抑えて折り返し位置を改善）。サムネは行の高さいっぱいに伸ばす */
-  #articles-page .card--article .card__thumb {
-    flex: 0 0 36%;
-    width: 36%;
-    min-width: 0;
-    padding-top: 0;
-    height: auto;
-    min-height: 0;
-    max-height: none;
     align-self: stretch;
+    flex-shrink: 0;
   }
   #works-page .card--work .card__thumb img:not(.thumb-logo),
   #works-page .card--work .card__thumb svg {

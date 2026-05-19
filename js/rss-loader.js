@@ -19,7 +19,7 @@
   const ZENN_API_URL = `https://zenn.dev/api/articles?username=${ZENN_USER_ID}&order=latest`;
   const PREVIEW_DEFAULT_AUTHOR = 'しおり🔖';
   const PREVIEW_FALLBACK_AVATAR = 'https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg';
-  const articleListCacheStorageKey = '__SHIORI_ARTICLES_CACHE_V2__';
+  const articleListCacheStorageKey = '__SHIORI_ARTICLES_CACHE_V3__';
   const articleListCacheTtlMs = 30 * 60 * 1000; // 30分
   
   // CORSプロキシ（必要に応じて変更可能）
@@ -304,26 +304,15 @@
       .filter((item) => item.title && item.link);
   };
 
-  const fetchNoteEyecatch = async (noteKey) => {
+  const fetchNoteEyecatch = async (noteKey, noteLink = '') => {
     if (!noteKey) return '';
+    const seeded = noteLink ? lookupSeededImageUrl(noteLink) : '';
+    if (seeded) return normalizeThumbnailUrl(seeded);
+
     const cached = getCachedEyecatch(noteKey);
     if (cached) return cached;
 
     const apiUrl = `https://note.com/api/v3/notes/${noteKey}`;
-
-    // 遅い原因：失敗→別経路…を順番待ちしていたので、最短で取れた経路を採用（並列）
-    const tryDirect = (async () => {
-      try {
-        const res = await fetchWithTimeout(apiUrl, { timeoutMs: 3500 });
-        if (!res.ok) return '';
-        const json = await res.json();
-        const eyecatch = json?.data?.eyecatch;
-        return typeof eyecatch === 'string' ? normalizeThumbnailUrl(eyecatch) : '';
-      } catch (error) {
-        debugWarn('note api direct fetch failed:', error);
-        return '';
-      }
-    })();
 
     const tryJina = (async () => {
       try {
@@ -347,21 +336,6 @@
       }
     })();
 
-    const tryAllOriginsRaw = (async () => {
-      try {
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
-        const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 4500 });
-        if (!res.ok) return '';
-        const text = await res.text();
-        const json = JSON.parse(text);
-        const eyecatch = json?.data?.eyecatch;
-        return typeof eyecatch === 'string' ? normalizeThumbnailUrl(eyecatch) : '';
-      } catch (error) {
-        debugWarn('allorigins raw failed:', error);
-        return '';
-      }
-    })();
-
     const tryCorsProxyIo = (async () => {
       try {
         const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(apiUrl)}`;
@@ -376,7 +350,7 @@
       }
     })();
 
-    const eyecatch = await firstTruthy([tryDirect, tryCorsProxyIo, tryJina, tryAllOriginsRaw]);
+    const eyecatch = await firstTruthy([tryCorsProxyIo, tryJina]);
     if (eyecatch) setCachedEyecatch(noteKey, eyecatch);
     return eyecatch;
   };
@@ -449,30 +423,24 @@
     return '';
   };
 
-  const OGP_PROXIES = [
-    (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
-    (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
-  ];
-
   const fetchOgpImage = async (articleUrl) => {
     if (!articleUrl || !articleUrl.startsWith('http')) return '';
+    const seeded = lookupSeededImageUrl(articleUrl);
+    if (seeded) return seeded;
+
     const cached = getCachedOgp(articleUrl);
     if (cached) return cached;
 
-    for (const toProxyUrl of OGP_PROXIES) {
-      try {
-        const proxyUrl = toProxyUrl(articleUrl);
-        const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 6000 });
-        if (!res.ok) continue;
-        const html = await res.text();
-        const imageUrl = extractOgpImageFromHtml(html);
-        if (imageUrl) {
-          setCachedOgp(articleUrl, imageUrl);
-          return imageUrl;
-        }
-      } catch (e) {
-        debugWarn('OGP fetch failed:', articleUrl, e);
+    try {
+      const html = await fetchHtmlForOgp(articleUrl, { timeoutMs: 7000 });
+      if (!html) return '';
+      const imageUrl = extractOgpImageFromHtml(html);
+      if (imageUrl) {
+        setCachedOgp(articleUrl, imageUrl);
+        return imageUrl;
       }
+    } catch (e) {
+      debugWarn('OGP fetch failed:', articleUrl, e);
     }
     return '';
   };
@@ -494,8 +462,8 @@
     };
 
     const tryViaProxy = async () => {
-      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
-      const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 5500 });
+      const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(apiUrl)}`;
+      const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 6000 });
       if (!res.ok) throw new Error(`Proxy error: ${res.status}`);
       return res.json();
     };
@@ -515,7 +483,7 @@
     }
   };
 
-  // Zenn API（直アクセス + 1 プロキシのみ・タイムアウト短めで体感を優先）
+  // Zenn API（CORS 非対応のためプロキシ経由。rss2json は別経路で併用）
   const fetchZennItemsViaAPI = async () => {
     const fetchAndNormalize = async (url, label, timeoutMs) => {
       try {
@@ -531,34 +499,94 @@
 
     return firstNonEmptyArray([
       fetchAndNormalize(ZENN_API_URL, 'direct', 3800),
-      fetchAndNormalize(`https://api.allorigins.win/raw?url=${encodeURIComponent(ZENN_API_URL)}`, 'allorigins', 3800)
+      fetchAndNormalize(`https://corsproxy.io/?${encodeURIComponent(ZENN_API_URL)}`, 'corsproxy', 6000)
     ]);
   };
 
-  // Qiita Atom をプロキシ経由で取得してパース（RSS2JSONはQiita形式で空になるため）
-  const CORS_PROXIES = [
-    (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
-    (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
-  ];
+  // プロキシ応答が HTML エラーページ（allorigins 520 等）のときは無効扱い
+  const isUsableProxyBody = (text) => {
+    if (!text || typeof text !== 'string') return false;
+    const trimmed = text.trim();
+    if (trimmed.length < 100) return false;
+    if (/^error code:/i.test(trimmed)) return false;
+    if (trimmed.startsWith('{') && trimmed.includes('"error"')) return false;
+    return true;
+  };
+
+  const fetchTextViaCorsProxy = async (targetUrl, { timeoutMs = 5000 } = {}) => {
+    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
+    try {
+      const res = await fetchWithTimeout(proxyUrl, { timeoutMs });
+      if (!res.ok) return '';
+      const text = await res.text();
+      return isUsableProxyBody(text) ? text : '';
+    } catch (error) {
+      debugWarn('corsproxy fetch failed:', targetUrl, error);
+      return '';
+    }
+  };
+
+  const fetchHtmlForOgp = async (pageUrl, { timeoutMs = 7000 } = {}) => {
+    const viaProxy = await fetchTextViaCorsProxy(pageUrl, { timeoutMs });
+    if (viaProxy) return viaProxy;
+    return '';
+  };
 
   // noteは rss2json 単独だと更新遅延・取得失敗時に止まりやすいため、直接RSS取得も併用
   const fetchNoteViaRssRaw = async () => {
-    return firstNonEmptyArray(CORS_PROXIES.map((toProxyUrl) => (async () => {
-      try {
-        const proxyUrl = toProxyUrl(NOTE_FEED_URL);
-        const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 3200 });
-        if (!res.ok) return [];
-        const xmlText = await res.text();
-        if (!xmlText || xmlText.length < 100) return [];
-        return mapParsedRssItems(parseRSS(xmlText), 'note');
-      } catch (e) {
-        debugWarn('note RSS proxy failed:', e);
-        return [];
-      }
-    })()));
+    try {
+      const xmlText = await fetchTextViaCorsProxy(NOTE_FEED_URL, { timeoutMs: 5500 });
+      if (!xmlText) return [];
+      return mapParsedRssItems(parseRSS(xmlText), 'note');
+    } catch (e) {
+      debugWarn('note RSS proxy failed:', e);
+      return [];
+    }
   };
 
   const normalizeArticleLink = (url) => String(url || '').trim().replace(/\/$/, '');
+
+  // ビルド時に生成した 記事URL → サムネURL（data/article-images.js）
+  const articleImagesByLink = new Map();
+  const registerArticleImages = (record) => {
+    if (!record || typeof record !== 'object') return;
+    Object.entries(record).forEach(([link, imageUrl]) => {
+      if (!link || !imageUrl) return;
+      articleImagesByLink.set(normalizeArticleLink(link), String(imageUrl).trim());
+    });
+  };
+  registerArticleImages(window.__ARTICLE_IMAGES__);
+
+  const lookupSeededImageUrl = (link) => {
+    const key = normalizeArticleLink(link);
+    return key ? (articleImagesByLink.get(key) || '') : '';
+  };
+
+  const loadArticleImagesManifest = async () => {
+    if (articleImagesByLink.size > 0) return;
+    if (!canUseFetch || isFileProtocol) return;
+    try {
+      const response = await fetchWithTimeout('data/article-images.json', { timeoutMs: 4000 });
+      if (!response.ok) return;
+      const payload = await response.json();
+      registerArticleImages(payload);
+    } catch (error) {
+      debugWarn('article-images manifest fetch failed:', error);
+    }
+  };
+
+  const applySeededImages = (articles) => {
+    return (Array.isArray(articles) ? articles : []).map((item) => {
+      const existing = String(item?.imageUrl || '').trim();
+      if (existing) return item;
+      const seeded = lookupSeededImageUrl(item?.link);
+      if (!seeded) return item;
+      const imageUrl = item?.source === 'note'
+        ? normalizeThumbnailUrl(seeded)
+        : seeded;
+      return { ...item, imageUrl };
+    });
+  };
 
   // rss2json が先に返るとサムネ無しで確定してしまうため、生RSSの imageUrl をリンク単位で上書きマージする
   const mergeNoteFeedWithRawThumbs = (rawItems, jsonItems) => {
@@ -591,35 +619,25 @@
   };
 
   const fetchQiitaViaAtomRaw = async () => {
-    return firstNonEmptyArray(CORS_PROXIES.map((toProxyUrl) => (async () => {
-      try {
-        const proxyUrl = toProxyUrl(QIITA_FEED_URL);
-        const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 4000 });
-        if (!res.ok) return [];
-        const xmlText = await res.text();
-        if (!xmlText || xmlText.length < 100) return [];
-        return parseAtomFeed(xmlText, 'qiita');
-      } catch (e) {
-        debugWarn('Qiita Atom proxy failed:', e);
-        return [];
-      }
-    })()));
+    try {
+      const xmlText = await fetchTextViaCorsProxy(QIITA_FEED_URL, { timeoutMs: 5500 });
+      if (!xmlText) return [];
+      return parseAtomFeed(xmlText, 'qiita');
+    } catch (e) {
+      debugWarn('Qiita Atom proxy failed:', e);
+      return [];
+    }
   };
 
   const fetchZennViaFeedRaw = async () => {
-    return firstNonEmptyArray(CORS_PROXIES.map((toProxyUrl) => (async () => {
-      try {
-        const proxyUrl = toProxyUrl(ZENN_FEED_URL);
-        const res = await fetchWithTimeout(proxyUrl, { timeoutMs: 4000 });
-        if (!res.ok) return [];
-        const xmlText = await res.text();
-        if (!xmlText || xmlText.length < 100) return [];
-        return parseFeedItemsAuto(xmlText, 'zenn');
-      } catch (e) {
-        debugWarn('Zenn feed proxy failed:', e);
-        return [];
-      }
-    })()));
+    try {
+      const xmlText = await fetchTextViaCorsProxy(ZENN_FEED_URL, { timeoutMs: 5500 });
+      if (!xmlText) return [];
+      return parseFeedItemsAuto(xmlText, 'zenn');
+    } catch (e) {
+      debugWarn('Zenn feed proxy failed:', e);
+      return [];
+    }
   };
 
   const parseAtomFeed = (xmlText, source) => {
@@ -1062,7 +1080,7 @@
 
   const mergeAndSortArticles = (articles) => {
     const seenLinks = new Set();
-    return (Array.isArray(articles) ? articles : [])
+    const merged = (Array.isArray(articles) ? articles : [])
       .filter((item) => item && item.link && item.title)
       .filter((item) => {
         if (seenLinks.has(item.link)) return false;
@@ -1070,6 +1088,7 @@
         return true;
       })
       .sort((a, b) => (b.dateMs || 0) - (a.dateMs || 0));
+    return applySeededImages(merged);
   };
 
   // 記事を表示
@@ -1130,7 +1149,7 @@
         link: value.link || '',
         thumbEls: value.thumbEls
       }));
-      const concurrency = 4;
+      const concurrency = 6;
       let index = 0;
 
       const worker = async () => {
@@ -1139,10 +1158,11 @@
           index += 1;
 
           try {
-            let imageUrl = await fetchNoteEyecatch(current.noteKey);
-            if (!imageUrl && current.link) {
-              imageUrl = await fetchOgpImage(current.link);
-            }
+            let imageUrl = lookupSeededImageUrl(current.link);
+            if (imageUrl) imageUrl = normalizeThumbnailUrl(imageUrl);
+            if (!imageUrl) imageUrl = getCachedEyecatch(current.noteKey);
+            if (!imageUrl && current.link) imageUrl = await fetchOgpImage(current.link);
+            if (!imageUrl) imageUrl = await fetchNoteEyecatch(current.noteKey, current.link);
             if (imageUrl) {
               current.thumbEls.forEach((thumbEl) => setThumbImage(thumbEl, imageUrl, current.title));
             }
@@ -1157,14 +1177,15 @@
 
     // 画像がないソースは OGP（og:image）を取得（Qiita / Zenn の自動プレビュー含む）
     if (ogpToHydrate.length > 0) {
-      const concurrency = 3;
+      const concurrency = 4;
       let idx = 0;
       const ogpWorker = async () => {
         while (idx < ogpToHydrate.length) {
           const current = ogpToHydrate[idx];
           idx += 1;
           try {
-            const imageUrl = await fetchOgpImage(current.link);
+            let imageUrl = lookupSeededImageUrl(current.link);
+            if (!imageUrl) imageUrl = await fetchOgpImage(current.link);
             if (imageUrl) {
               setThumbImage(current.thumbEl, imageUrl, current.title);
             }
@@ -1228,6 +1249,8 @@
   // 初期化
   const init = async () => {
     try {
+      await loadArticleImagesManifest();
+
       const cachedArticles = readArticleListCache();
       if (cachedArticles.length > 0) {
         renderArticlesToContainers(cachedArticles);
@@ -1294,6 +1317,7 @@
         });
 
       const zennTask = firstNonEmptyArray([
+        fetchFeedItems(ZENN_FEED_URL, 'zenn', { timeoutMs: 4500 }),
         fetchZennItemsViaAPI(),
         fetchZennViaFeedRaw()
       ])

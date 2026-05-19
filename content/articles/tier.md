@@ -3,7 +3,7 @@ title: 電通大生が一人暮らしで住むならどこ？
 slug: tier
 date: 2026-03-07
 excerpt: 通学時間、家賃、街の便利さの3軸で、調布から橋本までの住みやすさを学生目線でまとめました。
-image: assets/tier-cover-chizuru.png
+image: assets/media/tier-cover-chizuru.png
 imageAlt: 彼女、お借りしますの一ノ瀬千鶴の画像
 ---
 
@@ -215,7 +215,7 @@ imageAlt: 彼女、お借りしますの一ノ瀬千鶴の画像
 - 東府中・多磨霊園は府中より静かで家賃も少し抑えやすい
 - 分倍河原は南武線も使えるからバイト・遊びの幅が広い
 
-![府中二郎](../assets/jiro-fuchu.png)
+![府中二郎](../assets/media/jiro-fuchu.png)
 
 *府中二郎の一杯。めっちゃ美味い。*
 
@@ -266,7 +266,7 @@ imageAlt: 彼女、お借りしますの一ノ瀬千鶴の画像
 - おしゃれ・駅前の強さはあるけど、学生が「安さ」で選ぶエリアじゃない
 - 通学だけなら十分圏内。コスパでいうと評価分かれる
 
-![仙川二郎](../assets/jiro-senkawa.png)
+![仙川二郎](../assets/media/jiro-senkawa.png)
 
 *仙川二郎の一杯。ぶっちゃけそんな美味しくない（賛否両論）。*
 

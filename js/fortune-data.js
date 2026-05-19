@@ -1,5 +1,5 @@
 (() => {
-  // Generated from scripts/main.js (fortune data extracted for lazy-loading)
+  // Generated from js/main.js (fortune data extracted for lazy-loading)
   if (globalThis.__SHIORI_FORTUNE_DATA__) return;
   globalThis.__SHIORI_FORTUNE_DATA__ = {
   results: ['大吉', '中吉', '小吉', '吉', '末吉', '凶'],

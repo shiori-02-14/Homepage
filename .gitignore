@@ -32,4 +32,4 @@ push.log
 .env.*.local
 
 # 開発用プレビューファイル
-preview-icons.html
+tools/preview-icons.html

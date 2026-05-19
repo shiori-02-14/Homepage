@@ -1,0 +1,9 @@
+{
+  "name": "shiori-homepage",
+  "private": true,
+  "scripts": {
+    "build:articles": "node tools/build-local-articles.js",
+    "build:images": "node tools/build-article-images.js",
+    "build": "npm run build:articles && npm run build:images"
+  }
+}
