@@ -2113,7 +2113,10 @@ a.friend-card::after {
   object-fit: cover;
   display: block;
 }
-#works-page #bookmark-org .card__thumb img {
+#bookmark-org .card__thumb {
+  background: var(--accent-weak);
+}
+#bookmark-org .card__thumb img {
   object-fit: contain;
   inset: auto;
   top: 50%;
