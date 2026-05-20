@@ -3492,6 +3492,18 @@ html { scroll-behavior: smooth; }
     object-fit: cover;
     object-position: center;
   }
+  #works-page #bookmark-org .card__thumb img {
+    object-fit: contain;
+    object-position: center;
+    inset: auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: auto;
+    height: auto;
+    max-width: 88%;
+    max-height: 70%;
+  }
   #articles-page .card--article .card__content,
   #works-page .card--work .card__content {
     min-height: 0;
