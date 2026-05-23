@@ -3335,6 +3335,7 @@ a.friend-card::after {
   gap: 0.85rem;
   margin: 0;
   padding: 0 0 1.65rem;
+  min-width: 0;
 }
 #profile-page .profile-timeline__item:last-child {
   padding-bottom: 0;
@@ -3394,13 +3395,13 @@ a.friend-card::after {
   letter-spacing: .01em;
   color: var(--fg);
   line-height: 1.45;
-  word-break: keep-all;
-  overflow-wrap: normal;
-  line-break: strict;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  line-break: auto;
   text-wrap: pretty;
 }
 #profile-page .profile-timeline__title-phrase {
-  white-space: nowrap;
+  white-space: normal;
 }
 #profile-page .profile-timeline__title--with-icon {
   display: flex;
@@ -3460,9 +3461,9 @@ a.friend-card::after {
   font-weight: 520;
   line-height: 1.65;
   color: var(--muted);
-  word-break: keep-all;
-  overflow-wrap: normal;
-  line-break: strict;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  line-break: auto;
 }
 #profile-page .profile-timeline__item--future {
   --timeline-accent: var(--focus-ring);
