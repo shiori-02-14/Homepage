@@ -4186,15 +4186,15 @@ html { scroll-behavior: smooth; }
     padding-bottom: 0.75rem;
   }
   .list:not(.list--icons) { grid-template-columns: 1fr; }
-  /* Social/Links をスマホは4列・中央寄せで余白を整える */
+  /* Social/Links をスマホは4列・全幅で枠なし表示 */
   section.narrow:has(.list--icons) {
     margin: 1.05rem 0;
   }
   .list--icons,
   .list--social.list--icons,
   .list--friends.list--icons {
-    width: min(100%, 21.5rem);
-    margin-inline: auto;
+    width: 100%;
+    margin-inline: 0;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     column-gap: clamp(0.35rem, 2vw, 0.55rem);
     row-gap: clamp(0.62rem, 2.4vw, 0.85rem);
@@ -4210,7 +4210,21 @@ html { scroll-behavior: smooth; }
   .list--social.list--icons a {
     padding: 0.42rem 0;
     gap: 0.32rem;
-    border-radius: 14px;
+    border-radius: 0;
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+  }
+  .list--icons a:hover,
+  .list--icons a:focus-visible,
+  .list--friends.list--icons a:hover,
+  .list--friends.list--icons a:focus-visible,
+  .list--social.list--icons a:hover,
+  .list--social.list--icons a:focus-visible {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    transform: none;
   }
   .cards { grid-template-columns: 1fr; }
   .profile {
@@ -4533,7 +4547,7 @@ html { scroll-behavior: smooth; }
   .list--icons,
   .list--social.list--icons,
   .list--friends.list--icons {
-    width: min(100%, 19.25rem);
+    width: 100%;
     column-gap: 0.4rem;
     row-gap: 0.62rem;
   }
@@ -4541,7 +4555,7 @@ html { scroll-behavior: smooth; }
   .list--friends.list--icons a,
   .list--social.list--icons a {
     padding: 0.38rem 0;
-    border-radius: 13px;
+    border-radius: 0;
   }
   #articles-page .card--article .card__content {
     padding: 0.64rem 2.45rem 0.7rem 0.52rem;
