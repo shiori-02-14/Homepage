@@ -1831,8 +1831,25 @@ h2 .icon svg {
   grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
 }
 .list--icons {
-  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-  gap: clamp(0.8rem, 2vw, 1.3rem);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(0.5rem, 1.35vw, 0.9rem);
+}
+.list--social.list--icons,
+.list--friends.list--icons {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+.list--icons > li {
+  min-width: 0;
+}
+@media (min-width: 960px) {
+  .list--icons {
+    gap: 0.95rem;
+  }
+  .list--icons a,
+  .list--social.list--icons a {
+    padding: 0.82rem 0.48rem;
+    border-radius: 18px;
+  }
 }
 .list a {
   display:flex;
@@ -1855,16 +1872,15 @@ h2 .icon svg {
   justify-content: center;
   align-items: center;
   text-align: center;
-  gap: 0.6rem;
-  padding: 0.9rem 0.75rem;
-  border-radius: 18px;
-  background: transparent;
-  border-color: transparent;
+  gap: clamp(0.38rem, 1vw, 0.52rem);
+  width: 100%;
+  min-width: 0;
+  padding: clamp(0.62rem, 1.5vw, 0.82rem) clamp(0.22rem, 0.75vw, 0.42rem);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--panel-bg) 42%, transparent);
+  border: 1px solid color-mix(in srgb, var(--panel-border) 55%, transparent);
   box-shadow: none;
   transform: translateY(0);
-}
-.list--icons a::after {
-  display: none;
 }
 .list--icons a:hover,
 .list--icons a:focus-visible {
@@ -1877,14 +1893,23 @@ h2 .icon svg {
   transform: translateY(0);
   box-shadow: none;
 }
+.list--icons a::after {
+  display: none;
+}
 .social-label {
   font-weight: 650;
-  font-size: 0.92rem;
+  font-size: clamp(0.7rem, 2.35vw, 0.86rem);
   letter-spacing: .01em;
   color: var(--accent-strong);
+  white-space: nowrap;
+  word-break: keep-all;
+  line-height: 1.25;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.list--social a {
-  padding:.9rem 1.15rem;
+.list--social.list--icons a {
+  padding: clamp(0.62rem, 1.5vw, 0.82rem) clamp(0.22rem, 0.75vw, 0.42rem);
 }
 .list--social a::after {
   display: none;
@@ -1967,9 +1992,6 @@ h2 .icon svg {
 .list--friends {
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
-.list--friends.list--icons {
-  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-}
 a.friend-card {
   display: flex;
   flex-direction: column;
@@ -2025,9 +2047,15 @@ a.friend-card::after {
   flex: 0 0 auto;
   justify-content: center;
   font-weight: 650;
-  font-size: 0.92rem;
+  font-size: clamp(0.7rem, 2.35vw, 0.86rem);
   letter-spacing: .01em;
   color: var(--accent-strong);
+  white-space: nowrap;
+  word-break: keep-all;
+  line-height: 1.25;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* カード */
@@ -4091,7 +4119,7 @@ html { scroll-behavior: smooth; }
   }
   .list--icons,
   .list--friends.list--icons {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
   #profile-page .profile-hero {
     flex-direction: column;
@@ -4162,19 +4190,24 @@ html { scroll-behavior: smooth; }
     padding-bottom: 0.75rem;
   }
   .list:not(.list--icons) { grid-template-columns: 1fr; }
-  /* Social/Links の両方を4列に固定（in-appブラウザ差分にも強い指定） */
+  /* Social/Links を5列固定（in-appブラウザ差分にも強い指定） */
   .list--icons,
   .list--friends.list--icons {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0.6rem;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: clamp(0.42rem, 1.1vw, 0.58rem);
+  }
+  :root {
+    --tile-social-icon-box: 40px;
+    --tile-social-icon-size: 34px;
+    --tile-friend-avatar-size: 46px;
+    --tile-friend-plus-size: 46px;
   }
   .list--icons a,
-  .list--friends.list--icons a {
-    padding: 0.72rem 0.45rem;
-  }
-  .social-label,
-  .list--icons .friend-card__name {
-    font-size: 0.82rem;
+  .list--friends.list--icons a,
+  .list--social.list--icons a {
+    padding: 0.58rem 0.18rem;
+    gap: 0.34rem;
+    border-radius: 14px;
   }
   .cards { grid-template-columns: 1fr; }
   .profile {
@@ -4496,17 +4529,14 @@ html { scroll-behavior: smooth; }
   }
   .list--icons,
   .list--friends.list--icons {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0.5rem;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.38rem;
   }
   .list--icons a,
-  .list--friends.list--icons a {
-    padding: 0.68rem 0.35rem;
-    border-radius: 16px;
-  }
-  .social-label,
-  .list--icons .friend-card__name {
-    font-size: 0.78rem;
+  .list--friends.list--icons a,
+  .list--social.list--icons a {
+    padding: 0.52rem 0.12rem;
+    border-radius: 13px;
   }
   #articles-page .card--article .card__content {
     padding: 0.64rem 2.45rem 0.7rem 0.52rem;
