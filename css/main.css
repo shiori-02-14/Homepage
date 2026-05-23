@@ -1877,8 +1877,8 @@ h2 .icon svg {
   min-width: 0;
   padding: clamp(0.62rem, 1.5vw, 0.82rem) clamp(0.22rem, 0.75vw, 0.42rem);
   border-radius: 16px;
-  background: color-mix(in srgb, var(--panel-bg) 42%, transparent);
-  border: 1px solid color-mix(in srgb, var(--panel-border) 55%, transparent);
+  background: transparent;
+  border: 1px solid transparent;
   box-shadow: none;
   transform: translateY(0);
 }
