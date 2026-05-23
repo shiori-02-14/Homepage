@@ -2113,14 +2113,33 @@ a.friend-card::after {
   object-fit: cover;
   display: block;
 }
-#bookmark-org .card__thumb,
+#bookmark-org .card__thumb {
+  background: var(--accent-weak);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#bookmark-org .card__thumb img {
+  position: static;
+  display: block;
+  flex: 0 1 auto;
+  object-fit: contain;
+  object-position: center;
+  width: auto;
+  height: auto;
+  max-width: 88%;
+  max-height: 70%;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  transform: none;
+}
 #works-page #bookmark-org .card__thumb {
   background: var(--accent-weak);
   display: flex;
   align-items: center;
   justify-content: center;
 }
-#bookmark-org .card__thumb img,
 #works-page #bookmark-org .card__thumb img {
   position: static;
   display: block;
@@ -2296,9 +2315,12 @@ a.friend-card::after {
 }
 .cards-scroll {
   display: flex;
+  align-items: stretch;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   gap: clamp(1rem, 2vw, 1.5rem);
+  max-width: 100%;
+  min-width: 0;
   padding-bottom: 1rem; /* スクロールバーの領域確保 */
   -webkit-overflow-scrolling: touch; /* iOSでの慣性スクロール */
   scrollbar-width: thin;
@@ -2324,6 +2346,11 @@ a.friend-card::after {
   scroll-snap-align: start;
   flex: 0 0 auto; /* 横幅を固定しないと縮む */
   width: min(320px, 80vw); /* カードの幅設定 */
+  display: flex;
+}
+.cards-scroll > li > .card {
+  width: 100%;
+  flex: 1;
 }
 .cards > li {
   list-style:none;
@@ -2393,6 +2420,21 @@ a.friend-card::after {
 }
 .card.card--upcoming .card__link:focus-visible {
   outline:none;
+}
+.card--work.card--upcoming .card__construction {
+  position: absolute;
+  top: 44%;
+  left: 50%;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.card--work.card--upcoming .card__construction-emoji {
+  font-size: clamp(2.75rem, 17vw, 3.5rem);
+  line-height: 1;
 }
 .card h3 {
   margin:0;
@@ -2733,15 +2775,22 @@ a.friend-card::after {
 }
 .card--work .card__link {
   gap: 0;
+  flex: 1;
+  height: 100%;
 }
 .card--work .card__thumb {
   border-radius: 24px 24px 0 0;
   border: none;
+  aspect-ratio: 16 / 9;
+  padding-top: 0;
+  height: auto;
+  flex-shrink: 0;
 }
 .card--work .card__content {
   padding: 1.1rem 1.2rem 1.3rem;
   background: var(--glass-bg-strong);
   border-top: 1px solid var(--card-border);
+  flex: 1;
 }
 .card--work:hover .card__thumb img:not(.thumb-logo),
 .card--work:focus-within .card__thumb img:not(.thumb-logo),
@@ -2752,6 +2801,10 @@ a.friend-card::after {
 .card--work:hover .card__thumb img.thumb-logo,
 .card--work:focus-within .card__thumb img.thumb-logo {
   transform: translate(-50%, -50%) scale(1.03);
+}
+#bookmark-org.card--work:hover .card__thumb img,
+#bookmark-org.card--work:focus-within .card__thumb img {
+  transform: scale(1.03);
 }
 .meta { margin:0; color:var(--muted); font-size:.92rem; }
 
