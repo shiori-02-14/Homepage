@@ -4186,9 +4186,12 @@ html { scroll-behavior: smooth; }
     padding-bottom: 0.75rem;
   }
   .list:not(.list--icons) { grid-template-columns: 1fr; }
-  /* Social/Links をスマホは4列・全幅で枠なし表示 */
+  /* Social/Links をスマホは4列・全幅で枠なし・余白多め */
   section.narrow:has(.list--icons) {
-    margin: 1.05rem 0;
+    margin: 1.35rem 0;
+  }
+  section.narrow:has(.list--icons) .section__intro {
+    margin-bottom: 1.1rem;
   }
   .list--icons,
   .list--social.list--icons,
@@ -4196,24 +4199,28 @@ html { scroll-behavior: smooth; }
     width: 100%;
     margin-inline: 0;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    column-gap: clamp(0.35rem, 2vw, 0.55rem);
-    row-gap: clamp(0.62rem, 2.4vw, 0.85rem);
+    column-gap: clamp(0.55rem, 3.4vw, 0.85rem);
+    row-gap: clamp(0.95rem, 4vw, 1.25rem);
   }
   :root {
-    --tile-social-icon-box: 40px;
-    --tile-social-icon-size: 34px;
-    --tile-friend-avatar-size: 46px;
-    --tile-friend-plus-size: 46px;
+    --tile-social-icon-box: 42px;
+    --tile-social-icon-size: 36px;
+    --tile-friend-avatar-size: 48px;
+    --tile-friend-plus-size: 48px;
   }
   .list--icons a,
   .list--friends.list--icons a,
   .list--social.list--icons a {
-    padding: 0.42rem 0;
-    gap: 0.32rem;
+    padding: 0.52rem 0.1rem;
+    gap: 0.46rem;
     border-radius: 0;
     background: transparent;
     border-color: transparent;
     box-shadow: none;
+  }
+  .list--icons .social-label,
+  .list--icons .friend-card__name {
+    line-height: 1.32;
   }
   .list--icons a:hover,
   .list--icons a:focus-visible,
@@ -4548,13 +4555,14 @@ html { scroll-behavior: smooth; }
   .list--social.list--icons,
   .list--friends.list--icons {
     width: 100%;
-    column-gap: 0.4rem;
-    row-gap: 0.62rem;
+    column-gap: clamp(0.5rem, 3vw, 0.72rem);
+    row-gap: clamp(0.88rem, 3.6vw, 1.12rem);
   }
   .list--icons a,
   .list--friends.list--icons a,
   .list--social.list--icons a {
-    padding: 0.38rem 0;
+    padding: 0.48rem 0.08rem;
+    gap: 0.42rem;
     border-radius: 0;
   }
   #articles-page .card--article .card__content {
