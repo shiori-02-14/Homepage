@@ -4117,10 +4117,6 @@ html { scroll-behavior: smooth; }
     max-width: none;
     width: 100%;
   }
-  .list--icons,
-  .list--friends.list--icons {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
   #profile-page .profile-hero {
     flex-direction: column;
     text-align: left;
@@ -4190,10 +4186,10 @@ html { scroll-behavior: smooth; }
     padding-bottom: 0.75rem;
   }
   .list:not(.list--icons) { grid-template-columns: 1fr; }
-  /* Social/Links を5列固定（in-appブラウザ差分にも強い指定） */
+  /* Social/Links をスマホは4列、PCは5列 */
   .list--icons,
   .list--friends.list--icons {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: clamp(0.42rem, 1.1vw, 0.58rem);
   }
   :root {
@@ -4529,7 +4525,7 @@ html { scroll-behavior: smooth; }
   }
   .list--icons,
   .list--friends.list--icons {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0.38rem;
   }
   .list--icons a,
