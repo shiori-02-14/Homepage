@@ -3600,8 +3600,8 @@ a.friend-card::after {
 }
 @media (max-width: 640px) {
   #profile-page main {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-left: clamp(0.65rem, 3.5vw, 0.85rem);
+    padding-right: clamp(0.65rem, 3.5vw, 0.85rem);
   }
   #profile-page .profile-section.narrow {
     max-width: 100%;
@@ -3642,21 +3642,22 @@ a.friend-card::after {
     line-height: 1.65;
   }
   #profile-page .profile-skills {
-    --skill-tile: 38px;
-    --skill-cell: 72px;
+    --skill-tile: clamp(34px, 9.2vw, 38px);
+    --skill-cell: clamp(64px, 17vw, 72px);
     --skill-cols: 4;
-    --skill-grid-gap: 0.4rem;
-    --skill-label-size: 0.6rem;
+    --skill-grid-gap: clamp(0.32rem, 2.8vw, 0.42rem);
+    --skill-label-size: clamp(0.56rem, 2.8vw, 0.62rem);
   }
   #profile-page .profile-skills__subgroup {
-    padding: 0.52rem 0.62rem 0.6rem;
+    padding: 0.55rem clamp(0.46rem, 3.4vw, 0.62rem) 0.62rem;
+  }
+}
+@media (max-width: 359px) {
+  #profile-page .profile-skills {
+    --skill-cols: 3;
   }
 }
 @media (max-width: 480px) {
-  #profile-page main {
-    padding-left: 0.42rem;
-    padding-right: 0.42rem;
-  }
   #profile-page .profile-intro-card {
     --intro-portrait: 72px;
     --intro-lead-gap: 0.38rem;
@@ -3886,7 +3887,7 @@ a.friend-card::after {
   --skill-tile: 40px;
   --skill-cell: 76px;
   --skill-cols: 4;
-  --skill-grid-gap: 0.45rem;
+  --skill-grid-gap: clamp(0.34rem, 2.5vw, 0.45rem);
   --skill-item-gap: 0.24rem;
   --skill-icon-padding: 5px;
   --skill-label-size: 0.64rem;
@@ -3912,7 +3913,7 @@ a.friend-card::after {
   gap: 0.45rem;
   width: 100%;
   min-width: 0;
-  padding: 0.62rem 0.72rem 0.68rem;
+  padding: 0.62rem clamp(0.52rem, 3.2vw, 0.72rem) 0.68rem;
   border-radius: 14px;
   border: 1px solid var(--panel-border);
   background: var(--note-bg);
@@ -3953,8 +3954,9 @@ a.friend-card::after {
 }
 
 #profile-page .profile-skills__grid {
-  display: grid;
-  grid-template-columns: repeat(var(--skill-cols), minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: var(--skill-grid-gap);
   list-style: none;
   margin: 0;
@@ -3966,7 +3968,8 @@ a.friend-card::after {
   flex-direction: column;
   align-items: center;
   gap: var(--skill-item-gap);
-  width: 100%;
+  flex: 0 0 calc((100% - (var(--skill-cols) - 1) * var(--skill-grid-gap)) / var(--skill-cols));
+  max-width: calc((100% - (var(--skill-cols) - 1) * var(--skill-grid-gap)) / var(--skill-cols));
   min-width: 0;
   padding: 0;
   border: none;
@@ -4051,18 +4054,6 @@ a.friend-card::after {
 #profile-page .profile-skills__grid li:focus-visible img {
   outline: 2px solid rgba(14, 165, 233, 0.55);
   outline-offset: 2px;
-}
-@media (max-width: 520px) {
-  #profile-page .profile-skills {
-    --skill-tile: 36px;
-    --skill-cell: 68px;
-    --skill-cols: 4;
-    --skill-grid-gap: 0.38rem;
-    --skill-label-size: 0.58rem;
-  }
-  #profile-page .profile-skills__subgroup {
-    padding: 0.55rem 0.62rem 0.62rem;
-  }
 }
 @media (min-width: 521px) {
   #profile-page .profile-skills {
