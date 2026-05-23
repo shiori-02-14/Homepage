@@ -1831,19 +1831,25 @@ h2 .icon svg {
   grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
 }
 .list--icons {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: clamp(0.5rem, 1.35vw, 0.9rem);
+  --icon-cols: 5;
+  --icon-gap: clamp(0.5rem, 1.35vw, 0.9rem);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: var(--icon-gap);
 }
 .list--social.list--icons,
 .list--friends.list--icons {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  --icon-cols: 5;
 }
 .list--icons > li {
   min-width: 0;
+  flex: 0 0 calc((100% - (var(--icon-cols) - 1) * var(--icon-gap)) / var(--icon-cols));
+  max-width: calc((100% - (var(--icon-cols) - 1) * var(--icon-gap)) / var(--icon-cols));
 }
 @media (min-width: 960px) {
   .list--icons {
-    gap: 0.95rem;
+    --icon-gap: 0.95rem;
   }
   .list--icons a,
   .list--social.list--icons a {
@@ -4187,9 +4193,9 @@ html { scroll-behavior: smooth; }
     padding-bottom: 0.75rem;
   }
   .list:not(.list--icons) { grid-template-columns: 1fr; }
-  /* Social/Links をスマホは4列・全幅で枠なし・余白多め */
+  /* Social/Links は5列・中央寄せ・枠なし */
   section.narrow:has(.list--icons) {
-    margin: 1.35rem 0;
+    margin-block: 1.35rem;
   }
   section.narrow:has(.list--icons) .section__intro {
     margin-bottom: 1.1rem;
@@ -4198,16 +4204,14 @@ html { scroll-behavior: smooth; }
   .list--social.list--icons,
   .list--friends.list--icons {
     width: 100%;
-    margin-inline: 0;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    column-gap: clamp(0.55rem, 3.4vw, 0.85rem);
-    row-gap: clamp(0.95rem, 4vw, 1.25rem);
+    margin-inline: auto;
+    --icon-gap: clamp(0.4rem, 2.4vw, 0.72rem);
   }
   :root {
-    --tile-social-icon-box: 42px;
-    --tile-social-icon-size: 36px;
-    --tile-friend-avatar-size: 48px;
-    --tile-friend-plus-size: 48px;
+    --tile-social-icon-box: 40px;
+    --tile-social-icon-size: 34px;
+    --tile-friend-avatar-size: 46px;
+    --tile-friend-plus-size: 46px;
   }
   .list--icons a,
   .list--friends.list--icons a,
@@ -4556,8 +4560,8 @@ html { scroll-behavior: smooth; }
   .list--social.list--icons,
   .list--friends.list--icons {
     width: 100%;
-    column-gap: clamp(0.5rem, 3vw, 0.72rem);
-    row-gap: clamp(0.88rem, 3.6vw, 1.12rem);
+    margin-inline: auto;
+    --icon-gap: clamp(0.35rem, 2vw, 0.62rem);
   }
   .list--icons a,
   .list--friends.list--icons a,
