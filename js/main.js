@@ -108,10 +108,17 @@ const setupThemeToggle = () => {
     }
   };
 
+  const updateSkillIcons = (theme) => {
+    document.querySelectorAll('[data-skill]').forEach((img) => {
+      img.src = `https://skillicons.dev/icons?i=${img.dataset.skill}&theme=${theme}`;
+    });
+  };
+
   const applyTheme = (theme, { persist = false } = {}) => {
     const nextTheme = theme === 'dark' ? 'dark' : 'light';
     root.setAttribute('data-theme', nextTheme);
     updateToggleUI(nextTheme);
+    updateSkillIcons(nextTheme);
     if (persist) {
       localStorage.setItem(storageKey, nextTheme);
     }
@@ -677,6 +684,33 @@ const initFortune = () => {
   // コンテナ全体のクリックイベントは削除
 };
 
+const initProfileTimelineFuture = () => {
+  const isProfilePage = document.body && document.body.id === 'profile-page';
+  if (!isProfilePage) return;
+
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
+
+  document.querySelectorAll('#profile-page .profile-timeline__item:not(.profile-timeline__item--tail)').forEach((item) => {
+    const timeEl = item.querySelector('.profile-timeline__date[datetime]');
+    if (!timeEl) return;
+
+    const value = timeEl.getAttribute('datetime');
+    if (!value) return;
+
+    const [year, month = '1'] = value.split('-');
+    const itemYear = Number(year);
+    const itemMonth = Number(month);
+    if (!itemYear || !itemMonth) return;
+
+    const isFuture = itemYear > currentYear || (itemYear === currentYear && itemMonth > currentMonth);
+    if (isFuture) {
+      item.classList.add('profile-timeline__item--future');
+    }
+  });
+};
+
 const initWorksFilter = () => {
   const isWorksPage = document.body && document.body.id === 'works-page';
   if (!isWorksPage) return;
@@ -746,6 +780,7 @@ const initPage = () => {
   initScrollReveal();
   initScrollProgress();
   initFortune();
+  initProfileTimelineFuture();
   initWorksFilter();
 };
 

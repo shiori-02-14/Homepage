@@ -18,7 +18,7 @@
   <meta name="twitter:description" content="しおり🔖のプロフィールページです。" />
   <meta name="twitter:image" content="https://assets.st-note.com/production/uploads/images/48714034/rectangle_large_type_2_b9e78de146b25585718e46e6ec668614.jpeg?width=1200" />
 
-  <link rel="stylesheet" href="css/main.css?v=20260428-profile-grid" />
+  <link rel="stylesheet" href="css/main.css?v=20260523-profile-stack" />
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -74,13 +74,11 @@
           </svg>
         </span> Profile</h1>
       </div>
-      <header class="profile-hero">
-        <img src="https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg?v=20260105"
-             alt="しおり🔖のアイコン" class="profile-portrait" width="160" height="160" loading="eager" decoding="async" referrerpolicy="no-referrer" />
-        <div class="profile-hero__content">
+      <section class="profile-card profile-intro-card" id="profile-about" aria-label="プロフィール概要">
+        <header class="profile-hero profile-intro-card__lead">
+          <img src="https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg?v=20260105"
+               alt="しおり🔖のアイコン" class="profile-portrait" width="160" height="160" loading="eager" decoding="async" referrerpolicy="no-referrer" />
           <p class="profile-tagline">しおり🔖</p>
-          
-          <!-- LINE風 BGMウィジェット -->
           <div class="profile-bgm">
             <a href="https://youtu.be/wRzPuptA6yw?si=3GPn5D4Me6gViO-4" target="_blank" rel="noopener noreferrer" class="bgm-badge" aria-label="BGM: 君はハニーデュー - 日向坂46">
               <span class="bgm-badge__icon">
@@ -94,30 +92,192 @@
               </div>
             </a>
           </div>
-          <p class="profile-intro">暇な時間に個人開発や文章づくりをゆっくり進めています。</p>
-          <p class="profile-intro">SNSで気軽に声をかけてもらえると嬉しいです。</p>
-        </div>
-      </header>
+        </header>
+        <dl class="profile-dl profile-dl--about">
+          <dt>Name</dt>
+          <dd class="profile-intro-card__name">
+            <span class="profile-intro-card__name-text">本間健一</span>
+            <span class="profile-intro-card__handle-note">ハンネは苗字の本間→「本の間」→「しおり🔖」</span>
+          </dd>
+          <dt>Birthday</dt>
+          <dd>2003/9/14</dd>
+          <dt>University</dt>
+          <dd class="profile-intro-card__route">
+            <span class="profile-intro-card__route-item profile-intro-card__route-item--past"><a href="https://www.mod.go.jp/nda/" target="_blank" rel="noopener noreferrer">防衛大学校（中退）</a></span>
+            <span class="profile-intro-card__route-arrow" aria-hidden="true">→</span>
+            <span class="profile-intro-card__route-item profile-intro-card__route-item--current"><a href="https://www.uec.ac.jp/" target="_blank" rel="noopener noreferrer">電気通信大学</a></span>
+          </dd>
+          <dt>Hobby</dt>
+          <dd class="profile-intro-card__tags">
+            <span>資産運用</span>
+            <span>坂道</span>
+            <span>食べ歩き</span>
+            <span>献血</span>
+            <span>旅行</span>
+          </dd>
+        </dl>
+      </section>
 
       <div class="profile-body">
         <div class="profile-cards">
-          <section class="profile-card" id="profile-about" aria-labelledby="profile-about-title">
-            <h2 id="profile-about-title"><span class="icon icon--profile" aria-hidden="true">
+          <section class="profile-card profile-skills" id="profile-skills" aria-labelledby="profile-skills-title">
+            <h2 id="profile-skills-title"><span class="icon icon--profile" aria-hidden="true">
               <svg viewBox="0 0 24 24" role="presentation">
-                <circle cx="12" cy="7.5" r="4"></circle>
-                <path d="M20 21a8 8 0 0 0-16 0"></path>
+                <path d="M8 6h8M8 12h8M8 18h5"></path>
+                <path d="M4 6h.01M4 12h.01M4 18h.01"></path>
               </svg>
-            </span> About</h2>
-            <dl class="profile-dl">
-              <dt>University</dt>
-              <dd>
-                <a href="https://www.mod.go.jp/nda/" target="_blank" rel="noopener noreferrer">防衛大学校</a>
-                 → 
-                <a href="https://www.uec.ac.jp/" target="_blank" rel="noopener noreferrer">電気通信大学</a>
-              </dd>
-              <dt>Hobby</dt>
-              <dd>資産運用 / 坂道 / 食べ歩き / 献血 / 旅行</dd>
-            </dl>
+            </span> Skills &amp; Tools</h2>
+
+            <div class="profile-skills__group">
+              <h3 class="profile-skills__heading">開発言語</h3>
+
+              <div class="profile-skills__subgroup">
+                <h4 class="profile-skills__subheading">勉強中</h4>
+                <ul class="profile-skills__grid" aria-label="開発言語">
+                  <li tabindex="0" aria-label="HTML"><img class="profile-skills__icon" data-skill="html" src="https://skillicons.dev/icons?i=html&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">HTML</span></li>
+                  <li tabindex="0" aria-label="CSS"><img class="profile-skills__icon" data-skill="css" src="https://skillicons.dev/icons?i=css&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">CSS</span></li>
+                  <li tabindex="0" aria-label="JavaScript"><img class="profile-skills__icon" data-skill="js" src="https://skillicons.dev/icons?i=js&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">JavaScript</span></li>
+                  <li tabindex="0" aria-label="Python"><img class="profile-skills__icon" data-skill="python" src="https://skillicons.dev/icons?i=python&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Python</span></li>
+                  <li tabindex="0" aria-label="Ruby"><img class="profile-skills__icon" data-skill="ruby" src="https://skillicons.dev/icons?i=ruby&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Ruby</span></li>
+                  <li tabindex="0" aria-label="Go"><img class="profile-skills__icon" data-skill="golang" src="https://skillicons.dev/icons?i=golang&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Go</span></li>
+                  <li tabindex="0" aria-label="PHP"><img class="profile-skills__icon" data-skill="php" src="https://skillicons.dev/icons?i=php&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">PHP</span></li>
+                  <li tabindex="0" aria-label="C"><img class="profile-skills__icon" data-skill="c" src="https://skillicons.dev/icons?i=c&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">C</span></li>
+                  <li tabindex="0" aria-label="C++"><img class="profile-skills__icon" data-skill="cpp" src="https://skillicons.dev/icons?i=cpp&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">C++</span></li>
+                  <li tabindex="0" aria-label="C#"><img class="profile-skills__icon" data-skill="cs" src="https://skillicons.dev/icons?i=cs&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">C#</span></li>
+                  <li tabindex="0" aria-label="Swift"><img class="profile-skills__icon" data-skill="swift" src="https://skillicons.dev/icons?i=swift&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Swift</span></li>
+                  <li tabindex="0" aria-label="Kotlin"><img class="profile-skills__icon" data-skill="kotlin" src="https://skillicons.dev/icons?i=kotlin&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Kotlin</span></li>
+                  <li tabindex="0" aria-label="Dart"><img class="profile-skills__icon" data-skill="dart" src="https://skillicons.dev/icons?i=dart&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Dart</span></li>
+                  <li tabindex="0" aria-label="Markdown"><img class="profile-skills__icon" data-skill="md" src="https://skillicons.dev/icons?i=md&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Markdown</span></li>
+                  <li tabindex="0" aria-label="LaTeX"><img class="profile-skills__icon" data-skill="latex" src="https://skillicons.dev/icons?i=latex&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">LaTeX</span></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="profile-skills__group profile-skills__group--tools">
+              <h3 class="profile-skills__heading">ツール</h3>
+
+              <div class="profile-skills__subgroup">
+                <h4 class="profile-skills__subheading">開発環境</h4>
+                <ul class="profile-skills__grid" aria-label="開発環境">
+                  <li tabindex="0" aria-label="VSCode"><img class="profile-skills__icon" data-skill="vscode" src="https://skillicons.dev/icons?i=vscode&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">VSCode</span></li>
+                  <li tabindex="0" aria-label="Visual Studio"><img class="profile-skills__icon" data-skill="visualstudio" src="https://skillicons.dev/icons?i=visualstudio&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Visual Studio</span></li>
+                  <li tabindex="0" aria-label="Cursor"><img class="profile-skills__icon" src="assets/icons/skills/cursor.svg" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Cursor</span></li>
+                  <li tabindex="0" aria-label="Xcode"><img class="profile-skills__icon profile-skills__icon--xcode" src="assets/icons/skills/xcode.svg?v=3" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Xcode</span></li>
+                  <li tabindex="0" aria-label="Android Studio"><img class="profile-skills__icon" data-skill="androidstudio" src="https://skillicons.dev/icons?i=androidstudio&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Android Studio</span></li>
+                  <li tabindex="0" aria-label="Flutter"><img class="profile-skills__icon" data-skill="flutter" src="https://skillicons.dev/icons?i=flutter&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Flutter</span></li>
+                </ul>
+              </div>
+
+              <div class="profile-skills__subgroup">
+                <h4 class="profile-skills__subheading">クラウド・サービス</h4>
+                <ul class="profile-skills__grid" aria-label="クラウドとサービス">
+                  <li tabindex="0" aria-label="GitHub"><img class="profile-skills__icon" data-skill="github" src="https://skillicons.dev/icons?i=github&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">GitHub</span></li>
+                  <li tabindex="0" aria-label="Docker"><img class="profile-skills__icon" data-skill="docker" src="https://skillicons.dev/icons?i=docker&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Docker</span></li>
+                  <li tabindex="0" aria-label="Firebase"><img class="profile-skills__icon" data-skill="firebase" src="https://skillicons.dev/icons?i=firebase&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Firebase</span></li>
+                  <li tabindex="0" aria-label="Cloudflare"><img class="profile-skills__icon" data-skill="cloudflare" src="https://skillicons.dev/icons?i=cloudflare&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Cloudflare</span></li>
+                  <li tabindex="0" aria-label="Vercel"><img class="profile-skills__icon" data-skill="vercel" src="https://skillicons.dev/icons?i=vercel&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Vercel</span></li>
+                  <li tabindex="0" aria-label="Figma"><img class="profile-skills__icon" data-skill="figma" src="https://skillicons.dev/icons?i=figma&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Figma</span></li>
+                  <li tabindex="0" aria-label="Notion"><img class="profile-skills__icon" data-skill="notion" src="https://skillicons.dev/icons?i=notion&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Notion</span></li>
+                </ul>
+              </div>
+
+              <div class="profile-skills__subgroup">
+                <h4 class="profile-skills__subheading">ゲーム・クリエイティブ</h4>
+                <ul class="profile-skills__grid" aria-label="ゲームとクリエイティブツール">
+                  <li tabindex="0" aria-label="Unity"><img class="profile-skills__icon" data-skill="unity" src="https://skillicons.dev/icons?i=unity&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Unity</span></li>
+                  <li tabindex="0" aria-label="Unreal Engine"><img class="profile-skills__icon" data-skill="unreal" src="https://skillicons.dev/icons?i=unreal&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Unreal Engine</span></li>
+                  <li tabindex="0" aria-label="Godot"><img class="profile-skills__icon" data-skill="godot" src="https://skillicons.dev/icons?i=godot&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Godot</span></li>
+                  <li tabindex="0" aria-label="Blender"><img class="profile-skills__icon" data-skill="blender" src="https://skillicons.dev/icons?i=blender&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Blender</span></li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <section class="profile-card profile-timeline" id="profile-timeline" aria-labelledby="profile-timeline-title">
+            <h2 id="profile-timeline-title"><span class="icon icon--profile" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="presentation">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M12 7v5l3 2"></path>
+              </svg>
+            </span> Timeline</h2>
+            <ol class="profile-timeline__list">
+              <li class="profile-timeline__item">
+                <div class="profile-timeline__track" aria-hidden="true"><span class="profile-timeline__marker"></span></div>
+                <div class="profile-timeline__content">
+                  <time class="profile-timeline__date" datetime="2024-04">2024年4月</time>
+                  <h3 class="profile-timeline__title">防衛大学校 入学</h3>
+                  <p class="profile-timeline__desc">浪人🤡とかいろいろあって金銭的な事情で防衛大学校に入学しました。</p>
+                </div>
+              </li>
+              <li class="profile-timeline__item">
+                <div class="profile-timeline__track" aria-hidden="true"><span class="profile-timeline__marker"></span></div>
+                <div class="profile-timeline__content">
+                  <time class="profile-timeline__date" datetime="2024-08">2024年8月</time>
+                  <h3 class="profile-timeline__title">防衛大学校 中退</h3>
+                  <p class="profile-timeline__desc">なんやかんやあって、防衛大学校を中退しました。</p>
+                </div>
+              </li>
+              <li class="profile-timeline__item">
+                <div class="profile-timeline__track" aria-hidden="true"><span class="profile-timeline__marker"></span></div>
+                <div class="profile-timeline__content">
+                  <time class="profile-timeline__date" datetime="2025-04">2025年4月</time>
+                  <h3 class="profile-timeline__title">電気通信大学 入学</h3>
+                  <p class="profile-timeline__desc">なんやかんやあって、UEC25 として電気通信大学に入学しました。</p>
+                </div>
+              </li>
+              <li class="profile-timeline__item">
+                <div class="profile-timeline__track" aria-hidden="true"><span class="profile-timeline__marker"></span></div>
+                <div class="profile-timeline__content">
+                  <time class="profile-timeline__date" datetime="2025-11">2025年11月</time>
+                  <h3 class="profile-timeline__title">個人サイトを公開</h3>
+                  <p class="profile-timeline__desc">アドベントカレンダーをきっかけに、個人サイトを作りました。</p>
+                </div>
+              </li>
+              <li class="profile-timeline__item">
+                <div class="profile-timeline__track" aria-hidden="true"><span class="profile-timeline__marker"></span></div>
+                <div class="profile-timeline__content">
+                  <time class="profile-timeline__date" datetime="2026-01">2026年1月</time>
+                  <h3 class="profile-timeline__title profile-timeline__title--with-icon">
+                    <img class="profile-timeline__title-icon" src="assets/icons/AppIcon-light.jpg" alt="" width="20" height="20" loading="lazy" decoding="async" />
+                    <span class="profile-timeline__title-text">NEXUS for UEC を公開</span>
+                  </h3>
+                  <p class="profile-timeline__desc">電通大生向けの iOS アプリを公開しました。</p>
+                </div>
+              </li>
+              <li class="profile-timeline__item">
+                <div class="profile-timeline__track" aria-hidden="true"><span class="profile-timeline__marker"></span></div>
+                <div class="profile-timeline__content">
+                  <time class="profile-timeline__date" datetime="2026-03">2026年3月</time>
+                  <h3 class="profile-timeline__title profile-timeline__title--with-logo">
+                    <img class="profile-timeline__title-logo" src="assets/icons/bookmark.png" alt="" loading="lazy" decoding="async" />
+                    <span class="profile-timeline__title-suffix">を設立</span>
+                  </h3>
+                  <p class="profile-timeline__desc">普段の生活をより便利にする団体 bookmark を設立しました。</p>
+                </div>
+              </li>
+              <li class="profile-timeline__item">
+                <div class="profile-timeline__track" aria-hidden="true"><span class="profile-timeline__marker"></span></div>
+                <div class="profile-timeline__content">
+                  <time class="profile-timeline__date" datetime="2026-06">2026年6月</time>
+                  <h3 class="profile-timeline__title profile-timeline__title--with-icon">
+                    <img class="profile-timeline__title-icon" src="assets/icons/AppIcon-light.jpg" alt="" width="20" height="20" loading="lazy" decoding="async" />
+                    <span class="profile-timeline__title-text">NEXUS for UEC を公開</span>
+                  </h3>
+                  <p class="profile-timeline__desc">Android版をリリース予定。</p>
+                </div>
+              </li>
+              <li class="profile-timeline__item">
+                <div class="profile-timeline__track" aria-hidden="true"><span class="profile-timeline__marker"></span></div>
+                <div class="profile-timeline__content">
+                  <time class="profile-timeline__date" datetime="2026-08">2026年8月</time>
+                  <h3 class="profile-timeline__title">U☆PoC～UEC<span class="profile-timeline__title-phrase">アイディア実証コンテスト</span>～2026</h3>
+                  <p class="profile-timeline__desc">総嘗めの予定です。</p>
+                </div>
+              </li>
+              <li class="profile-timeline__item profile-timeline__item--tail" aria-hidden="true">
+                <div class="profile-timeline__track"><span class="profile-timeline__tail-arrow">↓</span></div>
+              </li>
+            </ol>
           </section>
 
           <section class="profile-card" id="profile-faves" aria-labelledby="profile-faves-title">
@@ -128,7 +288,7 @@
             </span> My fave</h2>
             <ul class="profile-oshimen" aria-label="推しメン一覧">
               <li>
-                <a href="https://www.nogizaka46.com/" target="_blank" rel="noopener noreferrer" class="profile-oshimen__group profile-oshimen__group--nogi">乃木坂46</a>
+                <a href="https://www.nogizaka46.com/" target="_blank" rel="noopener noreferrer" class="profile-oshimen__group profile-oshimen__group--nogi"><img class="profile-oshimen__group-icon" src="assets/icons/sakamichi/nogizaka46.png" alt="" width="20" height="20" loading="lazy" decoding="async" />乃木坂46</a>
                 <span class="profile-oshimen__member">
                   <a href="https://www.nogizaka46.com/s/n46/artist/55396?ima=0000" target="_blank" rel="noopener noreferrer">五百城 茉央</a>
                   <span aria-hidden="true"> / </span>
@@ -154,7 +314,7 @@
                 </span>
               </li>
               <li>
-                <a href="https://www.hinatazaka46.com/" target="_blank" rel="noopener noreferrer" class="profile-oshimen__group profile-oshimen__group--hinata">日向坂46</a>
+                <a href="https://www.hinatazaka46.com/" target="_blank" rel="noopener noreferrer" class="profile-oshimen__group profile-oshimen__group--hinata"><img class="profile-oshimen__group-icon" src="assets/icons/sakamichi/hinatazaka46.png" alt="" width="20" height="20" loading="lazy" decoding="async" />日向坂46</a>
                 <span class="profile-oshimen__member">
                   <a href="https://www.hinatazaka46.com/s/official/artist/29?ima=0000" target="_blank" rel="noopener noreferrer">正源司 陽子</a>
                   <span aria-hidden="true"> / </span>
@@ -180,7 +340,7 @@
                 </span>
               </li>
               <li>
-                <a href="https://sakurazaka46.com/" target="_blank" rel="noopener noreferrer" class="profile-oshimen__group profile-oshimen__group--sakura">櫻坂46</a>
+                <a href="https://sakurazaka46.com/" target="_blank" rel="noopener noreferrer" class="profile-oshimen__group profile-oshimen__group--sakura"><img class="profile-oshimen__group-icon" src="assets/icons/sakamichi/sakurazaka46.png" alt="" width="20" height="20" loading="lazy" decoding="async" />櫻坂46</a>
                 <span class="profile-oshimen__member">
                   <a href="https://sakurazaka46.com/s/s46/artist/50?ima=0000" target="_blank" rel="noopener noreferrer">森田 ひかる</a>
                   <span aria-hidden="true"> / </span>
@@ -218,7 +378,12 @@
             </span> PC</h2>
             <div class="profile-pc-stack">
               <div class="profile-pc-block profile-pc-block--mac">
-                <h3 class="profile-pc-sub">Mac</h3>
+                <h3 class="profile-pc-sub">
+                  <span class="profile-pc-sub__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" role="presentation"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                  </span>
+                  Mac
+                </h3>
                 <dl class="profile-dl" aria-label="Macのスペック">
                   <dt>機種</dt>
                   <dd>MacBook Pro 14-inch (2025)</dd>
@@ -233,7 +398,12 @@
                 </dl>
               </div>
               <div class="profile-pc-block profile-pc-block--win">
-                <h3 class="profile-pc-sub">Windows</h3>
+                <h3 class="profile-pc-sub">
+                  <span class="profile-pc-sub__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" role="presentation"><path d="M2 2h9.5v9.5H2V2zm11.5 0H22v9.5h-9.5V2zM2 13.5h9.5V22H2v-8.5zm11.5 0H22V22h-9.5v-8.5z"/></svg>
+                  </span>
+                  Windows
+                </h3>
                 <dl class="profile-dl" aria-label="Windows（ゲーミングPC）のスペック">
                   <dt>機種</dt>
                   <dd>GALLERIA FPR7A-R57-B</dd>
@@ -268,6 +438,7 @@
     "@context": "https://schema.org",
     "@type": "Person",
     "name": "しおり🔖",
+    "alternateName": "本間健一",
     "description": "しおり🔖 の個人サイト。",
     "url": "https://github.com/shiori-02-14",
     "sameAs": [
@@ -281,7 +452,7 @@
       "@type": "EducationalOrganization",
       "name": "電気通信大学"
     },
-    "knowsAbout": ["C++", "Swift", "Python"]
+    "knowsAbout": ["LaTeX", "C++", "C#", "Ruby", "Swift", "JavaScript", "HTML", "CSS", "Python", "Go", "Kotlin", "Dart"]
   }
   </script>
 </body>
