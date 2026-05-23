@@ -2923,16 +2923,42 @@ a.friend-card::after {
   max-width: 100%;
 }
 #profile-page .profile-intro-card .profile-bgm .bgm-badge {
-  max-width: min(100%, 16.5rem);
+  gap: 0.38rem;
+  padding: 0.26rem 0.52rem 0.26rem 0.34rem;
+  font-size: clamp(0.62rem, 1.45vw, 0.7rem);
+  max-width: min(100%, 17.5rem);
+}
+#profile-page .profile-intro-card .profile-bgm .bgm-badge__icon {
+  width: 18px;
+  height: 18px;
+}
+#profile-page .profile-intro-card .profile-bgm .bgm-badge__icon svg {
+  width: 9px;
+  height: 9px;
+  margin-left: 1px;
 }
 #profile-page .profile-intro-card .profile-bgm .bgm-badge__content {
   min-width: 0;
   flex: 1;
 }
 #profile-page .profile-intro-card .profile-bgm .bgm-badge__text {
+  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: clip;
 }
+#profile-page .profile-intro-card .profile-bgm .bgm-badge__eq {
+  height: 10px;
+  gap: 1.5px;
+  margin-left: 0.1rem;
+  flex-shrink: 0;
+}
+#profile-page .profile-intro-card .profile-bgm .bgm-badge__eq span {
+  width: 2px;
+}
+#profile-page .profile-intro-card .profile-bgm .bgm-badge__eq span:nth-child(1) { height: 4px; }
+#profile-page .profile-intro-card .profile-bgm .bgm-badge__eq span:nth-child(2) { height: 8px; }
+#profile-page .profile-intro-card .profile-bgm .bgm-badge__eq span:nth-child(3) { height: 5px; }
+#profile-page .profile-intro-card .profile-bgm .bgm-badge__eq span:nth-child(4) { height: 7px; }
 #profile-page .profile-intro-card .profile-dl--about {
   margin: 0;
   padding: 0.2rem 0 0.2rem var(--intro-col-gap);
@@ -3719,17 +3745,21 @@ a.friend-card::after {
     padding: 0.1rem 0.34rem;
   }
   #profile-page .profile-intro-card .profile-bgm .bgm-badge {
-    gap: 0.4rem;
-    padding: 0.28rem 0.55rem 0.28rem 0.38rem;
-    font-size: 0.66rem;
+    gap: 0.32rem;
+    padding: 0.24rem 0.46rem 0.24rem 0.32rem;
+    font-size: clamp(0.58rem, 2.8vw, 0.64rem);
+    max-width: 100%;
   }
   #profile-page .profile-intro-card .profile-bgm .bgm-badge__icon {
-    width: 20px;
-    height: 20px;
+    width: 17px;
+    height: 17px;
   }
   #profile-page .profile-intro-card .profile-bgm .bgm-badge__icon svg {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
+  }
+  #profile-page .profile-intro-card .profile-bgm .bgm-badge__eq {
+    height: 9px;
   }
   #profile-page .profile-timeline__title--with-icon {
     display: flex;
