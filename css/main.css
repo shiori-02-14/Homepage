@@ -3465,24 +3465,31 @@ a.friend-card::after {
 #profile-page .profile-timeline__title--with-logo {
   display: flex;
   align-items: center;
-  gap: 0.28rem;
   width: 100%;
-  flex-wrap: wrap;
-  row-gap: 0.22rem;
+}
+#profile-page .profile-timeline__title-logo-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  flex-wrap: nowrap;
+  min-width: 0;
+  max-width: 100%;
 }
 #profile-page .profile-timeline__title-logo {
   height: 2.15em;
   max-height: 2.15em;
-  max-width: min(100%, 11.5rem);
+  max-width: 100%;
   width: auto;
   display: block;
-  flex-shrink: 0;
+  flex-shrink: 1;
   object-fit: contain;
 }
 #profile-page .profile-timeline__title-logo-link {
   display: flex;
   align-items: center;
-  flex-shrink: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: min(11.5rem, calc(100% - 3.35rem));
   line-height: 0;
   border-radius: 0.22rem;
   transition: opacity .18s ease, box-shadow .18s ease;
@@ -3494,8 +3501,9 @@ a.friend-card::after {
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 38%, transparent);
 }
 #profile-page .profile-timeline__title-suffix {
-  flex-shrink: 0;
+  flex: 0 0 auto;
   align-self: center;
+  white-space: nowrap;
   font-size: inherit;
   font-weight: inherit;
   line-height: 1.2;
@@ -3617,9 +3625,15 @@ a.friend-card::after {
   #profile-page .profile-timeline__title-text {
     flex: 1 1 10rem;
   }
+  #profile-page .profile-timeline__title-logo-group {
+    gap: 0.22rem;
+  }
   #profile-page .profile-timeline__title-logo {
-    max-width: min(100%, 9.5rem);
-    max-height: 1.95em;
+    max-height: 1.72em;
+    height: 1.72em;
+  }
+  #profile-page .profile-timeline__title-logo-link {
+    max-width: calc(100% - 3rem);
   }
   #profile-page .profile-oshimen li {
     padding: 0.82rem 0.88rem;
@@ -3690,7 +3704,8 @@ a.friend-card::after {
     flex: 1 1 auto;
   }
   #profile-page .profile-timeline__title-logo {
-    max-width: min(100%, 8.5rem);
+    max-height: 1.62em;
+    height: 1.62em;
   }
 }
 
