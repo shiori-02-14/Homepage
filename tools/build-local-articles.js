@@ -503,7 +503,10 @@ ${article.bodyHtml.split('\n').map((line) => `        ${line}`).join('\n')}
       </nav>
     </article>
 
-    <footer class="foot">© <span id="y"></span> ${SITE_TITLE}</footer>
+    <footer class="foot">
+      <nav class="foot-social" aria-label="SNSリンク"></nav>
+      <p class="foot-copy">© <span id="y"></span> ${SITE_TITLE}</p>
+    </footer>
   </main>
 
   <script src="../js/main.js" defer></script>

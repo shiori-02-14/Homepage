@@ -2399,6 +2399,50 @@ a.friend-card::after {
 .cards-scroll > li > .card.card--article .card__thumb {
   width: 100%;
 }
+
+@media (max-width: 640px) {
+  /* トップの Works / Articles プレビューは横スクロールだと見切れやすいので縦並びに */
+  .cards-scroll {
+    flex-direction: column;
+    overflow-x: visible;
+    scroll-snap-type: none;
+    gap: 1rem;
+    padding-bottom: 0;
+  }
+
+  .cards-scroll > li {
+    width: 100%;
+    max-width: 100%;
+    flex: 1 1 auto;
+  }
+
+  .foot-social {
+    gap: 0.45rem;
+    max-width: 100%;
+    padding-inline: 0.25rem;
+  }
+
+  .foot-social__link {
+    width: 2.15rem;
+    height: 2.15rem;
+  }
+
+  .foot {
+    margin-top: clamp(0.75rem, 2.2vw, 1.15rem);
+    padding-top: clamp(1.55rem, 4vw, 2rem);
+    padding-bottom: max(1.65rem, env(safe-area-inset-bottom, 0px) + 1.25rem);
+  }
+
+  .foot:has(.foot-social) {
+    gap: clamp(1rem, 3vw, 1.35rem);
+  }
+
+  section.narrow:has(.fortune-container) {
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+}
+
 .cards > li {
   list-style:none;
 }
@@ -4339,18 +4383,20 @@ a.friend-card::after {
 
 /* フッター */
 .foot {
-  /* main の上下余白と合わさって下が空きやすいので、少し詰める */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.85rem;
-  margin-top: 0;
-  padding-top: 1.35rem;
-  padding-bottom: 1.35rem;
+  margin-top: clamp(0.65rem, 2vw, 1.1rem);
+  padding-top: clamp(1.45rem, 3.8vw, 2.1rem);
+  padding-bottom: clamp(1.5rem, 3.8vw, 2.2rem);
   border-top: 1px solid var(--line);
   color: var(--muted);
   text-align: center;
   font-size: 0.9rem;
+}
+
+.foot:has(.foot-social) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.95rem, 2.8vw, 1.35rem);
 }
 
 .foot-social {
@@ -4413,6 +4459,13 @@ a.friend-card::after {
   margin: 0;
   font-size: 0.88rem;
   color: var(--muted);
+  line-height: 1.5;
+}
+
+/* おみくじ結果表示中はフッターまでの距離を詰める */
+#top main:has(.fortune-result[style*="block"]) .foot {
+  margin-top: clamp(0.35rem, 1.2vw, 0.65rem);
+  padding-top: clamp(1.25rem, 3.2vw, 1.75rem);
 }
 
 /* Articlesページ：下の余白（padding/margin）が大きく見えるのを解消 */
@@ -5051,15 +5104,21 @@ html { scroll-behavior: smooth; }
 .fortune-container {
   text-align: center;
   margin: 0;
-  padding: 0;
-  min-height: 150px; /* コメントとラッキーアイテム分の高さを確保 */
+  padding: clamp(1rem, 3vw, 1.75rem) 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
+  gap: clamp(0.75rem, 2.5vw, 1rem);
   position: relative;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+section.narrow:has(.fortune-container) {
+  margin-top: clamp(1.6rem, 4vw, 2.4rem);
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 /* 補助テキスト */
@@ -5267,12 +5326,13 @@ html { scroll-behavior: smooth; }
 .fortune-comment {
   display: none;
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: var(--muted);
-  line-height: 1.6;
+  line-height: 1.65;
   transition: opacity 0.2s ease;
   opacity: 0;
   transform: translateY(10px);
+  max-width: min(100%, 22rem);
 }
 
 .fortune-comment.fortune-reveal {
@@ -5286,11 +5346,13 @@ html { scroll-behavior: smooth; }
 .fortune-lucky {
   display: none;
   margin: 0;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   color: var(--muted);
+  line-height: 1.55;
   transition: opacity 0.2s ease;
   opacity: 0;
   transform: translateY(10px);
+  max-width: min(100%, 22rem);
 }
 
 .fortune-lucky.fortune-reveal {
@@ -5303,8 +5365,29 @@ html { scroll-behavior: smooth; }
 
 /* 「もう一度」ボタン */
 .fortune-retry-btn {
-  margin-top: 0.5rem;
+  margin-top: 0;
   animation: fortuneRetryAppear 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* 結果表示中：内部の余白を要素ごとに調整 */
+.fortune-container:has(.fortune-result[style*="block"]) {
+  cursor: pointer;
+  gap: 0;
+  min-height: 0;
+  padding-top: clamp(0.35rem, 1.2vw, 0.65rem);
+  padding-bottom: clamp(0.25rem, 1vw, 0.5rem);
+}
+
+.fortune-container:has(.fortune-result[style*="block"]) .fortune-result {
+  margin-bottom: clamp(0.9rem, 2.8vw, 1.2rem);
+}
+
+.fortune-container:has(.fortune-result[style*="block"]) .fortune-comment {
+  margin-bottom: 0.35rem;
+}
+
+.fortune-container:has(.fortune-result[style*="block"]) .fortune-lucky {
+  margin-bottom: clamp(0.95rem, 2.8vw, 1.25rem);
 }
 
 @keyframes fortuneRetryAppear {
@@ -5316,11 +5399,6 @@ html { scroll-behavior: smooth; }
     opacity: 1;
     transform: translateY(0) scale(1);
   }
-}
-
-/* 結果が表示されている時のコンテナ */
-.fortune-container:has(.fortune-result[style*="block"]) {
-  cursor: pointer;
 }
 
 /* アニメーション定義 */

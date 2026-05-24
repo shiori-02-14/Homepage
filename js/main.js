@@ -179,16 +179,19 @@ const initFooterSocial = () => {
   const pathPrefix = getFooterPathPrefix();
 
   document.querySelectorAll('.foot:not([data-foot-social-ready])').forEach((footer) => {
-    if (footer.querySelector('.foot-social')) {
-      footer.dataset.footSocialReady = 'true';
-      return;
-    }
-
     footer.dataset.footSocialReady = 'true';
 
-    const nav = document.createElement('nav');
-    nav.className = 'foot-social';
-    nav.setAttribute('aria-label', 'SNSリンク');
+    let nav = footer.querySelector('.foot-social');
+    if (!nav) {
+      nav = document.createElement('nav');
+      nav.className = 'foot-social';
+      nav.setAttribute('aria-label', 'SNSリンク');
+      footer.prepend(nav);
+    }
+
+    if (nav.childElementCount > 0) {
+      return;
+    }
 
     FOOTER_SOCIAL_LINKS.forEach(({ key, href, label, internal }) => {
       const link = document.createElement('a');
@@ -212,11 +215,13 @@ const initFooterSocial = () => {
       nav.appendChild(link);
     });
 
-    const copy = document.createElement('p');
-    copy.className = 'foot-copy';
-    copy.innerHTML = '© <span id="y"></span> しおり🔖';
-
-    footer.replaceChildren(nav, copy);
+    let copy = footer.querySelector('.foot-copy');
+    if (!copy) {
+      copy = document.createElement('p');
+      copy.className = 'foot-copy';
+      copy.innerHTML = '© <span id="y"></span> しおり🔖';
+      footer.appendChild(copy);
+    }
   });
 };
 
