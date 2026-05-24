@@ -774,26 +774,6 @@ const initFriendAvatars = () => {
   document.querySelectorAll('.friend-card__avatar img').forEach((img) => {
     img.referrerPolicy = 'no-referrer';
 
-    const fetchTarget = img.dataset.avatarFetch?.trim();
-    if (fetchTarget) {
-      const slash = fetchTarget.indexOf('/');
-      const provider = slash === -1 ? 'twitter' : fetchTarget.slice(0, slash);
-      const handle = slash === -1 ? fetchTarget : fetchTarget.slice(slash + 1);
-      img.src = `https://unavatar.io/${provider}/${encodeURIComponent(handle)}?t=${Date.now()}`;
-    } else {
-      try {
-        const rawSrc = img.getAttribute('src') || '';
-        if (!rawSrc || rawSrc.startsWith('assets/')) return;
-        const url = new URL(rawSrc, window.location.href);
-        if (/unavatar\.io/i.test(url.hostname)) {
-          url.searchParams.set('t', String(Date.now()));
-          img.src = url.toString();
-        }
-      } catch (_) {
-        // ignore
-      }
-    }
-
     img.addEventListener('error', () => {
       const avatar = img.closest('.friend-card__avatar');
       const name = img.closest('.friend-card')?.querySelector('.friend-card__name')?.textContent?.trim();
