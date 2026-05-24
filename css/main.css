@@ -2044,6 +2044,18 @@ a.friend-card::after {
   object-fit: cover;
   display: block;
 }
+.friend-card__avatar[data-initial] {
+  display: grid;
+  place-items: center;
+  font-weight: 640;
+  font-size: 0.92rem;
+  color: var(--muted);
+  background: var(--accent-weak);
+}
+.friend-card__avatar[data-initial]::before {
+  content: attr(data-initial);
+  line-height: 1;
+}
 .friend-card__name {
   flex: 1;
   display: inline-flex;
