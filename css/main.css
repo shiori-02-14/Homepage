@@ -2401,19 +2401,24 @@ a.friend-card::after {
 }
 
 @media (max-width: 640px) {
-  /* トップの Works / Articles プレビューは横スクロールだと見切れやすいので縦並びに */
+  /* トップの Works / Articles：スマホでも横スクロール */
   .cards-scroll {
-    flex-direction: column;
-    overflow-x: visible;
-    scroll-snap-type: none;
-    gap: 1rem;
-    padding-bottom: 0;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    gap: 0.85rem;
+    padding-bottom: 0.75rem;
+    scroll-padding-inline: 0.15rem;
+    -webkit-overflow-scrolling: touch;
   }
 
   .cards-scroll > li {
-    width: 100%;
-    max-width: 100%;
-    flex: 1 1 auto;
+    width: min(272px, 78vw);
+    max-width: none;
+    flex: 0 0 auto;
+    scroll-snap-align: start;
   }
 
   .foot-social {
