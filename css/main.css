@@ -2241,6 +2241,20 @@ a.friend-card::after {
 #works-page .card--work h3 {
   font-size: clamp(1.05rem, 1.4vw, 1.2rem);
   line-height: 1.35;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  align-self: stretch;
+  white-space: normal;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  text-overflow: ellipsis;
+  word-break: normal;
+  line-break: normal;
+  text-wrap: wrap;
 }
 #articles-page .card__date {
   font-size: 0.9rem;
@@ -4613,50 +4627,34 @@ html { scroll-behavior: smooth; }
     margin-bottom: 1.1rem;
   }
 
-  /* スマホ：Works はコンパクト固定高、Articles は Works 幅 + サムネ 16:9 */
+  /* スマホ：Articles / Works 共通の横並びカード（高さ = サムネ 16:9） */
+  #articles-page .card--article,
   #works-page .card--work {
-    height: 102px;
-    min-height: 102px;
-    max-height: 102px;
+    --card-thumb-w: clamp(128px, 38vw, 172px);
+    height: calc(var(--card-thumb-w) * 9 / 16);
+    min-height: calc(var(--card-thumb-w) * 9 / 16);
+    max-height: calc(var(--card-thumb-w) * 9 / 16);
     overflow: hidden;
   }
-  #articles-page .card--article {
-    height: auto;
-    min-height: 0;
-    max-height: none;
-    overflow: hidden;
-  }
+  #articles-page .card--article .card__link,
   #works-page .card--work .card__link {
+    flex-direction: row;
     align-items: stretch;
     height: 100%;
     padding-block: 0;
   }
-  #articles-page .card--article .card__link {
-    align-items: center;
-    height: auto;
-    padding-block: 0;
-  }
+  #articles-page .card--article .card__thumb,
   #works-page .card--work .card__thumb {
-    height: 102px;
-    min-height: 102px;
-    max-height: 102px;
-    aspect-ratio: unset;
-    flex: 0 0 40%;
-    width: 40%;
-    padding-top: 0;
-    align-self: stretch;
-    flex-shrink: 0;
-  }
-  #articles-page .card--article .card__thumb {
-    flex: 0 0 clamp(120px, 34vw, 220px);
-    width: clamp(120px, 34vw, 220px);
-    height: auto;
+    flex: 0 0 var(--card-thumb-w);
+    width: var(--card-thumb-w);
+    height: 100%;
     min-height: 0;
     max-height: none;
     aspect-ratio: 16 / 9;
     padding-top: 0;
-    align-self: center;
+    align-self: stretch;
     flex-shrink: 0;
+    border-radius: 16px 0 0 16px;
   }
   #works-page .card--work .card__thumb img:not(.thumb-logo),
   #works-page .card--work .card__thumb svg {
@@ -4665,30 +4663,84 @@ html { scroll-behavior: smooth; }
     object-fit: cover;
     object-position: center;
   }
-  #articles-page .card--article .card__content,
-  #works-page .card--work .card__content {
+  #articles-page .card--article .card__content {
+    flex: 1 1 auto;
+    min-width: 0;
     min-height: 0;
-    padding: 0.5rem 0.75rem;
+    height: 100%;
+    padding: 0.56rem 2.45rem 0.56rem 0.62rem;
+    border-left: 1px solid var(--card-border);
+    border-top: none;
     justify-content: center;
     gap: 0.18rem;
     overflow: hidden;
   }
-  #articles-page .card--article .card__content {
-    justify-content: center; /* サムネよりテキストが低いとき、右列を縦中央に */
-    padding: 0.72rem 2.55rem 0.76rem 0.68rem;
-    gap: 0.28rem;
+  #works-page .card--work .card__content {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    padding: 0.5rem 2.4rem 0.5rem 0.65rem;
+    border-left: 1px solid var(--card-border);
+    border-top: none;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 0;
+    overflow: hidden;
+  }
+  #works-page .card--work h3 {
+    font-size: 0.875rem;
+    line-height: 1.25;
+    font-weight: 640;
+    width: 100%;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+  }
+  #articles-page .card__date,
+  #works-page .card__date {
+    font-size: 0.82rem;
   }
   #articles-page .card--article h3 {
     font-size: 0.94rem;
     line-height: 1.34;
   }
-  #works-page .card--work h3 {
-    font-size: 0.98rem;
-    line-height: 1.3;
+  #works-page .card--work .card__content > p:not(.card__note) {
+    margin: 0.14rem 0 0;
+    font-size: 0.75rem;
+    line-height: 1.32;
+    color: var(--muted);
+    width: 100%;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    overflow: hidden;
   }
-  #articles-page .card__date,
-  #works-page .card__date {
-    font-size: 0.82rem;
+  #works-page .card--work .card__content > h3 + .card__note:only-of-type {
+    margin: 0.14rem 0 0 !important;
+    font-size: 0.75rem !important;
+    line-height: 1.32;
+    color: var(--muted);
+    opacity: 1;
+    width: 100%;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    overflow: hidden;
+  }
+  #works-page .card--work .card__content > p:not(.card__note) + .card__note {
+    margin: 0.1rem 0 0 !important;
+    font-size: 0.6875rem !important;
+    line-height: 1.25;
+    color: var(--muted);
+    opacity: 0.82;
+    width: 100%;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    overflow: hidden;
   }
   /* スマホ：プラットフォームバッジをコンパクトに（テキストとの干渉を減らす） */
   #articles-page .badge--note {
@@ -4696,7 +4748,8 @@ html { scroll-behavior: smooth; }
     padding: 0.12rem 0.48rem;
     letter-spacing: 0.05em;
   }
-  #articles-page .card--article .badge--corner {
+  #articles-page .card--article .badge--corner,
+  #works-page .card--work .badge--corner {
     top: 0.48rem;
     right: 0.52rem;
     left: auto;
@@ -4708,41 +4761,8 @@ html { scroll-behavior: smooth; }
   #works-page .cards {
     gap: 1rem;
   }
-  #works-page .card--work .card__link {
-    align-items: stretch;
-  }
-  #works-page .card--work .card__thumb {
-    height: auto;
-    min-height: 100%;
-    aspect-ratio: auto;
-  }
-  #works-page .card--work .card__link p {
-    margin: 0;
-    line-height: 1.35;
-  }
-  #works-page .card--work .card__content > p:not(.card__note) {
-    font-size: 0.94rem;
-    margin-top: 0.14rem;
-    display: -webkit-box;
-    line-clamp: 1;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  #works-page .card--work .card__note {
-    margin-top: 0.16rem !important;
-    font-size: 0.8rem !important;
-    line-height: 1.3;
-    display: -webkit-box;
-    line-clamp: 1;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  #works-page .badge--corner {
-    top: 0.75rem;
-    right: 0.75rem;
-    left: auto;
+  #works-page .card--work.card--upcoming .card__construction-emoji {
+    font-size: clamp(1.65rem, 9vw, 2.25rem);
   }
   /* スマホ：COMING SOON/LATERバッジのサイズを小さく */
   .badge--soon {
@@ -4842,29 +4862,28 @@ html { scroll-behavior: smooth; }
     border-radius: 0;
   }
   #articles-page .card--article .card__content {
-    padding: 0.64rem 2.45rem 0.7rem 0.52rem;
-    gap: 0.24rem;
-  }
-  #works-page .card--work .card__content {
-    padding: 0.78rem 0.78rem;
-  }
-  #articles-page .card--article h3,
-  #works-page .card--work h3 {
-    font-size: 0.96rem;
-    line-height: 1.28;
+    padding: 0.5rem 2.35rem 0.5rem 0.52rem;
+    gap: 0.14rem;
   }
   #articles-page .card--article h3 {
     font-size: 0.92rem;
+    line-height: 1.28;
   }
-  #articles-page .card__date,
-  #works-page .card__date {
+  #articles-page .card__date {
     font-size: 0.8rem;
   }
-  #works-page .card--work .card__content > p:not(.card__note) {
-    font-size: 0.9rem;
+  #works-page .card--work .card__content {
+    padding: 0.46rem 2.3rem 0.46rem 0.55rem;
   }
-  #works-page .card--work .card__note {
-    font-size: 0.76rem !important;
+  #works-page .card--work h3 {
+    font-size: 0.84rem;
+  }
+  #works-page .card--work .card__content > p:not(.card__note),
+  #works-page .card--work .card__content > h3 + .card__note:only-of-type {
+    font-size: 0.72rem !important;
+  }
+  #works-page .card--work .card__content > p:not(.card__note) + .card__note {
+    font-size: 0.66rem !important;
   }
   #works-page .cards {
     gap: 0.85rem;
