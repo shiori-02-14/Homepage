@@ -2095,8 +2095,8 @@ a.friend-card::after {
 }
 #works-page .card--work .card__thumb {
   /* スマホ〜タブレットで自然に伸縮するサムネ幅 */
-  flex: 0 0 clamp(140px, 40vw, 260px);
-  width: clamp(140px, 40vw, 260px);
+  flex: 0 0 clamp(120px, 34vw, 220px);
+  width: clamp(120px, 34vw, 220px);
   padding-top: 0;
   aspect-ratio: 16 / 9;
   border-radius: 20px 0 0 20px;
@@ -2192,8 +2192,8 @@ a.friend-card::after {
 }
 @media (min-width: 760px) {
   #works-page .card--work .card__thumb {
-    flex: 0 0 320px;
-    width: 320px;
+    flex: 0 0 272px;
+    width: 272px;
   }
   #works-page .card--work .card__content {
     padding: 1.25rem 1.4rem;
@@ -2264,8 +2264,8 @@ a.friend-card::after {
 #articles-page .card--article .card__thumb {
   display: grid;
   grid-template: 1fr / 1fr;
-  flex: 0 0 clamp(140px, 40vw, 260px);
-  width: clamp(140px, 40vw, 260px);
+  flex: 0 0 clamp(120px, 34vw, 220px);
+  width: clamp(120px, 34vw, 220px);
   padding-top: 0;
   aspect-ratio: 16 / 9;
   height: auto;
@@ -2306,8 +2306,8 @@ a.friend-card::after {
 
 @media (min-width: 760px) {
   #articles-page .card--article .card__thumb {
-    flex: 0 0 320px;
-    width: 320px;
+    flex: 0 0 272px;
+    width: 272px;
   }
   #articles-page .card--article .card__content {
     padding: 1.25rem 1.4rem;
@@ -2345,7 +2345,7 @@ a.friend-card::after {
   list-style: none;
   scroll-snap-align: start;
   flex: 0 0 auto; /* 横幅を固定しないと縮む */
-  width: min(320px, 80vw); /* カードの幅設定 */
+  width: min(272px, 68vw); /* カードの幅設定 */
   display: flex;
 }
 .cards-scroll > li > .card {
@@ -4615,9 +4615,9 @@ html { scroll-behavior: smooth; }
 
   /* スマホ：Works はコンパクト固定高、Articles は Works 幅 + サムネ 16:9 */
   #works-page .card--work {
-    height: 120px;
-    min-height: 120px;
-    max-height: 120px;
+    height: 102px;
+    min-height: 102px;
+    max-height: 102px;
     overflow: hidden;
   }
   #articles-page .card--article {
@@ -4637,9 +4637,9 @@ html { scroll-behavior: smooth; }
     padding-block: 0;
   }
   #works-page .card--work .card__thumb {
-    height: 120px;
-    min-height: 120px;
-    max-height: 120px;
+    height: 102px;
+    min-height: 102px;
+    max-height: 102px;
     aspect-ratio: unset;
     flex: 0 0 40%;
     width: 40%;
@@ -4648,8 +4648,8 @@ html { scroll-behavior: smooth; }
     flex-shrink: 0;
   }
   #articles-page .card--article .card__thumb {
-    flex: 0 0 clamp(140px, 40vw, 260px);
-    width: clamp(140px, 40vw, 260px);
+    flex: 0 0 clamp(120px, 34vw, 220px);
+    width: clamp(120px, 34vw, 220px);
     height: auto;
     min-height: 0;
     max-height: none;
