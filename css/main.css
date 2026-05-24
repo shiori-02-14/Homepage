@@ -3475,18 +3475,25 @@ a.friend-card::after {
 }
 #profile-page .profile-timeline__title--with-icon {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.32rem;
   width: 100%;
-  flex-wrap: wrap;
-  row-gap: 0.28rem;
+  flex-wrap: nowrap;
+  overflow-wrap: normal;
+  word-break: keep-all;
+  line-break: strict;
+  text-wrap: wrap;
 }
 #profile-page .profile-timeline__title--with-icon span {
   min-width: 0;
 }
 #profile-page .profile-timeline__title-text {
   min-width: 0;
-  flex: 1;
+  flex: 1 1 auto;
+  overflow-wrap: normal;
+  word-break: keep-all;
+  line-break: strict;
+  text-wrap: wrap;
 }
 #profile-page .profile-timeline__title a:not(.profile-timeline__title-logo-link):not(.profile-timeline__title-icon-link),
 #profile-page .profile-timeline__title-text a {
@@ -3515,8 +3522,10 @@ a.friend-card::after {
 #profile-page .profile-timeline__title-icon-link {
   display: flex;
   align-items: center;
+  align-self: flex-start;
   flex-shrink: 0;
   line-height: 0;
+  margin-top: 0.12em;
   border-radius: 5px;
   transition: opacity .18s ease, box-shadow .18s ease;
 }
@@ -3872,7 +3881,7 @@ a.friend-card::after {
   }
   #profile-page .profile-timeline__title--with-icon {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.32rem;
   }
   #profile-page .profile-timeline__title--with-icon .profile-timeline__title-text {
