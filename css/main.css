@@ -4217,7 +4217,7 @@ a.friend-card::after {
 @media (min-width: 900px) {
   #profile-page .profile-skills__group--tools {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: start;
     gap: 0.38rem 0.48rem;
   }
