@@ -149,6 +149,77 @@ const setupThemeToggle = () => {
   }
 };
 
+const FOOTER_SOCIAL_ICON = {
+  x: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>',
+  github: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>',
+  note: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4.1c4.2 0 6.9 2.2 6.9 6.4V19h-3.4v-7.5c0-2.1-1.1-3.2-3.2-3.2H9.5V19H6V5z"/></svg>',
+  qiita: '<svg viewBox="0 0 512 512" fill="currentColor"><path d="M248.445-.086h15.535c50.594 1.969 96.68 17.246 138.262 45.832 40.39 28.555 70.348 65.57 89.871 111.04 12.407 29.898 19.035 61.023 19.887 93.366v13.828c-1.434 39.383-11.281 76.54-29.531 111.465l-.168.168c-6.23-3.12-12.832-4.855-19.801-5.203-3.703-.129-7.402-.07-11.098.168-4.707.422-9.402.961-14.082 1.621a12.438 12.438 0 0 1-6.23-2.133 44.843 44.843 0 0 1-7.082-6.058 80.19 80.19 0 0 1-9.39-12.121c-2.24-4.125-2.981-8.508-2.22-13.14 5.727-17.692 8.856-35.845 9.391-54.454.938-26.027-3.441-51.117-13.144-75.277-9.582-23.993-23.211-45.301-40.883-63.926a5.79 5.79 0 0 0 .258-1.278 2772.54 2772.54 0 0 0-.344-50.015c-.922-7.813-5.278-11.2-13.059-10.156a25.062 25.062 0 0 0-6.824 2.73 5499.798 5499.798 0 0 1-35.164 20.059c-29.938-12.47-60.832-15.57-92.688-9.305-20.5 4.594-39.222 13.012-56.16 25.262a305.263 305.263 0 0 0-9.472 7.258c-12.442-3.09-24.871-6.192-37.297-9.305a17.357 17.357 0 0 0-8.875.34c-4.86 2.136-6.992 5.863-6.403 11.183a4012.428 4012.428 0 0 0 12.204 46.172c-18.922 33.156-27.825 68.863-26.711 107.11.293 18.89 3.48 37.27 9.558 55.136 12.75 35 35.938 60.52 69.559 76.555 20.023 9.117 41.02 14.465 62.984 16.047 28.059 1.86 55.711-.645 82.957-7.512a175.953 175.953 0 0 0 44.211-17.922 128.533 128.533 0 0 0 23.64-17.836c2.817 5 6.173 9.61 10.075 13.825 11.344 12.085 24.687 21.273 40.027 27.566a63.505 63.505 0 0 0 9.899 2.73c-37.512 38.594-82.86 63.176-136.043 73.743A285.817 285.817 0 0 1 262.445 512h-12.293c-62.222-2.078-116.734-23.387-163.523-63.926-40.762-36.457-67.531-81.433-80.313-134.933a284.931 284.931 0 0 1-6.402-49.16v-13.829a257.12 257.12 0 0 1 11.352-69.984c16.558-51.7 46.175-94.172 88.847-127.422C143.895 19.63 193.336 2.02 248.445-.086Zm0 0"/></svg>',
+  zenn: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M.264 23.771h4.984c.264 0 .498-.147.645-.352L19.614.874c.176-.293-.029-.645-.381-.645h-4.72c-.235 0-.44.117-.557.323L.03 23.361c-.088.176.029.41.234.41zM17.445 23.419l6.479-10.408c.205-.323-.029-.733-.41-.733h-4.691c-.176 0-.352.088-.44.235l-6.655 10.643c-.176.264.029.616.352.616h4.779c.234-.001.468-.118.586-.353z"/></svg>',
+  youtube: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>',
+};
+
+const FOOTER_SOCIAL_LINKS = [
+  { key: 'x', href: 'https://x.com/shiori_tech', label: 'X' },
+  { key: 'github', href: 'https://github.com/shiori-02-14', label: 'GitHub' },
+  { key: 'note', href: 'https://note.com/shiori_02_14_', label: 'note' },
+  { key: 'qiita', href: 'https://qiita.com/shiori_02_14_', label: 'Qiita' },
+  { key: 'zenn', href: 'https://zenn.dev/shiori_02_14', label: 'Zenn' },
+  { key: 'youtube', href: 'https://www.youtube.com/@shiori_channel914', label: 'YouTube' },
+];
+
+const getFooterPathPrefix = () => {
+  const path = window.location.pathname.replace(/\\/g, '/');
+  if (/\/articles\/[^/]+\.html$/i.test(path)) {
+    return '../';
+  }
+  return '';
+};
+
+const initFooterSocial = () => {
+  const pathPrefix = getFooterPathPrefix();
+
+  document.querySelectorAll('.foot:not([data-foot-social-ready])').forEach((footer) => {
+    if (footer.querySelector('.foot-social')) {
+      footer.dataset.footSocialReady = 'true';
+      return;
+    }
+
+    footer.dataset.footSocialReady = 'true';
+
+    const nav = document.createElement('nav');
+    nav.className = 'foot-social';
+    nav.setAttribute('aria-label', 'SNSリンク');
+
+    FOOTER_SOCIAL_LINKS.forEach(({ key, href, label, internal }) => {
+      const link = document.createElement('a');
+      link.className = 'foot-social__link';
+      link.href = internal ? `${pathPrefix}${href}` : href;
+      if (!internal) {
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+      }
+
+      const icon = document.createElement('span');
+      icon.className = 'foot-social__icon';
+      icon.setAttribute('aria-hidden', 'true');
+      icon.innerHTML = FOOTER_SOCIAL_ICON[key] || '';
+
+      const sr = document.createElement('span');
+      sr.className = 'sr-only';
+      sr.textContent = label;
+
+      link.append(icon, sr);
+      nav.appendChild(link);
+    });
+
+    const copy = document.createElement('p');
+    copy.className = 'foot-copy';
+    copy.innerHTML = '© <span id="y"></span> しおり🔖';
+
+    footer.replaceChildren(nav, copy);
+  });
+};
+
 const initYearStamp = () => {
   const year = String(new Date().getFullYear());
   ['y', 'profile-year'].forEach((id) => {
@@ -788,6 +859,7 @@ const initFriendAvatars = () => {
 const initPage = () => {
   applyReducedEffectsHint();
   setupThemeToggle();
+  initFooterSocial();
   initYearStamp();
   initReloadButton();
   setupHeaderAutoFit();

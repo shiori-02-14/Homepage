@@ -96,6 +96,11 @@
   --section-divider-glow: rgba(251,191,36,.30);
   --texture-grain: rgba(15,23,42,.045);
   --texture-vignette: rgba(15,23,42,.14);
+  --foot-social-bg: rgba(148,163,184,.16);
+  --foot-social-bg-hover: rgba(255,255,255,.92);
+  --foot-social-border: rgba(148,163,184,.22);
+  --foot-social-border-hover: rgba(100,116,139,.38);
+  --foot-social-color: #64748b;
   color-scheme: light;
 }
 
@@ -185,6 +190,11 @@
   --section-divider-glow: rgba(251,191,36,.38);
   --texture-grain: rgba(248,250,252,.06);
   --texture-vignette: rgba(0,0,0,.36);
+  --foot-social-bg: rgba(255,255,255,.08);
+  --foot-social-bg-hover: rgba(255,255,255,.14);
+  --foot-social-border: rgba(255,255,255,.1);
+  --foot-social-border-hover: rgba(255,255,255,.22);
+  --foot-social-color: #94a3b8;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -4330,13 +4340,79 @@ a.friend-card::after {
 /* フッター */
 .foot {
   /* main の上下余白と合わさって下が空きやすいので、少し詰める */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
   margin-top: 0;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  border-top:1px solid var(--line);
-  color:var(--muted);
-  text-align:center;
-  font-size:.9rem;
+  padding-top: 1.35rem;
+  padding-bottom: 1.35rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.foot-social {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.55rem;
+  max-width: min(100%, 22rem);
+}
+
+.foot-social__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 999px;
+  background: var(--foot-social-bg);
+  border: 1px solid var(--foot-social-border);
+  color: var(--foot-social-color);
+  text-decoration: none;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+}
+
+.foot-social__link:hover,
+.foot-social__link:focus-visible {
+  background: var(--foot-social-bg-hover);
+  border-color: var(--foot-social-border-hover);
+  color: var(--accent-strong);
+  transform: translateY(-1px);
+  box-shadow: var(--elev-1);
+}
+
+.foot-social__link:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.foot-social__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+}
+
+.foot-social__icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.foot-copy {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--muted);
 }
 
 /* Articlesページ：下の余白（padding/margin）が大きく見えるのを解消 */
