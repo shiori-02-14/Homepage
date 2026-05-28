@@ -1549,7 +1549,7 @@ h2 .icon svg {
   position: absolute;
   inset: 0;
   /* ヒーロー背景：モバイルは軽量版 / 大きい画面は高解像度 */
-  background: url("../assets/profile/IMG_4573-small.jpg") 85% 20%/cover no-repeat;
+  background: url("../assets/profile/avatar-small.jpg") 85% 20%/cover no-repeat;
   opacity: .28;
   filter: saturate(.9);
     /* transform: scaleX(-1); */
@@ -1560,13 +1560,13 @@ h2 .icon svg {
 
 @media (min-width: 821px) {
   .hero::before {
-    background-image: url("../assets/profile/IMG_4573-medium.jpg");
+    background-image: url("../assets/profile/avatar-medium.jpg");
   }
 }
 
 @media (min-width: 821px) and (min-resolution: 2dppx) {
   .hero::before {
-    background-image: url("../assets/profile/IMG_4573.jpg");
+    background-image: url("../assets/profile/avatar.jpg");
   }
 }
 :root[data-theme='dark'] .hero::before {

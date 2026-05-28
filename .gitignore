@@ -34,3 +34,6 @@ push.log
 
 # 開発用プレビューファイル
 tools/preview-icons.html
+
+# VS Code Simple Browser が誤って作るディレクトリ
+vscode:

@@ -36,8 +36,14 @@ Homepage/
 ├── content/
 │   └── articles/           # ローカル記事 Markdown 原稿
 ├── assets/
-│   ├── icons/              # サイト・アプリ・スキルアイコン
-│   ├── media/              # 記事・Works 用メディア
+│   ├── icons/
+│   │   ├── apps/           # アプリアイコン（NEXUS, bookmark など）
+│   │   ├── brands/         # ブランド・SNS アイコン
+│   │   ├── sakamichi/      # 坂道グループアイコン
+│   │   └── skills/         # スキル・ツールアイコン
+│   ├── media/
+│   │   ├── homepage/       # homepage 記事用メディア
+│   │   └── tier/           # tier 記事用メディア
 │   └── profile/            # プロフィール用画像
 ├── css/
 │   └── main.css
@@ -49,4 +55,12 @@ Homepage/
 └── tools/                  # Node ビルドスクリプト
     ├── build-local-articles.js
     └── build-article-images.js
+```
+
+## ビルド
+
+```bash
+npm run build              # 記事 HTML + 外部記事サムネマニフェスト
+npm run build:articles     # ローカル記事のみ
+npm run build:images       # 外部記事サムネのみ
 ```
