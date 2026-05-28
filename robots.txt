@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://shiori-02-14.github.io/Homepage/sitemap.xml

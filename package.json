@@ -4,6 +4,7 @@
   "scripts": {
     "build:articles": "node tools/build-local-articles.js",
     "build:images": "node tools/build-article-images.js",
-    "build": "npm run build:articles && npm run build:images"
+    "build:sitemap": "node tools/build-sitemap.js",
+    "build": "npm run build:articles && npm run build:images && npm run build:sitemap"
   }
 }

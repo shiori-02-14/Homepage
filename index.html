@@ -3,20 +3,29 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>しおり🔖のホームページ</title>
-  <meta name="description" content="アイドルと黄色い看板のラーメン屋が好きです。" />
-  <meta name="keywords" content="しおり,電気通信大学" />
-  
-  <meta property="og:title" content="しおり🔖のホームページ" />
-  <meta property="og:description" content="アイドルと黄色い看板のラーメン屋が好きです。" />
+  <title>しおり🔖 | しおり（本間健一）の個人サイト — 電気通信大学</title>
+  <meta name="description" content="しおり（本間健一・しおり🔖）の公式サイト。電気通信大学の学生による個人ホームページ。記事・作品・プロフィールを掲載。" />
+  <meta name="keywords" content="しおり,しおり🔖,本間健一,電気通信大学,UEC,しおり 電通大,個人サイト" />
+  <meta name="author" content="しおり（本間健一）" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://shiori-02-14.github.io/Homepage/" />
+  <link rel="author" href="https://shiori-02-14.github.io/Homepage/profile.html" />
+
+  <meta property="og:site_name" content="しおり🔖" />
+  <meta property="og:title" content="しおり🔖 | しおり（本間健一）の個人サイト" />
+  <meta property="og:description" content="しおり（本間健一・しおり🔖）の公式サイト。電気通信大学の学生による個人ホームページ。" />
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://shiori-02-14.github.io/Homepage/" />
   <meta property="og:locale" content="ja_JP" />
-  <meta property="og:image" content="https://assets.st-note.com/production/uploads/images/48714034/rectangle_large_type_2_b9e78de146b25585718e46e6ec668614.jpeg?width=1200" />
-  
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="しおり🔖のホームページ" />
-  <meta name="twitter:description" content="アイドルと黄色い看板のラーメン屋が好きです。" />
-  <meta name="twitter:image" content="https://assets.st-note.com/production/uploads/images/48714034/rectangle_large_type_2_b9e78de146b25585718e46e6ec668614.jpeg?width=1200" />
+  <meta property="og:image" content="https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg" />
+  <meta property="og:image:alt" content="しおり🔖のアイコン" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="しおり🔖 | しおり（本間健一）の個人サイト" />
+  <meta name="twitter:description" content="しおり（本間健一・しおり🔖）の公式サイト。電気通信大学の学生による個人ホームページ。" />
+  <meta name="twitter:url" content="https://shiori-02-14.github.io/Homepage/" />
+  <meta name="twitter:image" content="https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg" />
+  <meta name="twitter:image:alt" content="しおり🔖のアイコン" />
   
   <link rel="stylesheet" href="css/main.css?v=20260524-cards-scroll" />
   <!-- Fonts -->
@@ -77,7 +86,8 @@
         <span class="hero__orb hero__orb--c"></span>
       </div>
       <div class="hero__body">
-        <h1>しおり🔖</h1>
+        <h1>しおり<span class="hero__mark" aria-hidden="true">🔖</span></h1>
+        <p class="hero__lead">本間健一（しおり）— 電気通信大学の個人サイト</p>
         <p class="note">アイドルと黄色い看板のラーメン屋が好きです。</p>
         <div class="hero__actions">
           <a class="btn" href="profile.html">≫ Profile</a>
@@ -361,16 +371,40 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "しおり🔖のホームページ",
-    "url": "https://github.com/shiori-02-14",
-    "description": "しおり🔖 の個人サイト。",
-    "potentialAction":
-    {
-      "@type": "SearchAction",
-      "target": "https://github.com/shiori-02-14?q={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://shiori-02-14.github.io/Homepage/#website",
+        "name": "しおり🔖",
+        "alternateName": ["しおり", "しおりのホームページ", "本間健一", "しおり🔖のホームページ"],
+        "url": "https://shiori-02-14.github.io/Homepage/",
+        "description": "しおり（本間健一）の公式個人サイト。電気通信大学の学生によるホームページ。",
+        "inLanguage": "ja",
+        "publisher": { "@id": "https://shiori-02-14.github.io/Homepage/#person" }
+      },
+      {
+        "@type": "Person",
+        "@id": "https://shiori-02-14.github.io/Homepage/#person",
+        "name": "しおり🔖",
+        "alternateName": ["しおり", "本間健一"],
+        "givenName": "健一",
+        "familyName": "本間",
+        "nickname": "しおり",
+        "url": "https://shiori-02-14.github.io/Homepage/profile.html",
+        "image": "https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg",
+        "affiliation": {
+          "@type": "CollegeOrUniversity",
+          "name": "電気通信大学"
+        },
+        "sameAs": [
+          "https://github.com/shiori-02-14",
+          "https://x.com/shiori_02_14_",
+          "https://note.com/shiori_02_14_",
+          "https://www.instagram.com/shiori_02_14_/",
+          "https://www.youtube.com/@shiori_channel914"
+        ]
+      }
+    ]
   }
   </script>
 </body>

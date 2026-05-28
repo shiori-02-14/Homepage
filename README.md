@@ -21,6 +21,7 @@ https://shiori-02-14.github.io/Homepage/
 - **ローカル記事** — `content/articles/*.md` をビルドで HTML 化
 - **ダーク / ライトテーマ** — ヘッダーのトグルで切り替え
 - **記事サムネの事前取得** — ビルド時に外部記事の OGP 画像を収集（CORS 回避）
+- **SEO** — canonical / OGP、`robots.txt`、`sitemap.xml`、構造化データ（JSON-LD）
 
 ## ディレクトリ構成
 
