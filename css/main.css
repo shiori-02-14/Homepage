@@ -1589,13 +1589,6 @@ h2 .icon svg {
   letter-spacing: .02em;
   text-wrap: pretty;
 }
-.hero__lead {
-  margin: 0 0 0.4rem;
-  font-size: clamp(0.92rem, 2.1vw, 1.02rem);
-  font-weight: 520;
-  color: var(--muted);
-  line-height: 1.45;
-}
 .subtitle {
   color:var(--muted);
   margin:0 0 .55rem;
