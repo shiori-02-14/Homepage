@@ -24,6 +24,14 @@ const MRSS_NS_THUMB_TEXT_RE = /<media:thumbnail[^>]*>([^<]+)<\/media:thumbnail>/
 
 const normalizeLink = (url) => String(url || '').trim().replace(/\/$/, '');
 
+const formatSimpleDate = (date) => {
+  if (!date || Number.isNaN(date.getTime())) return '';
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}/${month}/${day}`;
+};
+
 const normalizeNoteThumb = (url) => {
   if (!url) return '';
   let next = String(url);
@@ -89,10 +97,14 @@ const parseNoteRss = (xmlText) => {
       if (imgMatch && imgMatch[1]) imageUrl = imgMatch[1].replace(/&amp;/g, '&').trim();
     }
     if (link && title) {
+      const parsedDate = pubDate ? new Date(pubDate) : null;
+      const date = parsedDate && !Number.isNaN(parsedDate.getTime())
+        ? formatSimpleDate(parsedDate)
+        : '';
       items.push({
         link,
         title,
-        date: pubDate,
+        date,
         dateMs: Number.isFinite(dateMs) ? dateMs : 0,
         imageUrl: normalizeNoteThumb(imageUrl)
       });

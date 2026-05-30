@@ -19,7 +19,7 @@
   const ZENN_API_URL = `https://zenn.dev/api/articles?username=${ZENN_USER_ID}&order=latest`;
   const PREVIEW_DEFAULT_AUTHOR = 'しおり🔖';
   const PREVIEW_FALLBACK_AVATAR = 'https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg';
-  const articleListCacheStorageKey = '__SHIORI_ARTICLES_CACHE_V5__';
+  const articleListCacheStorageKey = '__SHIORI_ARTICLES_CACHE_V6__';
   const articleListCacheTtlMs = 30 * 60 * 1000; // 30分
   
   // CORSプロキシ（必要に応じて変更可能）
@@ -553,7 +553,7 @@
   // noteは rss2json 単独だと更新遅延・取得失敗時に止まりやすいため、直接RSS取得も併用
   const fetchNoteViaRssRaw = async () => {
     try {
-      const xmlText = await fetchTextViaCorsProxy(NOTE_FEED_URL, { timeoutMs: 5500 });
+      const xmlText = await fetchTextViaCorsProxy(NOTE_FEED_URL, { timeoutMs: 10000 });
       if (!xmlText) return [];
       return mapParsedRssItems(parseRSS(xmlText), 'note');
     } catch (e) {
@@ -1000,6 +1000,41 @@
     return `${year}/${month}/${day}`;
   };
 
+  const SIMPLE_DATE_RE = /^\d{4}\/\d{2}\/\d{2}$/;
+
+  const resolveArticleDate = (article) => {
+    const dateMs = Number(article?.dateMs) || 0;
+    if (dateMs > 0) {
+      const fromMs = new Date(dateMs);
+      if (!Number.isNaN(fromMs.getTime())) {
+        const display = formatDate(fromMs);
+        return { display, datetime: display.replace(/\//g, '-') };
+      }
+    }
+
+    const raw = String(article?.date || '').trim();
+    if (!raw) return { display: '', datetime: '' };
+    if (SIMPLE_DATE_RE.test(raw)) {
+      return { display: raw, datetime: raw.replace(/\//g, '-') };
+    }
+
+    const normalizedRaw = raw.includes('/') && !raw.includes(',')
+      ? raw.replace(/\//g, '-')
+      : raw;
+    const parsed = new Date(normalizedRaw);
+    if (!Number.isNaN(parsed.getTime())) {
+      const display = formatDate(parsed);
+      return { display, datetime: display.replace(/\//g, '-') };
+    }
+    return { display: '', datetime: '' };
+  };
+
+  const withNormalizedDate = (article) => {
+    const { display, datetime } = resolveArticleDate(article);
+    if (!display) return article;
+    return { ...article, date: display, dateDatetime: datetime };
+  };
+
   // 記事カードを生成
   const createArticleCard = (article) => {
     const li = document.createElement('li');
@@ -1064,11 +1099,12 @@
     const content = document.createElement('div');
     content.className = 'card__content';
     
-    if (article.date) {
+    const { display: dateText, datetime: dateDatetime } = resolveArticleDate(article);
+    if (dateText) {
       const time = document.createElement('time');
       time.className = 'card__date';
-      time.setAttribute('datetime', article.date.replace(/\//g, '-'));
-      time.textContent = article.date;
+      time.setAttribute('datetime', dateDatetime || dateText.replace(/\//g, '-'));
+      time.textContent = dateText;
       content.appendChild(time);
     }
     
@@ -1138,7 +1174,7 @@
         return true;
       })
       .sort((a, b) => (b.dateMs || 0) - (a.dateMs || 0));
-    return applySeededImages(merged);
+    return applySeededImages(merged.map(withNormalizedDate));
   };
 
   // 記事を表示
@@ -1301,39 +1337,33 @@
     try {
       await loadArticleImagesManifest();
 
-      const cachedArticles = readArticleListCache();
+      const seededNote = readSeededNoteFeed();
+      const cachedArticles = mergeNoteFeedWithRawThumbs(readArticleListCache(), seededNote);
       if (cachedArticles.length > 0) {
         renderArticlesToContainers(cachedArticles);
       }
 
       const sourceArticles = {
         local: readSeededLocalArticles(),
-        note: [],
+        note: seededNote.slice(),
         qiita: [],
         zenn: []
       };
 
-      const renderAndCache = () => {
-        const rendered = renderArticlesToContainers([
-          ...sourceArticles.local,
-          ...sourceArticles.note,
-          ...sourceArticles.qiita,
-          ...sourceArticles.zenn
-        ]);
-        if (rendered.length > 0) {
-          saveArticleListCache(rendered);
-        }
-        return rendered;
-      };
+      const renderLive = () => renderArticlesToContainers([
+        ...sourceArticles.local,
+        ...sourceArticles.note,
+        ...sourceArticles.qiita,
+        ...sourceArticles.zenn
+      ]);
 
-      if (sourceArticles.local.length > 0) {
-        renderAndCache();
-      }
+      // ホームは note 取得完了前に Qiita だけ描画されると最新 note が消えるため、シードを先に出す
+      renderLive();
 
       const localTask = fetchLocalArticles()
         .then((items) => {
           sourceArticles.local = Array.isArray(items) ? items : [];
-          renderAndCache();
+          renderLive();
         })
         .catch((error) => {
           if (sourceArticles.local.length === 0) {
@@ -1345,11 +1375,11 @@
       // 生RSS と rss2json を並列取得し、MRSS のサムネをリンクでマージ（先勝ちレースだとサムネが落ちる）
       const noteTask = fetchNoteArticlesMerged()
         .then((items) => {
-          sourceArticles.note = Array.isArray(items) ? items : [];
-          renderAndCache();
+          sourceArticles.note = Array.isArray(items) ? items : seededNote.slice();
+          renderLive();
         })
         .catch((error) => {
-          sourceArticles.note = [];
+          sourceArticles.note = seededNote.slice();
           debugWarn('note fetch failed:', error);
         });
 
@@ -1359,7 +1389,7 @@
       ])
         .then((items) => {
           sourceArticles.qiita = Array.isArray(items) ? items : [];
-          renderAndCache();
+          renderLive();
         })
         .catch((error) => {
           sourceArticles.qiita = [];
@@ -1373,7 +1403,7 @@
       ])
         .then((items) => {
           sourceArticles.zenn = Array.isArray(items) ? items : [];
-          renderAndCache();
+          renderLive();
         })
         .catch((error) => {
           sourceArticles.zenn = [];
@@ -1382,7 +1412,10 @@
 
       await promiseAllSettled([localTask, noteTask, qiitaTask, zennTask]);
 
-      const finalArticles = renderAndCache();
+      const finalArticles = renderLive();
+      if (finalArticles.length > 0) {
+        saveArticleListCache(finalArticles);
+      }
       if (finalArticles.length === 0 && cachedArticles.length === 0) {
         console.warn('記事を取得できませんでした');
       }
@@ -1395,12 +1428,15 @@
     } catch (err) {
       console.warn('[rss-loader] init failed:', err);
       try {
-        const merged = mergeAndSortArticles([
+        const merged = mergeAndSortArticles(
+          mergeNoteFeedWithRawThumbs(readArticleListCache(), readSeededNoteFeed())
+        );
+        const withLocal = mergeAndSortArticles([
           ...readSeededLocalArticles(),
-          ...readArticleListCache()
+          ...merged
         ]);
-        if (merged.length > 0) {
-          renderArticlesToContainers(merged);
+        if (withLocal.length > 0) {
+          renderArticlesToContainers(withLocal);
         }
       } catch (_) {}
     }
