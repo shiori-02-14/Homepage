@@ -19,7 +19,7 @@
   const ZENN_API_URL = `https://zenn.dev/api/articles?username=${ZENN_USER_ID}&order=latest`;
   const PREVIEW_DEFAULT_AUTHOR = 'しおり🔖';
   const PREVIEW_FALLBACK_AVATAR = 'https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg';
-  const articleListCacheStorageKey = '__SHIORI_ARTICLES_CACHE_V3__';
+  const articleListCacheStorageKey = '__SHIORI_ARTICLES_CACHE_V4__';
   const articleListCacheTtlMs = 30 * 60 * 1000; // 30分
   
   // CORSプロキシ（必要に応じて変更可能）
@@ -588,7 +588,7 @@
     });
   };
 
-  // rss2json が先に返るとサムネ無しで確定してしまうため、生RSSの imageUrl をリンク単位で上書きマージする
+  // 生RSS（最新）と rss2json（遅延しがち）をリンク単位で統合。json のみだと新着が落ちるため両方をマージする
   const mergeNoteFeedWithRawThumbs = (rawItems, jsonItems) => {
     const raw = Array.isArray(rawItems) ? rawItems : [];
     const json = Array.isArray(jsonItems) ? jsonItems : [];
@@ -598,16 +598,35 @@
       const url = String(item?.imageUrl || '').trim();
       if (link && url) thumbByLink.set(link, url);
     });
-    const base = json.length ? json : raw;
-    if (!base.length) return [];
-    return base.map((item) => {
-      const link = normalizeArticleLink(item?.link);
-      const fromRaw = link ? thumbByLink.get(link) : '';
-      return {
+
+    const byLink = new Map();
+    const upsertNoteItem = (item) => {
+      if (!item?.link || !item?.title) return;
+      const link = normalizeArticleLink(item.link);
+      const thumb = thumbByLink.get(link) || String(item.imageUrl || '').trim();
+      const next = {
         ...item,
-        imageUrl: fromRaw || String(item?.imageUrl || '').trim()
+        source: 'note',
+        imageUrl: thumb
       };
-    });
+      const prev = byLink.get(link);
+      if (!prev) {
+        byLink.set(link, next);
+        return;
+      }
+      const nextMs = Number(next.dateMs) || 0;
+      const prevMs = Number(prev.dateMs) || 0;
+      const newer = nextMs >= prevMs ? next : prev;
+      const older = nextMs >= prevMs ? prev : next;
+      byLink.set(link, {
+        ...newer,
+        imageUrl: thumb || String(newer.imageUrl || '').trim() || String(older.imageUrl || '').trim()
+      });
+    };
+
+    raw.forEach(upsertNoteItem);
+    json.forEach(upsertNoteItem);
+    return Array.from(byLink.values());
   };
 
   const fetchNoteArticlesMerged = async () => {
