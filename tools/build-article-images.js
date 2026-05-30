@@ -79,6 +79,8 @@ const parseNoteRss = (xmlText) => {
   for (const block of blocks) {
     const link = block.match(/<link>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/link>/i)?.[1]?.trim() || '';
     const title = block.match(/<title>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/i)?.[1]?.trim() || '';
+    const pubDate = block.match(/<pubDate>([\s\S]*?)<\/pubDate>/i)?.[1]?.trim() || '';
+    const dateMs = pubDate ? Date.parse(pubDate) : 0;
     let imageUrl = '';
     const mrss = block.match(MRSS_NS_THUMB_RE) || block.match(MRSS_NS_THUMB_TEXT_RE);
     if (mrss && mrss[1]) imageUrl = mrss[1].replace(/&amp;/g, '&').trim();
@@ -87,7 +89,13 @@ const parseNoteRss = (xmlText) => {
       if (imgMatch && imgMatch[1]) imageUrl = imgMatch[1].replace(/&amp;/g, '&').trim();
     }
     if (link && title) {
-      items.push({ link, title, imageUrl: normalizeNoteThumb(imageUrl) });
+      items.push({
+        link,
+        title,
+        date: pubDate,
+        dateMs: Number.isFinite(dateMs) ? dateMs : 0,
+        imageUrl: normalizeNoteThumb(imageUrl)
+      });
     }
   }
   return items;
@@ -143,10 +151,20 @@ const setImage = (manifest, link, imageUrl) => {
   manifest[normalizedLink] = url;
 };
 
-const buildNoteImages = async (manifest) => {
+const buildNoteImages = async (manifest, noteFeedOut) => {
   console.log('note RSS...');
   const xml = await fetchText(NOTE_FEED_URL);
   const items = parseNoteRss(xml);
+  if (Array.isArray(noteFeedOut)) {
+    noteFeedOut.push(...items.map((item) => ({
+      title: item.title,
+      link: item.link,
+      date: item.date || '',
+      dateMs: item.dateMs || 0,
+      imageUrl: item.imageUrl || '',
+      source: 'note'
+    })));
+  }
   for (const item of items) {
     let imageUrl = item.imageUrl;
     if (!imageUrl) {
@@ -188,7 +206,8 @@ const buildZennImages = async (manifest) => {
 
 const main = async () => {
   const manifest = {};
-  await buildNoteImages(manifest);
+  const noteFeed = [];
+  await buildNoteImages(manifest, noteFeed);
   await buildQiitaImages(manifest);
   await buildZennImages(manifest);
 
@@ -208,7 +227,21 @@ const main = async () => {
     'utf8'
   );
 
-  console.log(`\nBuilt ${Object.keys(sorted).length} article image(s).`);
+  const noteFeedSorted = noteFeed
+    .slice()
+    .sort((a, b) => (b.dateMs || 0) - (a.dateMs || 0));
+  fs.writeFileSync(
+    path.join(dataDir, 'note-feed.json'),
+    `${JSON.stringify(noteFeedSorted, null, 2)}\n`,
+    'utf8'
+  );
+  fs.writeFileSync(
+    path.join(dataDir, 'note-feed.js'),
+    `window.__NOTE_FEED__ = ${JSON.stringify(noteFeedSorted, null, 2)};\n`,
+    'utf8'
+  );
+
+  console.log(`\nBuilt ${Object.keys(sorted).length} article image(s), ${noteFeedSorted.length} note feed item(s).`);
 };
 
 main().catch((error) => {

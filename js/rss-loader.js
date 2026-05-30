@@ -19,7 +19,7 @@
   const ZENN_API_URL = `https://zenn.dev/api/articles?username=${ZENN_USER_ID}&order=latest`;
   const PREVIEW_DEFAULT_AUTHOR = 'しおり🔖';
   const PREVIEW_FALLBACK_AVATAR = 'https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg';
-  const articleListCacheStorageKey = '__SHIORI_ARTICLES_CACHE_V4__';
+  const articleListCacheStorageKey = '__SHIORI_ARTICLES_CACHE_V5__';
   const articleListCacheTtlMs = 30 * 60 * 1000; // 30分
   
   // CORSプロキシ（必要に応じて変更可能）
@@ -514,14 +514,32 @@
   };
 
   const fetchTextViaCorsProxy = async (targetUrl, { timeoutMs = 5000 } = {}) => {
-    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
+    const tryDirectProxy = async (proxyUrl) => {
+      try {
+        const res = await fetchWithTimeout(proxyUrl, { timeoutMs });
+        if (!res.ok) return '';
+        const text = await res.text();
+        return isUsableProxyBody(text) ? text : '';
+      } catch (error) {
+        debugWarn('cors proxy fetch failed:', proxyUrl, error);
+        return '';
+      }
+    };
+
+    const fromCorsProxyIo = await tryDirectProxy(
+      `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`
+    );
+    if (fromCorsProxyIo) return fromCorsProxyIo;
+
     try {
-      const res = await fetchWithTimeout(proxyUrl, { timeoutMs });
+      const allOriginsUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+      const res = await fetchWithTimeout(allOriginsUrl, { timeoutMs: Math.max(timeoutMs, 8000) });
       if (!res.ok) return '';
-      const text = await res.text();
+      const payload = await res.json();
+      const text = typeof payload?.contents === 'string' ? payload.contents : '';
       return isUsableProxyBody(text) ? text : '';
     } catch (error) {
-      debugWarn('corsproxy fetch failed:', targetUrl, error);
+      debugWarn('allorigins fetch failed:', targetUrl, error);
       return '';
     }
   };
@@ -556,6 +574,17 @@
     });
   };
   registerArticleImages(window.__ARTICLE_IMAGES__);
+
+  const readSeededNoteFeed = () => {
+    const seeded = window.__NOTE_FEED__;
+    return (Array.isArray(seeded) ? seeded : [])
+      .map((item) => ({
+        ...item,
+        source: 'note',
+        dateMs: Number(item?.dateMs) || 0
+      }))
+      .filter((item) => item.title && item.link);
+  };
 
   const lookupSeededImageUrl = (link) => {
     const key = normalizeArticleLink(link);
@@ -634,7 +663,9 @@
       fetchNoteViaRssRaw().catch(() => []),
       fetchFeedItems(NOTE_FEED_URL, 'note', { timeoutMs: 3800 }).catch(() => [])
     ]);
-    return mergeNoteFeedWithRawThumbs(raw, json);
+    const live = mergeNoteFeedWithRawThumbs(raw, json);
+    const seeded = readSeededNoteFeed();
+    return seeded.length ? mergeNoteFeedWithRawThumbs(live, seeded) : live;
   };
 
   const fetchQiitaViaAtomRaw = async () => {
