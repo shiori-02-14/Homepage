@@ -27,11 +27,11 @@
   <meta name="twitter:image" content="https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg" />
   <meta name="twitter:image:alt" content="しおり🔖のアイコン" />
   
-  <link rel="stylesheet" href="css/main.css?v=20260524-cards-scroll" />
+  <link rel="stylesheet" href="css/main.css?v=20260601-desktop-scale" />
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <!-- タブのアイコン（ファビコン）：Xの画像を使用 -->
   <link rel="icon" type="image/jpeg" href="https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg?v=20260105" />
   <link rel="apple-touch-icon" href="https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg?v=20260105" />
@@ -43,7 +43,7 @@
         <span class="reload-icon-wrapper">
           <img src="https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg?v=20260105" alt="しおり" class="reload-icon" width="42" height="42" loading="eager" decoding="async" referrerpolicy="no-referrer" />
         </span>
-        <span class="reload-text">しおり🔖</span>
+        <span class="reload-text">しおり<span class="reload-mark" aria-hidden="true">🔖</span></span>
       </a>
 
       <nav class="top-nav" aria-label="サイト内リンク">
@@ -80,25 +80,27 @@
   <main id="main-content" class="wrap">
 
     <header class="hero">
-      <div class="hero__ambient" aria-hidden="true">
-        <span class="hero__orb hero__orb--a"></span>
-        <span class="hero__orb hero__orb--b"></span>
-        <span class="hero__orb hero__orb--c"></span>
-      </div>
-      <div class="hero__body">
-        <h1>しおり🔖</h1>
-        <p class="note">アイドルと黄色い看板のラーメン屋が好きです。</p>
-        <div class="hero__actions">
-          <a class="btn" href="profile.html">≫ Profile</a>
-          <a class="btn btn--ghost" href="articles.html">Latest Articles</a>
+      <div class="hero__inner">
+        <div class="hero__masthead">
+          <img class="hero__avatar" src="https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg?v=20260105" alt="" width="96" height="96" loading="eager" decoding="async" referrerpolicy="no-referrer" />
+          <h1>しおり<span class="hero__mark" aria-hidden="true">🔖</span></h1>
         </div>
-      </div>
-      <div class="hero__aside">
-        <p class="hero__status">
-          <span class="status-dot" aria-hidden="true"></span>
-          <span class="status-label">Currently learning</span>
-        </p>
-        <p class="hero__mini">自分の大学の学生向けにアプリを開発中😵‍💫</p>
+        <div class="hero__lead">
+          <span class="hero__divider" aria-hidden="true"></span>
+          <p class="note note--epigraph" lang="ja">アイドルと黄色い看板のラーメン屋が好きです。</p>
+        </div>
+        <div class="hero__footer">
+          <div class="hero__actions">
+            <a class="btn btn--ghost" href="profile.html">プロフィール</a>
+            <a class="btn btn--ghost" href="articles.html">記事一覧</a>
+          </div>
+          <p class="hero__status-line">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span class="status-label">開発中</span>
+            <span class="hero__status-sep" aria-hidden="true">—</span>
+            <span class="hero__mini">電通大生向けアプリを制作しています</span>
+          </p>
+        </div>
       </div>
     </header>
 
@@ -263,14 +265,14 @@
             <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
           </svg>
         </span> Works</h2>
-        <a class="section__more" href="works.html" aria-label="作品一覧ページへ">View all works</a>
+        <a class="section__more" href="works.html" aria-label="作品一覧ページへ">すべて見る →</a>
       </div>
       <ul class="cards-scroll" aria-live="polite">
         <li class="card card--work" id="bookmark-org">
           <a class="card__link" href="https://team-bookmark.com/" target="_blank" rel="noopener noreferrer">
             <span class="badge badge--organization badge--corner">Organization</span>
             <div class="card__thumb">
-              <img src="assets/icons/apps/bookmark.png" alt="bookmark" loading="lazy" referrerpolicy="no-referrer" />
+              <img src="assets/icons/apps/bookmark-icon.png" alt="" class="thumb-logo" width="52" height="52" loading="lazy" decoding="async" referrerpolicy="no-referrer" />
             </div>
             <div class="card__content">
               <h3>bookmark</h3>
@@ -295,9 +297,10 @@
         <li class="card card--work">
           <a class="card__link" href="https://shiori-02-14.github.io/UCode/" target="_blank" rel="noopener noreferrer">
             <span class="badge badge--web badge--corner">Web</span>
-            <div class="card__thumb">
-              <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="U-Code">
-                <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, sans-serif" font-size="64" font-weight="700" fill="#2563eb">U-Code</text>
+            <div class="card__thumb card__thumb--ucode">
+              <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="U-Code">
+                <rect width="100" height="100" fill="#eff6ff" />
+                <text x="50" y="54" dominant-baseline="middle" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="22" font-weight="700" fill="#2563eb">U-Code</text>
               </svg>
             </div>
             <div class="card__content">
@@ -331,28 +334,52 @@
             <path d="M10 16h5" />
           </svg>
         </span> Articles</h2>
-        <a class="section__more" href="articles.html" aria-label="記事一覧ページへ">View all articles</a>
+        <a class="section__more" href="articles.html" aria-label="記事一覧ページへ">すべて見る →</a>
       </div>
       <ul class="cards-scroll" aria-live="polite" data-rss="home-articles"></ul>
     </section>
 
-    <section class="narrow" aria-label="おみくじ">
+    <section class="narrow fortune-section" aria-labelledby="fortune">
+      <div class="section__intro section__intro--bar fortune-section__intro">
+        <h2 id="fortune" class="fortune-title">おみくじ</h2>
+      </div>
       <div class="fortune-container">
-        <button id="fortune-btn" class="btn fortune-btn" type="button">
-          <span class="icon" aria-hidden="true">⛩️</span> 今日の運勢は？
-        </button>
-        <p id="fortune-hint" class="fortune-hint">押してみて</p>
-        <div id="fortune-result" class="fortune-result" aria-live="polite">
-          <div class="fortune-slot">
-            <div class="fortune-slot-reel" id="fortune-slot-reel"></div>
+        <div class="fortune-slip">
+          <div class="fortune-slip__inner">
+            <span class="fortune-slip__mark fortune-slip__mark--tl" aria-hidden="true"></span>
+            <span class="fortune-slip__mark fortune-slip__mark--tr" aria-hidden="true"></span>
+            <span class="fortune-slip__mark fortune-slip__mark--bl" aria-hidden="true"></span>
+            <span class="fortune-slip__mark fortune-slip__mark--br" aria-hidden="true"></span>
+            <p class="fortune-slip__seal" aria-hidden="true">御神<span class="fortune-slip__kuji">籤</span></p>
+            <div class="fortune-slip__content">
+              <div class="fortune-slip__stage">
+                <button id="fortune-btn" class="btn btn--ghost fortune-btn" type="button">
+                  今日の運勢を引く
+                </button>
+                <div id="fortune-result" class="fortune-result" aria-live="polite">
+                  <div class="fortune-slot">
+                    <div class="fortune-slot-reel" id="fortune-slot-reel"></div>
+                  </div>
+                  <div class="fortune-result-text"></div>
+                </div>
+              </div>
+              <p id="fortune-hint" class="fortune-hint">↓ ボタンを押して引く</p>
+            </div>
+            <div class="fortune-slip__outcome">
+              <div id="fortune-comment" class="fortune-comment" aria-live="polite">
+                <p class="fortune-comment__category" hidden></p>
+                <p class="fortune-comment__text"></p>
+              </div>
+              <div id="fortune-lucky" class="fortune-lucky" aria-live="polite">
+                <p class="fortune-lucky__label">Lucky item</p>
+                <p class="fortune-lucky__item"></p>
+              </div>
+              <button id="fortune-retry-btn" class="btn btn--ghost fortune-btn fortune-retry-btn" type="button" style="display: none;">
+                もう一度引く
+              </button>
+            </div>
           </div>
-          <div class="fortune-result-text"></div>
         </div>
-        <p id="fortune-comment" class="fortune-comment" aria-live="polite"></p>
-        <p id="fortune-lucky" class="fortune-lucky" aria-live="polite"></p>
-        <button id="fortune-retry-btn" class="btn fortune-btn fortune-retry-btn" type="button" style="display: none;">
-          <span class="icon" aria-hidden="true">⛩️</span> もう一度
-        </button>
       </div>
     </section>
 
@@ -362,7 +389,7 @@
     </footer>
   </main>
 
-  <script src="js/main.js" defer></script>
+  <script src="js/main.js?v=20260601-fortune-clip" defer></script>
   <script src="data/article-images.js" defer></script>
   <script src="data/note-feed.js" defer></script>
   <script src="data/local-articles.js" defer></script>

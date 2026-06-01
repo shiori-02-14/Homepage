@@ -1043,6 +1043,7 @@
     if (article.source) {
       li.setAttribute('data-source', article.source);
     }
+    li.setAttribute('data-title', article.title);
     
     const link = document.createElement('a');
     link.className = 'card__link';
@@ -1302,16 +1303,7 @@
 
       const activeTab = document.querySelector('.articles-filter__tab[aria-selected="true"]');
       const activeFilter = activeTab?.getAttribute('data-filter') || 'all';
-      const allCards = articlesPageContainer.querySelectorAll('.card--article');
-      allCards.forEach((card) => {
-        if (activeFilter === 'all') {
-          card.style.display = '';
-          return;
-        }
-        const source = card.getAttribute('data-source');
-        card.style.display = source === activeFilter ? '' : 'none';
-      });
-      updateEmptyState(articlesPageContainer, activeFilter);
+      applyFilter(articlesPageContainer, activeFilter);
 
       if (!articleSizeSyncInitialized) {
         const schedule = () => scheduleSyncArticleCardMinHeight(articlesPageContainer);
@@ -1442,6 +1434,23 @@
     }
   };
 
+  const applyFilter = (articlesList, filter) => {
+    if (!articlesList) return;
+
+    const allCards = articlesList.querySelectorAll('.card--article');
+    allCards.forEach((card) => {
+      if (filter === 'all') {
+        card.style.display = '';
+        return;
+      }
+      const source = card.getAttribute('data-source');
+      card.style.display = source === filter ? '' : 'none';
+    });
+
+    updateEmptyState(articlesList, filter);
+    scheduleSyncArticleCardMinHeight(articlesList);
+  };
+
   // 空の状態メッセージを表示/非表示
   const updateEmptyState = (articlesList, filter) => {
     // 既存の空の状態メッセージを削除
@@ -1453,17 +1462,15 @@
     // 表示されている記事数をカウント
     const allCards = articlesList.querySelectorAll('.card--article');
     let visibleCount = 0;
-    allCards.forEach(card => {
-      if (card.style.display !== 'none') {
-        visibleCount++;
-      }
+    allCards.forEach((card) => {
+      if (card.style.display !== 'none') visibleCount += 1;
     });
 
     // 記事が0件の場合、メッセージを表示
     if (visibleCount === 0) {
       const emptyDiv = document.createElement('div');
       emptyDiv.className = 'articles-empty';
-      
+
       if (filter === 'qiita') {
         emptyDiv.innerHTML = '<p class="articles-empty__text">まだ記事何もないです<br>毎日投稿で何か書きたいです</p>';
       } else if (filter === 'zenn') {
@@ -1478,11 +1485,20 @@
     }
   };
 
-  // フィルタリング機能（Articlesページのみ）
+  // フィルタ機能（Articlesページのみ）
   const setupArticleFilter = () => {
     const filterTabs = document.querySelectorAll('.articles-filter__tab');
     const articlesList = document.getElementById('articles-list');
     if (!filterTabs.length || !articlesList) return;
+
+    const getActiveFilter = () => {
+      const activeTab = document.querySelector('.articles-filter__tab[aria-selected="true"]');
+      return activeTab?.getAttribute('data-filter') || 'all';
+    };
+
+    const refreshView = () => {
+      applyFilter(articlesList, getActiveFilter());
+    };
 
     // 初期状態で「全て」タブをアクティブにする
     const allTab = document.getElementById('filter-all');
@@ -1490,39 +1506,21 @@
       allTab.classList.add('articles-filter__tab--active');
     }
 
-    filterTabs.forEach(tab => {
+    filterTabs.forEach((tab) => {
       tab.addEventListener('click', () => {
-        const filter = tab.getAttribute('data-filter');
-        
-        // タブの状態を更新
-        filterTabs.forEach(t => {
+        filterTabs.forEach((t) => {
           t.setAttribute('aria-selected', 'false');
           t.classList.remove('articles-filter__tab--active');
         });
         tab.setAttribute('aria-selected', 'true');
         tab.classList.add('articles-filter__tab--active');
 
-        // 記事をフィルタリング
-        const allCards = articlesList.querySelectorAll('.card--article');
-        allCards.forEach(card => {
-          if (filter === 'all') {
-            card.style.display = '';
-          } else {
-            const source = card.getAttribute('data-source');
-            card.style.display = source === filter ? '' : 'none';
-          }
-        });
-
-        // 空の状態メッセージを更新
-        updateEmptyState(articlesList, filter);
-
-        // カードの高さを再同期
-        scheduleSyncArticleCardMinHeight(articlesList);
+        refreshView();
       });
     });
 
     // load 後に再計算（defer スクリプトと遅延 fetch の完了タイミングがブラウザで差が出るため）
-    const runInitialEmptyCheck = () => updateEmptyState(articlesList, 'all');
+    const runInitialEmptyCheck = () => refreshView();
     if (document.readyState === 'complete') {
       window.requestAnimationFrame(runInitialEmptyCheck);
     } else {

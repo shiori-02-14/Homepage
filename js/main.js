@@ -433,14 +433,66 @@ const initFortune = () => {
   const slotReel = document.getElementById('fortune-slot-reel');
   const resultText = resultNode?.querySelector('.fortune-result-text');
   const container = document.querySelector('.fortune-container');
+  const slipNode = document.querySelector('.fortune-slip');
 
   if (!btn || !resultNode || !commentNode || !luckyNode) return;
+
+  const commentCategoryEl = commentNode.querySelector('.fortune-comment__category');
+  const commentTextEl = commentNode.querySelector('.fortune-comment__text');
+  const luckyItemEl = luckyNode.querySelector('.fortune-lucky__item');
+
+  const setFortuneComment = (category, text) => {
+    if (commentCategoryEl) {
+      if (category) {
+        commentCategoryEl.textContent = category;
+        commentCategoryEl.hidden = false;
+      } else {
+        commentCategoryEl.textContent = '';
+        commentCategoryEl.hidden = true;
+      }
+    }
+    if (commentTextEl) commentTextEl.textContent = text ? `「${text}」` : '';
+  };
+
+  const setFortuneLucky = (item) => {
+    if (luckyItemEl) luckyItemEl.textContent = item || '推しTシャツ';
+  };
+
+  const resetFortuneOutcome = () => {
+    setFortuneComment('', '');
+    if (luckyItemEl) luckyItemEl.textContent = '';
+    commentNode.style.display = 'none';
+    commentNode.classList.remove('fortune-reveal');
+    luckyNode.style.display = 'none';
+    luckyNode.classList.remove('fortune-reveal');
+  };
 
   const defaultFortuneData = {
     results: ['吉'],
     fallbackComment: '今日はうんこに気をつけましょう！',
     commentsByResult: {},
     luckyItems: []
+  };
+
+  const placeholderResults = ['大吉', '中吉', '小吉', '吉', '末吉', '凶'];
+
+  const spinPlaceholderReel = () => {
+    if ((reduceMotionQuery && reduceMotionQuery.matches) || !slotReel) return;
+
+    resultNode.style.display = 'block';
+    slotReel.innerHTML = '';
+    slotReel.style.transform = 'translateY(0)';
+    slotReel.style.transition = 'none';
+    slotReel.classList.remove('fortune-slot-slowing');
+
+    for (let i = 0; i < 16; i++) {
+      const reelItem = document.createElement('div');
+      reelItem.className = 'fortune-slot-item';
+      reelItem.textContent = pickRandom(placeholderResults);
+      slotReel.appendChild(reelItem);
+    }
+
+    slotReel.classList.add('fortune-slot-spinning');
   };
 
   const showFortune = (fortuneData) => {
@@ -460,7 +512,13 @@ const initFortune = () => {
     // データに含まれる運勢の重みを取得
     const weights = data.results.map(result => fortuneWeights[result] || 10);
     const randomResult = pickWeightedRandom(data.results, weights) || '吉';
-    const finalResult = randomResult === '大吉' ? '🌸 大吉 🌸' : randomResult;
+    const finalResult = randomResult;
+
+    if (slipNode) {
+      slipNode.classList.remove('fortune-slip--daikichi', 'fortune-slip--kyou');
+      if (randomResult === '大吉') slipNode.classList.add('fortune-slip--daikichi');
+      if (randomResult === '凶') slipNode.classList.add('fortune-slip--kyou');
+    }
 
     const commentCandidates = data.commentsByResult && data.commentsByResult[randomResult];
     const categories = commentCandidates ? Object.keys(commentCandidates) : [];
@@ -468,10 +526,10 @@ const initFortune = () => {
     const variations = (category && commentCandidates[category]) || [];
     const text = pickRandom(variations) || data.fallbackComment || defaultFortuneData.fallbackComment;
 
-    commentNode.textContent = category ? `${category}：${text}` : text;
+    setFortuneComment(category, text);
 
     const luckyItem = pickRandom(data.luckyItems);
-    luckyNode.textContent = `ラッキーアイテム：${luckyItem || '推しTシャツ'}`;
+    setFortuneLucky(luckyItem || '推しTシャツ');
 
     // 演出：順番に表示される
     const reduceMotion = reduceMotionQuery && reduceMotionQuery.matches;
@@ -504,7 +562,7 @@ const initFortune = () => {
         const firstItems = [];
         for (let i = 0; i < 30; i++) {
           const randomItem = pickRandom(allResults);
-          const item = randomItem === '大吉' ? '🌸 大吉 🌸' : randomItem;
+          const item = randomItem;
           reelItems.push(item);
           if (i === 0) firstItems.push(item);
         }
@@ -512,7 +570,7 @@ const initFortune = () => {
         // 中間部分：徐々に最終結果に近づく
         for (let i = 0; i < 5; i++) {
           const randomItem = pickRandom(allResults);
-          reelItems.push(randomItem === '大吉' ? '🌸 大吉 🌸' : randomItem);
+          reelItems.push(randomItem);
         }
         
         // 最後に最終結果を追加
@@ -550,8 +608,8 @@ const initFortune = () => {
         slotReel.classList.add('fortune-slot-spinning');
         
         // スロットが減速して止まる
-        const spinDuration = 1800; // 高速回転1.8秒
-        const slowDuration = 600; // 減速0.6秒
+        const spinDuration = 2200;
+        const slowDuration = 650;
         
         setTimeout(() => {
           slotReel.classList.remove('fortune-slot-spinning');
@@ -588,13 +646,13 @@ const initFortune = () => {
             setTimeout(() => {
               commentNode.style.display = 'block';
               commentNode.classList.add('fortune-reveal');
-            }, 300);
-            
+            }, 160);
+
             // ラッキーアイテムを表示
             setTimeout(() => {
               luckyNode.style.display = 'block';
               luckyNode.classList.add('fortune-reveal');
-            }, 600);
+            }, 360);
           }, slowDuration);
         }, spinDuration);
       } else {
@@ -612,12 +670,12 @@ const initFortune = () => {
         setTimeout(() => {
           commentNode.style.display = 'block';
           commentNode.classList.add('fortune-reveal');
-        }, 500);
-        
+        }, 280);
+
         setTimeout(() => {
           luckyNode.style.display = 'block';
           luckyNode.classList.add('fortune-reveal');
-        }, 900);
+        }, 520);
       }
     }
   };
@@ -645,35 +703,23 @@ const initFortune = () => {
   };
 
   const drawFortune = () => {
-    const activeBtn = btn.style.display !== 'none' ? btn : retryBtn;
+    const isFirstDraw = btn.style.display !== 'none';
+    const activeBtn = isFirstDraw ? btn : retryBtn;
+    const reduceMotion = reduceMotionQuery && reduceMotionQuery.matches;
+
     if (activeBtn) {
       activeBtn.setAttribute('aria-busy', 'true');
       activeBtn.disabled = true;
     }
 
     if (hintNode) {
-      // 読み込み中のテキストを変化させる
-      let loadingTextIndex = 0;
-      const loadingTexts = [
-        'おみくじを引いています...',
-        '運勢を占っています...',
-        '結果が出るまであと少し...',
-        '運命の扉が開きます...'
-      ];
-      
-      hintNode.textContent = loadingTexts[0];
-      hintNode.style.display = 'block';
-      hintNode.classList.add('fortune-loading');
-      
-      const loadingInterval = setInterval(() => {
-        loadingTextIndex = (loadingTextIndex + 1) % loadingTexts.length;
-        hintNode.textContent = loadingTexts[loadingTextIndex];
-      }, 400);
-      
-      // 結果表示時にクリア
-      setTimeout(() => {
-        clearInterval(loadingInterval);
-      }, 2000);
+      hintNode.classList.remove('fortune-loading');
+      hintNode.style.display = 'none';
+    }
+
+    if (slipNode) {
+      slipNode.classList.remove('fortune-slip--daikichi', 'fortune-slip--kyou');
+      slipNode.classList.add('fortune-slip--drawing');
     }
 
     // 結果を一旦非表示にする（アニメーションクラスも削除）
@@ -685,57 +731,51 @@ const initFortune = () => {
       slotReel.style.transition = 'none';
       slotReel.classList.remove('fortune-slot-spinning', 'fortune-slot-slowing');
       slotReel.innerHTML = '';
-      // スロットコンテナのクラスもリセット
       const slotContainer = slotReel.parentElement;
       if (slotContainer) {
         slotContainer.classList.remove('fortune-slot-stopped');
       }
     }
-    const resultText = resultNode?.querySelector('.fortune-result-text');
-    if (resultText) {
-      resultText.style.display = 'none';
-      resultText.textContent = '';
-      resultText.classList.remove('fortune-reveal');
+    const resultTextReset = resultNode?.querySelector('.fortune-result-text');
+    if (resultTextReset) {
+      resultTextReset.style.display = 'none';
+      resultTextReset.textContent = '';
+      resultTextReset.classList.remove('fortune-reveal');
     }
-    commentNode.style.display = 'none';
-    commentNode.classList.remove('fortune-reveal');
-    luckyNode.style.display = 'none';
-    luckyNode.classList.remove('fortune-reveal');
-    
-    // 「もう一度」ボタンを非表示にする
+    resetFortuneOutcome();
     if (retryBtn) {
       retryBtn.style.display = 'none';
     }
 
-    const dataPromise = loadFortuneData().catch(() => null);
-    const animPromise = (reduceMotionQuery && reduceMotionQuery.matches)
-      ? Promise.resolve()
-      : new Promise((resolve) => {
-        if (btn.style.display !== 'none') {
-          btn.classList.add('animate-out');
-          setTimeout(resolve, 300);
-        } else {
-          resolve();
-        }
-      });
+    spinPlaceholderReel();
 
-    // 演出のため、少し待ってから結果を表示（期待感を高めるため）
-    const revealDelay = (reduceMotionQuery && reduceMotionQuery.matches) ? 0 : 800;
+    // 初回のみボタン退場、再抽選は即スロット開始
+    if (isFirstDraw && !reduceMotion) {
+      btn.classList.add('animate-out');
+      window.setTimeout(() => {
+        btn.style.display = 'none';
+        btn.classList.remove('animate-out');
+      }, 220);
+    } else if (isFirstDraw) {
+      btn.style.display = 'none';
+    }
 
-    Promise.all([dataPromise, animPromise])
-      .then(([fortuneData]) => {
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            const resolved = fortuneData || globalThis[fortuneDataKey] || defaultFortuneData;
-            reveal(resolved);
-            if (hintNode) {
-              hintNode.classList.remove('fortune-loading');
-              hintNode.style.display = 'none';
-            }
-            resolve();
-          }, revealDelay);
-        });
-      })
+    const kickoff = reduceMotion ? 0 : (isFirstDraw ? 60 : 0);
+
+    const finishDraw = (fortuneData) => {
+      window.setTimeout(() => {
+        const resolved = fortuneData || globalThis[fortuneDataKey] || defaultFortuneData;
+        reveal(resolved);
+        if (slipNode) slipNode.classList.remove('fortune-slip--drawing');
+      }, kickoff);
+    };
+
+    const drawPromise = globalThis[fortuneDataKey]
+      ? Promise.resolve(globalThis[fortuneDataKey])
+      : loadFortuneData().catch(() => null);
+
+    drawPromise
+      .then((fortuneData) => finishDraw(fortuneData))
       .finally(() => {
         if (btn) {
           btn.removeAttribute('aria-busy');
@@ -750,6 +790,8 @@ const initFortune = () => {
 
   // ボタンクリックでおみくじを引く
   btn.addEventListener('click', drawFortune);
+
+  loadFortuneData().catch(() => null);
   
   // 「もう一度」ボタンでもおみくじを引けるようにする
   if (retryBtn) {
@@ -816,11 +858,11 @@ const initWorksFilter = () => {
   const applyFilter = (filter) => {
     const allCards = worksList.querySelectorAll('.card--work');
     allCards.forEach((card) => {
+      const type = card.getAttribute('data-work-type');
       if (filter === 'all') {
-        card.style.display = '';
+        card.style.display = type === 'plan' ? 'none' : '';
         return;
       }
-      const type = card.getAttribute('data-work-type');
       card.style.display = type === filter ? '' : 'none';
     });
     updateEmptyState(filter);
