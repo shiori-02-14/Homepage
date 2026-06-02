@@ -2097,7 +2097,8 @@ h2 .icon svg {
   }
   #top .card--work .badge.badge--organization.badge--corner,
   #top .card--work .badge.badge--platform.badge--corner,
-  #top .card--work .badge.badge--web.badge--corner {
+  #top .card--work .badge.badge--web.badge--corner,
+  #top .card--article .badge--corner {
     font-size: 0.7rem;
     padding: 0.34rem 0.78rem;
   }
@@ -2415,7 +2416,8 @@ h2 .icon svg {
   box-shadow: none;
 }
 .list--icons .social-icon svg,
-.list--icons .social-icon img {
+.list--icons .social-icon img,
+.list--icons .social-icon .social-icon__amazon {
   width: var(--tile-social-icon-size);
   height: var(--tile-social-icon-size);
 }
@@ -2427,6 +2429,21 @@ h2 .icon svg {
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+.social-icon__amazon {
+  display: block;
+  width: 100%;
+  height: 100%;
+  flex-shrink: 0;
+  background-color: var(--muted);
+  -webkit-mask-image: url("../assets/icons/brands/amazon-a-black.png");
+  mask-image: url("../assets/icons/brands/amazon-a-black.png");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
 }
 
 .list a::after {
@@ -2541,11 +2558,11 @@ a.friend-card::after {
   grid-template-columns: 1fr;
 }
 #articles-page .cards {
-  gap: clamp(1.5rem, 3vw, 2rem);
+  gap: clamp(0.75rem, 1.5vw, 1rem);
 }
 #works-page .cards {
   grid-template-columns: 1fr;
-  gap: clamp(1.5rem, 3vw, 2rem);
+  gap: clamp(0.75rem, 1.5vw, 1rem);
 }
 #works-page .card--work {
   padding: 0;
@@ -2673,17 +2690,25 @@ a.friend-card::after {
   text-wrap: wrap; /* 全体の h3 { balance } を上書き（不自然な改行を防ぐ） */
 }
 #top [data-rss="home-articles"] .card--article h3 {
-  font-size: clamp(1.05rem, 1.4vw, 1.2rem);
-  line-height: 1.35;
+  font-size: clamp(0.94rem, 1.8vw, 1.02rem);
+  line-height: 1.45;
   min-width: 0;
   white-space: normal;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-wrap: unset; /* balance を外してカード幅を素直に使う */
+  text-wrap: unset;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   line-clamp: 2;
+}
+@media (min-width: 641px) {
+  #top [data-rss="home-articles"] .card--article h3 {
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    white-space: nowrap;
+    display: block;
+  }
 }
 #works-page .card--work h3 {
   font-size: clamp(1.05rem, 1.4vw, 1.2rem);
@@ -2776,6 +2801,7 @@ a.friend-card::after {
   border-left: 1px solid var(--card-border);
   padding: 1.1rem 1.2rem;
   justify-content: center;
+  gap: 0.38rem;
   overflow: hidden;
 }
 
@@ -3063,13 +3089,25 @@ a.friend-card::after {
   border-radius:999px;
   border:1px solid var(--line);
   background:var(--accent-weak);
-  font-family: var(--font-ui);
-  font-size:0.72rem;
+  font-family: var(--font-serif);
+  font-size:0.66rem;
   font-weight:600;
-  letter-spacing:0.08em;
-  line-height:1.2;
-  text-transform:uppercase;
+  font-variant: normal;
+  font-synthesis: none;
+  letter-spacing:0.04em;
+  line-height:1.25;
+  text-transform:none;
   color:var(--accent-strong);
+}
+.card .badge.badge--corner {
+  font-family: var(--font-serif);
+  font-size: 0.66rem;
+  font-weight: 600;
+  font-variant: normal;
+  font-synthesis: none;
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  text-transform: none;
 }
 .badge--note {
   background: #0d9488;
@@ -3087,10 +3125,6 @@ a.friend-card::after {
   border-color: rgba(255,255,255,.4);
   color: #fff;
   box-shadow: 0 10px 24px -18px rgba(15,23,42,.35);
-  font-family: var(--font-ui);
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: none;
 }
 :root[data-theme='dark'] .badge--platform {
   background: rgba(96,165,250,.92);
@@ -3101,10 +3135,6 @@ a.friend-card::after {
   border-color: rgba(255,255,255,.4);
   color: #fff;
   box-shadow: 0 10px 24px -18px rgba(15,23,42,.35);
-  font-family: var(--font-ui);
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: none;
 }
 :root[data-theme='dark'] .badge--web {
   background: rgba(74,222,128,.92);
@@ -3161,10 +3191,6 @@ a.friend-card::after {
   border-color: rgba(255, 255, 255, .4);
   color: #fff;
   box-shadow: 0 10px 24px -18px rgba(15, 23, 42, .35);
-  font-family: var(--font-ui);
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: none;
 }
 :root[data-theme='dark'] .badge--organization {
   background: rgba(201, 168, 108, .92);
@@ -3176,7 +3202,6 @@ a.friend-card::after {
   right: 0.9rem;
   left: auto;
   z-index: 2;
-  text-transform: none;
 }
 /* Articles：プラットフォームバッジはカード右上 */
 #articles-page .card--article .badge--corner {
@@ -5329,7 +5354,7 @@ html { scroll-behavior: smooth; }
   }
 
   #articles-page .cards {
-    gap: 1rem;
+    gap: 0.5rem;
   }
   #articles-page main > section {
     margin-bottom: 0.7rem;
@@ -5388,7 +5413,7 @@ html { scroll-behavior: smooth; }
     border-left: 1px solid var(--card-border);
     border-top: none;
     justify-content: center;
-    gap: 0.18rem;
+    gap: 0.32rem;
     overflow: hidden;
   }
   #works-page .card--work .card__content {
@@ -5462,7 +5487,6 @@ html { scroll-behavior: smooth; }
   #articles-page .badge--note {
     font-size: 0.62rem;
     padding: 0.12rem 0.48rem;
-    letter-spacing: 0.05em;
   }
   #articles-page .card--article .badge--corner,
   #works-page .card--work .badge--corner {
@@ -5471,11 +5495,10 @@ html { scroll-behavior: smooth; }
     left: auto;
     font-size: 0.62rem;
     padding: 0.12rem 0.48rem;
-    letter-spacing: 0.05em;
     line-height: 1.2;
   }
   #works-page .cards {
-    gap: 1rem;
+    gap: 0.5rem;
   }
   #works-page .card--work.card--upcoming .card__construction-emoji {
     font-size: clamp(1.65rem, 9vw, 2.25rem);
@@ -5579,7 +5602,7 @@ html { scroll-behavior: smooth; }
   }
   #articles-page .card--article .card__content {
     padding: 0.5rem 0.65rem 0.5rem 0.52rem;
-    gap: 0.14rem;
+    gap: 0.28rem;
   }
   #articles-page .card--article h3 {
     font-size: 0.92rem;
@@ -5602,10 +5625,10 @@ html { scroll-behavior: smooth; }
     font-size: 0.66rem !important;
   }
   #works-page .cards {
-    gap: 0.85rem;
+    gap: 0.42rem;
   }
   #articles-page .cards {
-    gap: 1.02rem;
+    gap: 0.5rem;
   }
   /* 極小画面：COMING SOON/LATERバッジをさらに小さく */
   .badge--soon {
@@ -5695,7 +5718,8 @@ section.narrow.fortune-section {
 .fortune-slip {
   position: relative;
   width: 100%;
-  max-width: min(17rem, 100%);
+  max-width: min(22rem, 100%);
+  --fortune-core-w: 14rem;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -5756,6 +5780,7 @@ section.narrow.fortune-section {
   top: 50%;
   left: clamp(0.55rem, 2vw, 0.75rem);
   transform: translateY(-50%);
+  z-index: 2;
   margin: 0;
   writing-mode: vertical-rl;
   font-family: var(--font-serif);
@@ -5780,6 +5805,8 @@ section.narrow.fortune-section {
   align-items: center;
   gap: clamp(0.75rem, 2vw, 0.95rem);
   width: 100%;
+  max-width: var(--fortune-core-w);
+  margin-inline: auto;
   text-align: center;
 }
 
@@ -5835,11 +5862,6 @@ section.narrow.fortune-section {
   border-top: 1px solid color-mix(in srgb, var(--line-strong) 55%, transparent);
   text-align: center;
   overflow: visible;
-}
-
-.fortune-slip:has(.fortune-result[style*="block"]) .fortune-slip__seal {
-  top: calc(clamp(1.65rem, 4vw, 2.1rem) + 2.625rem);
-  transform: translateY(-50%);
 }
 
 .fortune-slip:has(.fortune-result[style*="block"]) .fortune-slip__inner {
@@ -6237,7 +6259,7 @@ section.narrow.fortune-section {
 
 @media (min-width: 768px) and (max-width: 1024px) {
   .fortune-slip {
-    max-width: 17rem;
+    max-width: 22rem;
   }
 
   .fortune-slip__stage,
@@ -6545,7 +6567,8 @@ section.fortune-section .fortune-title {
   color: var(--muted);
 }
 #top .list--icons .social-icon svg,
-#top .list--icons .social-icon img {
+#top .list--icons .social-icon img,
+#top .list--icons .social-icon .social-icon__amazon {
   width: 1.35rem;
   height: 1.35rem;
 }
@@ -6599,8 +6622,8 @@ section.fortune-section .fortune-title {
   flex-direction: row;
   align-items: center;
   gap: 0.75rem;
-  min-height: 3.5rem;
-  padding: var(--row-pad-y) var(--row-pad-x);
+  min-height: 0;
+  padding: 0.5rem var(--row-pad-x);
   border-radius: var(--radius-md);
   border-bottom: 1px solid var(--line-strong);
   transition: background .15s ease, color .15s ease;
@@ -6621,9 +6644,10 @@ section.fortune-section .fortune-title {
   align-items: center;
   column-gap: 0.65rem;
   row-gap: 0.15rem;
-  min-height: 4.5rem;
+  min-height: 3.75rem;
   width: 100%;
   box-sizing: border-box;
+  padding: 0.5rem var(--row-pad-x);
   padding-right: var(--row-pad-x);
 }
 #top .cards-scroll > li:last-child .card__link {
@@ -6701,9 +6725,8 @@ section.fortune-section .fortune-title {
 #top .card--work .badge--corner,
 #top .card--work .badge.badge--web.badge--corner,
 #top .card--work .badge.badge--platform.badge--corner,
-#top .card--work .badge.badge--organization.badge--corner {
-  grid-column: 3;
-  grid-row: 1;
+#top .card--work .badge.badge--organization.badge--corner,
+#top .card--article .badge--corner {
   position: static;
   top: auto;
   right: auto;
@@ -6712,17 +6735,21 @@ section.fortune-section .fortune-title {
   align-self: center;
   justify-self: end;
   padding: 0.32rem 0.72rem;
-  font-family: var(--font-ui);
-  font-size: 0.66rem;
-  font-weight: 600;
-  font-variant: normal;
-  font-synthesis: none;
-  letter-spacing: 0.04em;
-  line-height: 1.25;
-  text-transform: none;
   border-radius: 999px;
   white-space: nowrap;
   box-sizing: border-box;
+}
+#top .card--work .badge--corner,
+#top .card--work .badge.badge--web.badge--corner,
+#top .card--work .badge.badge--platform.badge--corner,
+#top .card--work .badge.badge--organization.badge--corner {
+  grid-column: 3;
+  grid-row: 1;
+  left: auto;
+}
+#top .card--article .badge--corner {
+  grid-area: badge;
+  left: auto;
 }
 #top .card--work .badge.badge--organization.badge--corner {
   background: rgba(168, 132, 74, 0.95);
@@ -6791,52 +6818,58 @@ section.fortune-section .fortune-title {
 }
 #top .card--article .card__link {
   position: relative;
-  align-items: flex-start;
-  padding-right: 4.5rem;
-}
-#top .card--article .badge--corner {
-  position: absolute;
-  top: 50%;
-  right: var(--row-pad-x);
-  left: auto;
-  transform: translateY(-50%);
-  font-family: var(--font-ui);
-  font-size: 0.68rem;
-  font-weight: 600;
-  padding: 0.24rem 0.58rem;
-  letter-spacing: 0.06em;
-  line-height: 1.2;
-  border-radius: 999px;
-  white-space: nowrap;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "meta badge"
+    "title title";
+  align-items: start;
+  column-gap: 0.75rem;
+  row-gap: 0.38rem;
+  padding-right: var(--row-pad-x);
 }
 #top .card--article .card__content {
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  gap: 0.75rem;
-  flex: 1;
-  padding: 0;
-  background: transparent;
-  border: none;
+  display: contents;
 }
 #top .card--article .card__date {
+  grid-area: meta;
   flex-shrink: 0;
-  width: 5.2em;
-  font-size: 0.8rem;
+  width: auto;
+  min-width: 0;
+  padding-top: 0;
+  font-size: 0.76rem;
   font-family: var(--font-serif);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
   color: var(--muted);
 }
 #top .card--article h3 {
-  flex: 1 1 auto;
+  grid-area: title;
   min-width: 0;
   font-size: clamp(0.94rem, 1.8vw, 1.02rem);
   font-weight: 600;
   font-family: var(--font-serif);
   letter-spacing: 0.03em;
+  line-height: 1.45;
   color: var(--fg);
-  white-space: nowrap;
+  white-space: normal;
   overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   text-overflow: ellipsis;
+}
+@media (min-width: 641px) {
+  #top .card--article .card__link {
+    row-gap: 0.32rem;
+  }
+  #top .card--article h3 {
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    white-space: nowrap;
+    display: block;
+  }
 }
 
 @media (max-width: 640px) {
@@ -6864,8 +6897,8 @@ section.fortune-section .fortune-title {
     grid-template-columns: 3.15rem minmax(0, 1fr) minmax(0, max-content);
     column-gap: 0.5rem;
     min-height: 0;
-    padding: 0.85rem var(--row-pad-x);
-    padding-bottom: 0.85rem;
+    padding: 0.42rem var(--row-pad-x);
+    padding-bottom: 0.42rem;
   }
   #top .card--work .card__thumb {
     width: 3.15rem;
@@ -6874,10 +6907,10 @@ section.fortune-section .fortune-title {
   #top .card--work .badge--corner,
   #top .card--work .badge.badge--web.badge--corner,
   #top .card--work .badge.badge--platform.badge--corner,
-  #top .card--work .badge.badge--organization.badge--corner {
+  #top .card--work .badge.badge--organization.badge--corner,
+  #top .card--article .badge--corner {
     font-size: 0.6rem;
     padding: 0.24rem 0.58rem;
-    letter-spacing: 0.03em;
   }
   #top .card--work h3 {
     font-size: 1rem;
@@ -6888,22 +6921,11 @@ section.fortune-section .fortune-title {
     line-clamp: 2;
   }
   #top .card--article .card__link {
-    padding-right: var(--row-pad-x);
-    padding-bottom: 2.15rem;
+    row-gap: 0.32rem;
+    padding: 0.42rem var(--row-pad-x);
   }
-  #top .card--article .badge--corner {
-    top: auto;
-    bottom: 0.8rem;
-    transform: none;
-    font-size: 0.64rem;
-    padding: 0.2rem 0.5rem;
-  }
-  #top .card--article h3 {
-    white-space: normal;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
+  #top .card--article .card__date {
+    font-size: 0.72rem;
   }
   .site-header__inner .top-nav {
     justify-content: flex-start;
@@ -6923,7 +6945,7 @@ section.fortune-section .fortune-title {
   border-radius: var(--radius-md);
   border: 1px solid var(--line);
   background: var(--surface);
-  margin-bottom: 0.65rem;
+  margin-bottom: 0;
   overflow: hidden;
   transition: border-color .15s ease, background .15s ease;
 }
