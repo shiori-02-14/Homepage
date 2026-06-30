@@ -7138,8 +7138,9 @@ section.fortune-section .fortune-title {
 
 #advent2026-page .advent-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: clamp(0.45rem, 1.5vw, 0.65rem);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
+  gap: clamp(0.55rem, 1.6vw, 0.8rem);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -7163,7 +7164,56 @@ section.fortune-section .fortune-title {
   background: var(--surface);
   text-decoration: none;
   color: inherit;
-  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease, opacity 0.15s ease;
+}
+
+#advent2026-page .advent-door__panel--article {
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0;
+  aspect-ratio: auto;
+  padding: 0;
+  overflow: hidden;
+}
+
+#advent2026-page .advent-door__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
+  width: 100%;
+  padding: 0.45rem 0.55rem 0.4rem;
+}
+
+#advent2026-page .advent-door__thumb {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--line) 35%, var(--surface));
+}
+
+#advent2026-page .advent-door__thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#advent2026-page .advent-door__title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin: 0;
+  padding: 0.5rem 0.55rem 0;
+  font-size: 0.86rem;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  color: var(--fg);
+  text-align: left;
 }
 
 #advent2026-page .advent-door__month {
@@ -7177,12 +7227,16 @@ section.fortune-section .fortune-title {
 
 #advent2026-page .advent-door__num {
   font-family: var(--font-serif);
-  font-size: clamp(1.15rem, 3.2vw, 1.45rem);
+  font-size: 1rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
   line-height: 1;
   color: var(--fg);
+}
+
+#advent2026-page .advent-door__num--large {
+  font-size: clamp(1.15rem, 3.2vw, 1.45rem);
 }
 
 #advent2026-page .advent-door__hint {
@@ -7192,13 +7246,21 @@ section.fortune-section .fortune-title {
   color: var(--muted);
 }
 
+#advent2026-page .advent-door__panel--article .advent-door__hint {
+  margin-top: auto;
+  padding: 0.32rem 0.55rem 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-align: left;
+}
+
 #advent2026-page .advent-door--locked .advent-door__panel {
   background: color-mix(in srgb, var(--line) 28%, var(--surface));
   border-style: dashed;
   opacity: 0.72;
 }
 
-#advent2026-page .advent-door--locked .advent-door__num {
+#advent2026-page .advent-door--locked .advent-door__num--large {
   color: var(--muted);
 }
 
@@ -7236,19 +7298,45 @@ section.fortune-section .fortune-title {
   font-weight: 500;
 }
 
-@media (max-width: 560px) {
-  #advent2026-page .advent-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
+#advent2026-page .advent-door--read .advent-door__link {
+  border-color: var(--line-strong);
+  background: color-mix(in srgb, var(--line) 18%, var(--surface));
 }
 
-@media (max-width: 420px) {
+#advent2026-page .advent-door--read .advent-door__link:hover,
+#advent2026-page .advent-door--read .advent-door__link:focus-visible {
+  border-color: var(--line-strong);
+  background: var(--row-hover);
+  transform: none;
+}
+
+#advent2026-page .advent-door--read .advent-door__thumb img {
+  filter: grayscale(0.55) brightness(0.94);
+  opacity: 0.88;
+}
+
+#advent2026-page .advent-door--read .advent-door__title {
+  color: var(--muted);
+}
+
+#advent2026-page .advent-door--read .advent-door__month,
+#advent2026-page .advent-door--read .advent-door__hint {
+  color: var(--muted);
+}
+
+#advent2026-page .advent-door--read .advent-door__num {
+  color: var(--muted);
+}
+
+@media (max-width: 560px) {
   #advent2026-page .advent-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+}
 
-  #advent2026-page .advent-door__hint {
-    font-size: 0.58rem;
+@media (max-width: 400px) {
+  #advent2026-page .advent-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
