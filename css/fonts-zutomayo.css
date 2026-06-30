@@ -1,0 +1,69 @@
+/* zutomayo.net 同系フォント
+   ダークモード UI = DotGothic16（8bit ドット調・日英）
+   PixelMplus12 は英字ラベル用フォールバック */
+
+@font-face {
+  font-family: "PixelMplus12";
+  src: url("../assets/fonts/PixelMplus12-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "PixelMplus12";
+  src: url("../assets/fonts/PixelMplus12-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root[data-theme='dark'] {
+  /* DotGothic16 優先 — くっきりしたドットマトリクス */
+  --font-dot: "DotGothic16", "PixelMplus12", sans-serif;
+  --font-alpha: var(--font-dot);
+}
+
+/* ドット調の描画（くっきり表示） */
+:root[data-theme='dark'] {
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: auto;
+  text-rendering: geometricPrecision;
+}
+
+:root[data-theme='dark'] body {
+  font-family: var(--font-dot);
+  font-weight: 400;
+  font-synthesis: none;
+  line-height: 1.7;
+}
+
+/* zutomayo.net の .f-px / .f-px--b 相当 */
+:root[data-theme='dark'] .f-px,
+:root[data-theme='dark'] .f-px--b {
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: auto;
+  font-synthesis: none;
+  text-transform: uppercase;
+}
+:root[data-theme='dark'] .f-px {
+  font-family: var(--font-dot);
+  font-weight: 400;
+}
+:root[data-theme='dark'] .f-px--b {
+  font-family: var(--font-dot);
+  font-weight: 700;
+}
+
+:root[data-theme='dark'] .f-dot,
+:root[data-theme='dark'] .f-dot--b {
+  font-family: var(--font-dot);
+  font-synthesis: none;
+  -webkit-font-smoothing: none;
+}
+:root[data-theme='dark'] .f-dot {
+  font-weight: 400;
+}
+:root[data-theme='dark'] .f-dot--b {
+  font-weight: 700;
+}

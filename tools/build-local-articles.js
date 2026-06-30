@@ -436,7 +436,7 @@ ${pageDescription ? `  <meta property="og:description" content="${escapeAttr(pag
   <meta name="twitter:image:alt" content="${escapeAttr(article.imageAlt || `${article.title} の画像`)}" />
 ${pageDescription ? `  <meta name="twitter:description" content="${escapeAttr(pageDescription)}" />` : ''}
 
-  <link rel="stylesheet" href="../css/main.css?v=20260524-cards-scroll" />
+  <link rel="stylesheet" href="../css/main.css?v=20260630-pc-clean" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -509,7 +509,7 @@ ${article.bodyHtml.split('\n').map((line) => `        ${line}`).join('\n')}
     </footer>
   </main>
 
-  <script src="../js/main.js" defer></script>
+  <script src="../js/main.js?v=20260630-dark-revert" defer></script>
   <script type="application/ld+json">
 ${jsonLd}
   </script>

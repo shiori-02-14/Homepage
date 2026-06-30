@@ -1,0 +1,1395 @@
+/* =====================================================================
+   ダークモード専用 — ずとまよ「レトロOSデスクトップ」忠実版
+   zutomayo.net TOP — 暗い地 #252228・紫窓枠・くすみラベンダー窓
+   ライト（ヨルシカ）には影響しない data-theme='dark' スコープ限定
+   ===================================================================== */
+
+/* ----- ユーティリティ：ベベル ----- */
+:root[data-theme='dark'] {
+  --border-outset: 2px solid;
+  --border-outset-color: var(--bevel-light) var(--bevel-dark) var(--bevel-dark) var(--bevel-light);
+  --border-inset-color: var(--bevel-dark) var(--bevel-light) var(--bevel-light) var(--bevel-dark);
+}
+
+/* ----- 可読性：明るい窓面の内側ではテキスト系変数を暗色に解決させる -----
+   （--fg / --muted を使う main.css 側のルールがすべて暗い文字になる） */
+:root[data-theme='dark'] section.narrow,
+:root[data-theme='dark'] #works-page .card,
+:root[data-theme='dark'] #articles-page .card,
+:root[data-theme='dark'] .articles-filter,
+:root[data-theme='dark'] #article-page .article-content,
+:root[data-theme='dark'] #article-page .article-toc,
+:root[data-theme='dark'] #profile-page .profile-intro-card,
+:root[data-theme='dark'] #profile-page .profile-block,
+:root[data-theme='dark'] #profile-page .profile-card,
+:root[data-theme='dark'] #profile-page .profile-timeline__item,
+:root[data-theme='dark'] .bgm-badge {
+  --fg: var(--fg-panel);
+  --muted: var(--fg-panel-muted);
+  --accent-strong: var(--fg-panel);
+}
+
+/* ---------------------------------------------------------------------
+   1. デスクトップ背景（ベタ塗り）+ 走査線
+   --------------------------------------------------------------------- */
+:root[data-theme='dark'] body {
+  background-color: var(--page-bg);
+  background-image: none;
+}
+
+:root[data-theme='dark'] body::before {
+  opacity: 0.1;
+  mix-blend-mode: soft-light;
+}
+
+:root[data-theme='dark'] body::after {
+  opacity: 1;
+  pointer-events: none;
+  /* 色付きの空グラデは廃止。ごく薄いビネットのみ残す */
+  background:
+    radial-gradient(ellipse 130% 90% at 50% 0%, transparent 60%, rgba(12, 10, 16, 0.4) 100%);
+}
+
+/* 走査線（CRT） */
+:root[data-theme='dark'] main.wrap::before,
+:root[data-theme='dark'] #main-content.wrap::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(42, 36, 52, 0.1) 2px,
+    rgba(42, 36, 52, 0.1) 3px
+  );
+}
+
+:root[data-theme='dark'] main.wrap,
+:root[data-theme='dark'] #main-content.wrap {
+  position: relative;
+  z-index: 1;
+}
+
+/* 写真コラージュは廃止（背景はパターン壁紙＋装飾ダイアログのみ） */
+
+/* 装飾ポップアップ（散らばるOSウィンドウ） */
+.desk-popups { display: none; }
+:root[data-theme='dark'] .desk-popups {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+:root[data-theme='dark'] .desk-popup {
+  position: absolute;
+  border: 2px solid;
+  border-color: #ffffff var(--bevel-dark) var(--bevel-dark) #ffffff;
+  background: var(--win-body);
+  box-shadow: var(--elev-2);
+  opacity: 0.5;
+  width: 200px;
+  font-family: var(--font-dot);
+}
+:root[data-theme='dark'] .desk-popup__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  height: 1.35rem;
+  padding: 0 0.35rem;
+  background: var(--win-titlebar);
+  color: var(--ztmy-titlebar-text);
+  font-size: 0.56rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+:root[data-theme='dark'] .desk-popup__heart { color: var(--ztmy-pink); }
+:root[data-theme='dark'] .desk-popup__x {
+  margin-left: auto;
+  width: 0.95rem;
+  height: 0.95rem;
+  display: grid;
+  place-items: center;
+  background: var(--btn-face-chrome);
+  border: 1px solid #ffffff;
+  color: var(--fg-panel);
+}
+:root[data-theme='dark'] .desk-popup__body {
+  padding: 0.5rem 0.5rem 0.55rem;
+  color: var(--fg-panel);
+  font-size: 0.56rem;
+  letter-spacing: 0.05em;
+}
+:root[data-theme='dark'] .desk-popup__btns {
+  display: flex;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+}
+:root[data-theme='dark'] .desk-popup__btn {
+  flex: 1;
+  text-align: center;
+  padding: 0.18rem 0;
+  background: var(--btn-face);
+  border: 2px solid;
+  border-color: #ffffff var(--bevel-dark) var(--bevel-dark) #ffffff;
+  color: var(--fg-panel);
+}
+:root[data-theme='dark'] .desk-popup__body--eq {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 46px;
+  padding: 0.4rem 0.5rem;
+  background: #14121a;
+}
+:root[data-theme='dark'] .desk-popup__body--eq span {
+  flex: 1;
+  background: var(--ztmy-pink);
+}
+:root[data-theme='dark'] .desk-popup__body--eq span:nth-child(odd) { background: var(--ztmy-cyan); height: 70%; }
+:root[data-theme='dark'] .desk-popup__body--eq span:nth-child(even) { background: var(--ztmy-pink); height: 100%; }
+:root[data-theme='dark'] .desk-popup__body--eq span:nth-child(3n) { background: var(--ztmy-teal); height: 45%; }
+:root[data-theme='dark'] .desk-popup__body--grid {
+  height: 70px;
+  background-color: #14121a;
+  background-image:
+    linear-gradient(90deg, rgba(204,73,158,0.5) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(154,249,246,0.4) 1px, transparent 1px);
+  background-size: 12px 12px;
+}
+:root[data-theme='dark'] .desk-popup--sounds { top: 13%; right: 3%; transform: rotate(-3deg); }
+:root[data-theme='dark'] .desk-popup--crab { top: 46%; right: 4%; transform: rotate(4deg); width: 180px; }
+:root[data-theme='dark'] .desk-popup--news { bottom: 12%; left: 3%; transform: rotate(2deg); width: 210px; }
+
+/* 装飾ポップアップは広い画面（本文カラム外に余白がある）でのみ表示 */
+@media (max-width: 1100px) {
+  :root[data-theme='dark'] .desk-popups { display: none; }
+}
+/* テーマ切替フェード */
+html.theme-transitioning body {
+  transition: background-color .35s ease, color .35s ease;
+}
+html.theme-transitioning body * {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: .35s;
+}
+
+/* ---------------------------------------------------------------------
+   2. タイポグラフィ — 全体ドット調 DotGothic16
+   --------------------------------------------------------------------- */
+:root[data-theme='dark'] button,
+:root[data-theme='dark'] input,
+:root[data-theme='dark'] select,
+:root[data-theme='dark'] textarea {
+  font-family: var(--font-dot);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
+:root[data-theme='dark'] .hero h1,
+:root[data-theme='dark'] .section__intro p,
+:root[data-theme='dark'] .hero__status-line,
+:root[data-theme='dark'] .hero .note--epigraph,
+:root[data-theme='dark'] .card p,
+:root[data-theme='dark'] .card__note,
+:root[data-theme='dark'] .fortune-slip,
+:root[data-theme='dark'] .fortune-result,
+:root[data-theme='dark'] .fortune-result-text,
+:root[data-theme='dark'] .fortune-btn,
+:root[data-theme='dark'] .fortune-title,
+:root[data-theme='dark'] .btn,
+:root[data-theme='dark'] .foot,
+:root[data-theme='dark'] .foot-copy,
+:root[data-theme='dark'] #article-page .article-content,
+:root[data-theme='dark'] #article-page .article-toc,
+:root[data-theme='dark'] #profile-page .profile-block,
+:root[data-theme='dark'] #profile-page .profile-intro-card,
+:root[data-theme='dark'] #profile-page .profile-timeline__item,
+:root[data-theme='dark'] #profile-page .profile-timeline__title,
+:root[data-theme='dark'] #profile-page .profile-timeline__desc {
+  font-family: var(--font-dot);
+  text-shadow: none;
+}
+
+:root[data-theme='dark'] .hero h1 {
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--fg);
+  text-transform: none;
+}
+
+/* メニュー風 UI = DotGothic16 大文字 */
+:root[data-theme='dark'] .top-nav,
+:root[data-theme='dark'] .top-nav a {
+  font-family: var(--font-dot);
+  font-weight: 400;
+  font-size: var(--font-menu-size);
+  letter-spacing: var(--font-menu-track);
+  text-transform: uppercase;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: auto;
+  font-synthesis: none;
+  font-variant-numeric: tabular-nums;
+}
+:root[data-theme='dark'] .top-nav a[aria-current="page"] {
+  font-weight: 700;
+  color: var(--fg-chrome);
+}
+
+:root[data-theme='dark'] .page-title {
+  font-family: var(--font-dot);
+  font-weight: 700;
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  letter-spacing: var(--font-menu-track);
+  text-transform: uppercase;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: auto;
+  font-synthesis: none;
+}
+
+/* 英字見出し・UI（zutomayo.net 左メニュー風） */
+:root[data-theme='dark'] .section__intro h2,
+:root[data-theme='dark'] .card h3,
+:root[data-theme='dark'] .hero__scene,
+:root[data-theme='dark'] .hero__nav-link,
+:root[data-theme='dark'] .hero__nav-label,
+:root[data-theme='dark'] .hero__nav-num,
+:root[data-theme='dark'] .row-link,
+:root[data-theme='dark'] .subtitle,
+:root[data-theme='dark'] .meta,
+:root[data-theme='dark'] .section__more,
+:root[data-theme='dark'] #top .social-label,
+:root[data-theme='dark'] #top .friend-card__name,
+:root[data-theme='dark'] #top .list--icons a,
+:root[data-theme='dark'] #articles-page .page-title,
+:root[data-theme='dark'] #works-page .page-title,
+:root[data-theme='dark'] #profile-page .page-title,
+:root[data-theme='dark'] .site-header .reload-text {
+  font-family: var(--font-dot);
+  font-weight: 400;
+  letter-spacing: var(--font-menu-track);
+  text-transform: uppercase;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: auto;
+  font-synthesis: none;
+  font-variant-numeric: tabular-nums;
+}
+
+:root[data-theme='dark'] #top .section__intro h2,
+:root[data-theme='dark'] #top .card h3 {
+  color: var(--fg-panel);
+}
+
+/* OSラベル・タブ（バッジは main.css のくすみ配色を維持） */
+:root[data-theme='dark'] section.narrow[data-section-label]::before,
+:root[data-theme='dark'] .foot-copy::before,
+:root[data-theme='dark'] .articles-filter__tab,
+:root[data-theme='dark'] .page-title::before,
+:root[data-theme='dark'] #top .card--article .card__date,
+:root[data-theme='dark'] #articles-page .card__date,
+:root[data-theme='dark'] #works-page .card__date {
+  font-family: var(--font-dot);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  -webkit-font-smoothing: none;
+  font-synthesis: none;
+}
+
+:root[data-theme='dark'] .articles-filter__tab {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+}
+
+:root[data-theme='dark'] section.narrow[data-section-label]::before,
+:root[data-theme='dark'] .articles-filter__tab[aria-selected="true"] {
+  font-weight: 700;
+}
+
+/* コードのみ等幅を維持 */
+:root[data-theme='dark'] code,
+:root[data-theme='dark'] pre,
+:root[data-theme='dark'] kbd,
+:root[data-theme='dark'] samp,
+:root[data-theme='dark'] #article-page .article-content code,
+:root[data-theme='dark'] #article-page .article-content pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  letter-spacing: 0;
+}
+
+/* ---------------------------------------------------------------------
+   3. OSウィンドウ — セクション
+   --------------------------------------------------------------------- */
+:root[data-theme='dark'] section.narrow {
+  position: relative;
+  margin-top: 1.35rem;
+  padding: 0;
+  border: 2px solid;
+  border-color: var(--bevel-light) var(--bevel-dark) var(--bevel-dark) var(--bevel-light);
+  border-radius: 0;
+  background: var(--win-body);
+  box-shadow: var(--elev-1);
+  overflow: visible;
+}
+
+/* タイトルバー（紫 + ♥ + 白文字） */
+:root[data-theme='dark'] section.narrow[data-section-label]::before {
+  content: attr(data-section-label) ".EXE";
+  display: flex;
+  align-items: center;
+  height: 1.65rem;
+  padding: 0 2rem 0 1.35rem;
+  margin: 0;
+  background-color: var(--win-titlebar);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath fill='%23cc499e' d='M5 8.5S1.8 5.6 1.8 3.2c0-1.4 1.1-2.4 2.5-1.5C5.2 1.1 6.4.6 7.6 1.7c1.4-.9 2.5.1 2.5 1.5 0 2.4-3.2 5.3-5.1 5.3z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 0.42rem center;
+  background-size: 0.55rem 0.55rem;
+  border-bottom: 1px solid var(--win-chrome-border);
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: var(--ztmy-titlebar-text);
+  text-transform: uppercase;
+  text-shadow: none;
+  opacity: 1;
+}
+
+/* クローズ [×] */
+:root[data-theme='dark'] section.narrow[data-section-label]::after {
+  content: "×";
+  position: absolute;
+  top: 0.2rem;
+  right: 0.35rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-dot);
+  font-size: 0.85rem;
+  line-height: 1;
+  color: var(--ztmy-titlebar-text);
+  background: var(--btn-face-chrome);
+  border: 2px solid;
+  border-color: #ffffff #5a5088 #5a5088 #ffffff;
+  box-shadow: none;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ウィンドウ内は暗い文字 */
+:root[data-theme='dark'] section.narrow,
+:root[data-theme='dark'] section.narrow .section__intro,
+:root[data-theme='dark'] section.narrow .section__intro h2,
+:root[data-theme='dark'] section.narrow .card,
+:root[data-theme='dark'] section.narrow .card h3,
+:root[data-theme='dark'] section.narrow .card p,
+:root[data-theme='dark'] section.narrow .card__note,
+:root[data-theme='dark'] section.narrow .list--icons a,
+:root[data-theme='dark'] section.narrow .row-link,
+:root[data-theme='dark'] section.narrow .meta,
+:root[data-theme='dark'] section.narrow .subtitle,
+:root[data-theme='dark'] section.narrow .section__more,
+:root[data-theme='dark'] section.narrow .btn,
+:root[data-theme='dark'] section.narrow .fortune-btn,
+:root[data-theme='dark'] section.narrow .fortune-slip,
+:root[data-theme='dark'] section.narrow .fortune-result,
+:root[data-theme='dark'] section.narrow .fortune-result-text {
+  color: var(--fg-panel);
+}
+
+:root[data-theme='dark'] section.narrow {
+  padding: 0 0.45rem 0.55rem;
+}
+:root[data-theme='dark'] section.narrow > .section__intro,
+:root[data-theme='dark'] section.narrow > .list--icons,
+:root[data-theme='dark'] section.narrow > .cards-scroll,
+:root[data-theme='dark'] section.narrow > .fortune-container {
+  margin: 0;
+  padding: 0.55rem 0.5rem 0.35rem;
+  border: none;
+  background: transparent;
+}
+/* ウィンドウ内側のインセット面 */
+:root[data-theme='dark'] section.narrow > .section__intro:first-of-type {
+  margin-top: 0.35rem;
+  padding: 0.45rem 0.55rem;
+  border: 2px solid;
+  border-color: var(--bevel-dark) var(--bevel-light) var(--bevel-light) var(--bevel-dark);
+  background: var(--btn-face);
+}
+:root[data-theme='dark'] section.narrow > .list--icons,
+:root[data-theme='dark'] section.narrow > .cards-scroll {
+  padding: 0.35rem 0.55rem 0.55rem;
+}
+
+:root[data-theme='dark'] .section__intro--bar,
+:root[data-theme='dark'] .section__intro--split {
+  border-bottom: none;
+  padding-bottom: 0.35rem;
+}
+:root[data-theme='dark'] .section__intro--bar::after,
+:root[data-theme='dark'] .section__intro--split::after {
+  display: none;
+}
+:root[data-theme='dark'] .section__intro--bar > h2::before,
+:root[data-theme='dark'] .section__intro--split > h2::before {
+  content: none;
+}
+:root[data-theme='dark'] .section__intro h2 {
+  font-size: var(--font-menu-size);
+}
+:root[data-theme='dark'] .section__intro h2 .icon {
+  color: var(--ztmy-heart);
+}
+
+/* ページ見出しウィンドウ */
+:root[data-theme='dark'] .page-title {
+  display: block;
+  margin: 0 0 1rem;
+  padding: 0.45rem 0.65rem 0.55rem;
+  background: var(--win-titlebar);
+  border: 2px solid;
+  border-color: var(--bevel-light) var(--bevel-dark) var(--bevel-dark) var(--bevel-light);
+  box-shadow: var(--elev-1);
+  border-radius: 0;
+  color: var(--ztmy-titlebar-text);
+}
+:root[data-theme='dark'] .page-title::before {
+  content: "\2665 WINDOW.EXE";
+  font-size: 0.62rem;
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--ztmy-pink);
+  letter-spacing: 0.12em;
+  font-weight: 400;
+}
+
+/* ---------------------------------------------------------------------
+   4. Win9x ベベル — ボタン・タブ・フォーム
+   --------------------------------------------------------------------- */
+:root[data-theme='dark'] .btn,
+:root[data-theme='dark'] #top .hero__actions .btn,
+:root[data-theme='dark'] .fortune-btn,
+:root[data-theme='dark'] .reload-btn,
+:root[data-theme='dark'] .section__more {
+  border-radius: 0;
+  background: var(--btn-face);
+  color: var(--fg-panel);
+  border: 2px solid;
+  border-color: var(--bevel-light) var(--bevel-dark) var(--bevel-dark) var(--bevel-light);
+  box-shadow: none;
+  font-family: var(--font-dot);
+  font-weight: 700;
+  text-shadow: none;
+}
+:root[data-theme='dark'] .btn:hover,
+:root[data-theme='dark'] .btn:focus-visible,
+:root[data-theme='dark'] #top .hero__actions .btn:hover,
+:root[data-theme='dark'] .fortune-btn:hover {
+  background: var(--win-titlebar);
+  color: var(--ztmy-titlebar-text);
+  box-shadow: none;
+}
+:root[data-theme='dark'] .btn:active,
+:root[data-theme='dark'] #top .hero__actions .btn:active {
+  border-color: var(--bevel-dark) var(--bevel-light) var(--bevel-light) var(--bevel-dark);
+  background: var(--win-titlebar-2);
+  color: var(--ztmy-titlebar-text);
+  transform: none;
+}
+
+:root[data-theme='dark'] .articles-filter {
+  border: 2px solid;
+  border-color: var(--bevel-dark) var(--bevel-light) var(--bevel-light) var(--bevel-dark);
+  background: var(--btn-face);
+  padding: 0.25rem;
+  border-radius: 0;
+  gap: 0.2rem;
+}
+:root[data-theme='dark'] .articles-filter__tab {
+  border-radius: 0;
+  background: var(--btn-face);
+  border: 2px solid;
+  border-color: var(--bevel-light) var(--bevel-dark) var(--bevel-dark) var(--bevel-light);
+  color: var(--fg-panel);
+  font-family: var(--font-dot);
+  font-size: 0.75rem;
+  box-shadow: none;
+}
+:root[data-theme='dark'] .articles-filter__tab[aria-selected="true"],
+:root[data-theme='dark'] .articles-filter__tab--active,
+:root[data-theme='dark'] #articles-page .articles-filter__tab[aria-selected="true"],
+:root[data-theme='dark'] #articles-page .articles-filter__tab--active,
+:root[data-theme='dark'] #works-page .articles-filter__tab[aria-selected="true"],
+:root[data-theme='dark'] #works-page .articles-filter__tab--active {
+  background: var(--win-titlebar);
+  border-color: var(--bevel-dark) var(--bevel-light) var(--bevel-light) var(--bevel-dark);
+  color: var(--ztmy-titlebar-text);
+  box-shadow: none;
+}
+
+/* テーマトグル — 太陽 | スイッチ | 月（Win9x・状態が一目で分かる） */
+:root[data-theme='dark'] .theme-toggle.theme-toggle--switch {
+  gap: 0.35rem;
+  padding: 0.28rem 0.4rem;
+  background: color-mix(in srgb, var(--win-body) 80%, var(--page-bg));
+  border: 2px solid;
+  border-color: var(--bevel-light) var(--bevel-dark) var(--bevel-dark) var(--bevel-light);
+  border-radius: 0;
+}
+:root[data-theme='dark'] .theme-toggle.theme-toggle--switch:hover,
+:root[data-theme='dark'] .theme-toggle.theme-toggle--switch:focus-visible {
+  background: color-mix(in srgb, var(--win-titlebar) 55%, var(--btn-face));
+}
+:root[data-theme='dark'] .theme-toggle--switch .theme-toggle__glyph--sun,
+:root[data-theme='dark'] .theme-toggle--switch .theme-toggle__glyph--moon {
+  display: grid;
+  width: 18px;
+  height: 18px;
+  color: var(--muted);
+  opacity: 0.55;
+}
+:root[data-theme='dark'] .theme-toggle--switch .theme-toggle__glyph--moon {
+  color: var(--ztmy-heart);
+  opacity: 1;
+}
+:root[data-theme='dark'] .theme-toggle--switch .theme-toggle__track {
+  position: relative;
+  flex-shrink: 0;
+  width: 3.25rem;
+  height: 1.35rem;
+  border-radius: 0;
+  border: 2px solid;
+  border-color: var(--bevel-dark) var(--bevel-light) var(--bevel-light) var(--bevel-dark);
+  background: var(--win-titlebar-2);
+  box-shadow: none;
+  overflow: hidden;
+}
+:root[data-theme='dark'] .theme-toggle__track::after {
+  display: none;
+}
+:root[data-theme='dark'] .theme-toggle--switch .theme-toggle__knob {
+  top: 2px;
+  left: 2px;
+  width: 1.05rem;
+  height: calc(100% - 4px);
+  border-radius: 0;
+  background: var(--bevel-light);
+  border: 2px solid;
+  border-color: var(--bevel-light) var(--bevel-dark) var(--bevel-dark) var(--bevel-light);
+  box-shadow: var(--elev-1);
+  transform: translateX(1.95rem);
+}
+:root[data-theme='dark'] .theme-toggle--switch .theme-icon {
+  width: 14px;
+  height: 14px;
+}
+
+@media (max-width: 640px) {
+  :root[data-theme='dark'] .theme-toggle--switch .theme-toggle__track {
+    display: inline-flex;
+  }
+  :root[data-theme='dark'] .theme-toggle.theme-toggle--switch {
+    width: auto;
+    min-width: 0;
+    height: auto;
+    padding: 0.22rem 0.32rem;
+    gap: 0.28rem;
+  }
+  :root[data-theme='dark'] .theme-toggle--switch .theme-toggle__glyph--sun,
+  :root[data-theme='dark'] .theme-toggle--switch .theme-toggle__glyph--moon {
+    display: grid;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   5. ヒーロー — 配色・歪みロゴのみ（レイアウトは main.css に従う）
+   --------------------------------------------------------------------- */
+/* フラット化：ぼかしオーブ・雲・空グラデは出さない（ベタ塗りのデスクトップ） */
+:root[data-theme='dark'] .hero__ambient,
+:root[data-theme='dark'] .hero__orb,
+:root[data-theme='dark'] .hero__cloud,
+:root[data-theme='dark'] .hero__horizon {
+  display: none;
+}
+
+:root[data-theme='dark'] #top .hero {
+  border: none;
+  box-shadow: none;
+  background: transparent;
+}
+:root[data-theme='dark'] #top .hero::before,
+:root[data-theme='dark'] #top .hero::after {
+  display: none;
+}
+
+/* ロゴ：ZUTOMAYO 風グリッチ（色ズレ＋わずかな歪み） */
+:root[data-theme='dark'] .hero h1 {
+  position: relative;
+  filter: url(#ztmy-warp);
+  color: var(--fg-chrome);
+  text-shadow:
+    -2px 0 0 rgba(154, 249, 246, 0.9),
+    2px 0 0 rgba(204, 73, 158, 0.9),
+    0 0 16px rgba(140, 135, 214, 0.45);
+  animation: ztmy-glitch 5s steps(1) infinite;
+}
+@keyframes ztmy-glitch {
+  0%, 86%, 100% {
+    text-shadow:
+      -2px 0 0 rgba(154, 249, 246, 0.9),
+      2px 0 0 rgba(204, 73, 158, 0.9),
+      0 0 16px rgba(140, 135, 214, 0.45);
+    transform: translate(0, 0);
+  }
+  88% {
+    text-shadow:
+      -4px 0 0 rgba(154, 249, 246, 0.95),
+      3px 0 0 rgba(204, 73, 158, 0.95),
+      0 0 16px rgba(140, 135, 214, 0.45);
+    transform: translate(2px, -1px) skewX(-3deg);
+  }
+  91% {
+    text-shadow:
+      3px 0 0 rgba(154, 249, 246, 0.95),
+      -4px 0 0 rgba(204, 73, 158, 0.95),
+      0 0 16px rgba(140, 135, 214, 0.45);
+    transform: translate(-2px, 1px) skewX(2deg);
+  }
+  94% {
+    text-shadow:
+      -2px 0 0 rgba(154, 249, 246, 0.9),
+      2px 0 0 rgba(204, 73, 158, 0.9),
+      0 0 16px rgba(140, 135, 214, 0.45);
+    transform: translate(0, 0);
+  }
+}
+:root[data-theme='dark'][data-reduced-effects='true'] .hero h1,
+:root[data-theme='dark'] .hero h1:hover {
+  animation: none;
+}
+:root[data-theme='dark'] .hero__avatar {
+  border: 2px solid;
+  border-color: var(--bevel-light) var(--bevel-dark) var(--bevel-dark) var(--bevel-light);
+  box-shadow: var(--elev-1);
+  animation: none;
+}
+:root[data-theme='dark'] #top .hero .note--epigraph {
+  color: var(--fg);
+}
+:root[data-theme='dark'] #top .hero__footer {
+  border-top-color: var(--bevel-dark);
+}
+
+/* カードの内側グラデ・サムネ光沢を無効化（ベタ塗りパネル） */
+:root[data-theme='dark'] .card::before,
+:root[data-theme='dark'] .card__thumb::after {
+  display: none;
+}
+:root[data-theme='dark'] .card:hover,
+:root[data-theme='dark'] .card:focus-within {
+  background: var(--card-bg-hover);
+  box-shadow: var(--elev-2);
+  transform: none;
+}
+
+/* ---------------------------------------------------------------------
+   6. Social / Links — 2列・行リンクは main.css、装飾のみ
+   --------------------------------------------------------------------- */
+:root[data-theme='dark'] #top .list--social.list--icons a,
+:root[data-theme='dark'] #top .list--friends.list--icons a.friend-card {
+  position: relative;
+  padding-left: 1.65rem;
+  border-radius: 0;
+}
+:root[data-theme='dark'] #top .list--social.list--icons a::before,
+:root[data-theme='dark'] #top .list--friends.list--icons a.friend-card::before {
+  content: "♥";
+  position: absolute;
+  left: 0.45rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ztmy-heart);
+  font-size: 0.75rem;
+}
+:root[data-theme='dark'] #top .list--social.list--icons a:hover,
+:root[data-theme='dark'] #top .list--friends.list--icons a.friend-card:hover {
+  background: color-mix(in srgb, var(--win-titlebar) 55%, var(--win-body));
+}
+:root[data-theme='dark'] #top .list--icons .social-icon {
+  color: var(--ztmy-teal);
+}
+
+/* ---------------------------------------------------------------------
+   7. Works / Articles — 行リストは main.css、サムネ・バッジの装飾のみ
+   --------------------------------------------------------------------- */
+:root[data-theme='dark'] #top .card--work .card__thumb {
+  border-radius: 0;
+  border: 2px solid;
+  border-color: var(--bevel-dark) var(--bevel-light) var(--bevel-light) var(--bevel-dark);
+}
+
+/* サムネ地・ホバー — ピンク被り（--accent-weak）を排してニュートラルに */
+:root[data-theme='dark'] .card__thumb {
+  background: var(--surface-raised);
+}
+:root[data-theme='dark'] #works-page .card--work .card__thumb,
+:root[data-theme='dark'] #works-page #bookmark-org .card__thumb,
+:root[data-theme='dark'] #articles-page .card--article .card__thumb {
+  background: var(--surface-raised);
+}
+:root[data-theme='dark'] #works-page .card--work .card__thumb svg {
+  background: #eff6ff;
+}
+:root[data-theme='dark'] #articles-page .card:hover,
+:root[data-theme='dark'] #works-page .card:hover,
+:root[data-theme='dark'] #articles-page .card:focus-within,
+:root[data-theme='dark'] #works-page .card:focus-within {
+  background: var(--card-bg-hover);
+}
+
+/* ウィンドウ内テキスト可読性（色・サイズ。フォントは DotGothic16 統一） */
+:root[data-theme='dark'] #top .card--work h3,
+:root[data-theme='dark'] #top .card--article h3,
+:root[data-theme='dark'] #works-page .card--work h3,
+:root[data-theme='dark'] #articles-page .card--article h3 {
+  font-family: var(--font-dot);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0.04em;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: auto;
+  font-synthesis: none;
+  color: var(--fg-panel);
+}
+:root[data-theme='dark'] #top .card--work .card__link:hover h3,
+:root[data-theme='dark'] #top .card--work:focus-within .card__link h3,
+:root[data-theme='dark'] #top .card--article .card__link:hover h3,
+:root[data-theme='dark'] #top .card--article:focus-within .card__link h3 {
+  color: var(--fg-panel);
+}
+:root[data-theme='dark'] #top .card--work .card__link p:not(.card__note),
+:root[data-theme='dark'] #top .card--article .card__date,
+:root[data-theme='dark'] #works-page .card--work .card__content > p:not(.card__note),
+:root[data-theme='dark'] #works-page .card--work .card__content > .card__note,
+:root[data-theme='dark'] #works-page .card--work .card__content > h3 + .card__note:only-of-type,
+:root[data-theme='dark'] #works-page .card--work .card__content > p:not(.card__note) + .card__note,
+:root[data-theme='dark'] #works-page .card__date,
+:root[data-theme='dark'] #articles-page .card--article .card__date,
+:root[data-theme='dark'] section.narrow .card__link p:not(.card__note) {
+  font-family: var(--font-dot);
+  font-size: 0.92rem;
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: auto;
+  font-synthesis: none;
+  color: var(--fg-panel-muted);
+}
+:root[data-theme='dark'] #top .card--article .card__date {
+  font-size: 0.84rem;
+}
+:root[data-theme='dark'] section.narrow .section__intro h2 {
+  text-transform: none;
+  letter-spacing: 0.06em;
+}
+:root[data-theme='dark'] section.narrow .section__more {
+  font-family: var(--font-dot);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0.04em;
+  color: var(--fg-panel);
+}
+/* ---------------------------------------------------------------------
+   8. ヘッダー・進捗・フッター
+   --------------------------------------------------------------------- */
+:root[data-theme='dark'] .site-header {
+  background: var(--chrome-bg);
+  border-bottom: 1px solid rgba(122, 114, 138, 0.4);
+  backdrop-filter: none;
+}
+:root[data-theme='dark'] .site-header .top-nav a {
+  color: var(--fg-chrome);
+}
+/* ヘッダーのピルはグレー面なので暗い文字 */
+:root[data-theme='dark'] .site-header .reload-btn .reload-text {
+  color: var(--fg-panel);
+}
+:root[data-theme='dark'] .top-nav a:hover,
+:root[data-theme='dark'] .top-nav a:focus-visible,
+:root[data-theme='dark'] .top-nav a:active {
+  color: var(--ztmy-cyan);
+}
+:root[data-theme='dark'] .top-nav a::after {
+  background: var(--ztmy-pink);
+  height: 2px;
+  box-shadow: none;
+}
+:root[data-theme='dark'] .top-nav a[aria-current="page"] {
+  color: var(--fg-chrome);
+  text-shadow: 0 0 10px var(--ztmy-pink);
+}
+:root[data-theme='dark'] .scroll-progress {
+  height: 4px;
+  background: var(--chrome-bg-2);
+  border-bottom: 1px solid rgba(122, 114, 138, 0.35);
+}
+:root[data-theme='dark'] .scroll-progress__bar {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--ztmy-pink) 0,
+    var(--ztmy-pink) 8px,
+    var(--ztmy-teal) 8px,
+    var(--ztmy-teal) 16px
+  );
+  box-shadow: none;
+  border-radius: 0;
+}
+:root[data-theme='dark'] .foot {
+  border-top: 1px solid rgba(122, 114, 138, 0.35);
+  background: color-mix(in srgb, var(--chrome-bg) 88%, var(--page-bg));
+  padding-top: 0.65rem;
+  color: var(--fg-chrome);
+}
+:root[data-theme='dark'] .foot-copy::before {
+  content: "STATUS: ZUTOMAYO_DESKTOP";
+  font-family: var(--font-dot);
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  color: var(--ztmy-teal);
+  opacity: 1;
+}
+:root[data-theme='dark'] .foot-copy {
+  color: var(--muted);
+  font-size: 0.65rem;
+}
+
+/* ヒーロー・記事ページ本体（暗い地の上） */
+:root[data-theme='dark'] .hero h1,
+:root[data-theme='dark'] .hero .note--epigraph,
+:root[data-theme='dark'] .hero__status-line {
+  color: var(--fg-chrome);
+}
+/* ヒーローのボタンはグレー面なので暗い文字 */
+:root[data-theme='dark'] #top .hero__actions .btn {
+  color: var(--fg-panel);
+}
+:root[data-theme='dark'] #article-page .article-content,
+:root[data-theme='dark'] #article-page .article-toc,
+:root[data-theme='dark'] #profile-page .profile-block,
+:root[data-theme='dark'] #profile-page .profile-intro-card,
+:root[data-theme='dark'] #profile-page .profile-timeline__item,
+:root[data-theme='dark'] #profile-page .profile-timeline__title,
+:root[data-theme='dark'] #profile-page .profile-timeline__desc {
+  color: var(--fg-panel);
+}
+:root[data-theme='dark'] #articles-page .card,
+:root[data-theme='dark'] #works-page .card,
+:root[data-theme='dark'] #articles-page .articles-filter,
+:root[data-theme='dark'] #works-page .articles-filter {
+  color: var(--fg-panel);
+}
+:root[data-theme='dark'] .articles-filter__tab[aria-selected="true"] {
+  color: var(--ztmy-titlebar-text);
+}
+
+/* ---------------------------------------------------------------------
+   9. おみくじ — ダイアログ窓
+   --------------------------------------------------------------------- */
+:root[data-theme='dark'] .fortune-section {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+:root[data-theme='dark'] .fortune-slip {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding-top: 0;
+}
+:root[data-theme='dark'] .fortune-slip__seal {
+  color: var(--ztmy-pink);
+  text-shadow: none;
+}
+:root[data-theme='dark'] .fortune-slip__mark {
+  border-color: var(--ztmy-teal);
+}
+:root[data-theme='dark'] .fortune-btn {
+  border: 2px solid;
+  border-color: var(--bevel-light) var(--bevel-dark) var(--bevel-dark) var(--bevel-light);
+}
+
+/* ---------------------------------------------------------------------
+   10. サブページ
+   --------------------------------------------------------------------- */
+:root[data-theme='dark'] #article-page .article-content a {
+  color: var(--ztmy-pink);
+  text-decoration: underline;
+}
+:root[data-theme='dark'] #article-page .article-content blockquote {
+  border-left: 3px solid var(--ztmy-teal);
+  background: rgba(184, 152, 188, 0.28);
+}
+
+:root[data-theme='dark'] .bgm-badge {
+  border: 2px solid;
+  border-color: var(--bevel-light) var(--bevel-dark) var(--bevel-dark) var(--bevel-light);
+  border-radius: 0;
+  background: var(--btn-face);
+  box-shadow: var(--elev-1);
+}
+:root[data-theme='dark'] .bgm-badge__icon {
+  background: var(--win-titlebar);
+  border-radius: 0;
+}
+:root[data-theme='dark'] .bgm-badge__eq span:nth-child(odd) { background: var(--ztmy-titlebar); }
+:root[data-theme='dark'] .bgm-badge__eq span:nth-child(even) { background: var(--ztmy-heart); }
+
+:root[data-theme='dark'] #profile-page .profile-intro-card,
+:root[data-theme='dark'] #profile-page .profile-block {
+  border: 2px solid;
+  border-color: var(--bevel-light) var(--bevel-dark) var(--bevel-dark) var(--bevel-light);
+  border-radius: 0;
+  box-shadow: var(--elev-1);
+  background: var(--win-body);
+}
+
+/* 推しグループバッジ — 明るい窓面の上なので濃色文字に */
+:root[data-theme='dark'] #profile-page .profile-oshimen__group--nogi {
+  color: #6d0e72;
+  border-color: rgba(126, 16, 131, 0.45);
+  background: rgba(126, 16, 131, 0.1);
+}
+:root[data-theme='dark'] #profile-page .profile-oshimen__group--hinata {
+  color: #16638c;
+  border-color: rgba(31, 127, 173, 0.45);
+  background: rgba(75, 173, 221, 0.14);
+}
+:root[data-theme='dark'] #profile-page .profile-oshimen__group--sakura {
+  color: #a8395c;
+  border-color: rgba(224, 106, 142, 0.5);
+  background: rgba(224, 106, 142, 0.14);
+}
+:root[data-theme='dark'] #profile-page .profile-oshimen__group--others {
+  color: #8a5505;
+  border-color: rgba(217, 119, 6, 0.45);
+  background: rgba(217, 119, 6, 0.12);
+}
+:root[data-theme='dark'] #profile-page .profile-portrait {
+  border: 2px solid;
+  border-color: var(--bevel-light) var(--bevel-dark) var(--bevel-dark) var(--bevel-light);
+  border-radius: 0;
+  box-shadow: var(--elev-1);
+}
+
+/* サブページのカード一覧 */
+:root[data-theme='dark'] .cards-scroll > li.card,
+:root[data-theme='dark'] #works-page .card,
+:root[data-theme='dark'] #articles-page .card {
+  border: 2px solid;
+  border-color: var(--bevel-light) var(--bevel-dark) var(--bevel-dark) var(--bevel-light);
+  border-radius: 0;
+  background: var(--win-body);
+  box-shadow: var(--elev-1);
+}
+
+/* Reveal — シンプルフェード */
+:root[data-theme='dark'].has-reveal .reveal-target {
+  transform: translateY(10px);
+  filter: none;
+  transition: opacity .45s ease, transform .45s ease;
+}
+:root[data-theme='dark'].has-reveal .reveal-target.is-visible {
+  transform: translateY(0);
+}
+
+/* ---------------------------------------------------------------------
+   11. バッジ — ピル型維持（配色は main.css のビビッド色をそのまま使う）
+   --------------------------------------------------------------------- */
+:root[data-theme='dark'] .badge,
+:root[data-theme='dark'] .card .badge,
+:root[data-theme='dark'] .card .badge.badge--corner {
+  border-radius: 999px;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+:root[data-theme='dark'] #top .card--work .badge--corner,
+:root[data-theme='dark'] #top .card--work .badge.badge--web.badge--corner,
+:root[data-theme='dark'] #top .card--work .badge.badge--platform.badge--corner,
+:root[data-theme='dark'] #top .card--work .badge.badge--organization.badge--corner,
+:root[data-theme='dark'] #top .card--article .badge--corner,
+:root[data-theme='dark'] #top .card--article .badge.badge--corner {
+  border-radius: 999px;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 640px) {
+  :root[data-theme='dark'] #top .card--work .badge--corner,
+  :root[data-theme='dark'] #top .card--work .badge.badge--web.badge--corner,
+  :root[data-theme='dark'] #top .card--work .badge.badge--platform.badge--corner,
+  :root[data-theme='dark'] #top .card--work .badge.badge--organization.badge--corner,
+  :root[data-theme='dark'] #top .card--article .badge--corner {
+    font-size: 0.64rem;
+    padding: 0.2rem 0.48rem;
+  }
+  /* Works一覧：バッジは右下へ（タイトルとの重なり回避・タイトルはフル幅） */
+  :root[data-theme='dark'] #works-page .card--work .badge--corner,
+  :root[data-theme='dark'] #works-page .card--work .badge.badge--corner {
+    font-size: 0.52rem;
+    padding: 0.12rem 0.32rem;
+    top: auto;
+    bottom: 0.45rem;
+    right: 0.45rem;
+  }
+  :root[data-theme='dark'] #works-page .card--work h3 {
+    padding-right: 0;
+  }
+  :root[data-theme='dark'] #works-page .card--work .card__content > p:last-child {
+    padding-right: 4.4rem;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   12. アクセシビリティ
+   --------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html.theme-transitioning body,
+  html.theme-transitioning body * { transition: none !important; }
+  :root[data-theme='dark'] .hero h1 { filter: none; text-shadow: none; animation: none; }
+  :root[data-theme='dark'] main.wrap::before,
+  :root[data-theme='dark'] #main-content.wrap::before { display: none; }
+  :root[data-theme='dark'] .desk-popups { display: none; }
+}
+:root[data-theme='dark'][data-reduced-effects='true'] .hero h1 {
+  filter: none;
+  text-shadow: none;
+}
+:root[data-theme='dark'][data-reduced-effects='true'] main.wrap::before,
+:root[data-theme='dark'][data-reduced-effects='true'] #main-content.wrap::before {
+  display: none;
+}
+:root[data-theme='dark'][data-reduced-effects='true'] .desk-popups {
+  display: none;
+}
+:root[data-theme='dark'][data-reduced-effects='true'] #top .list--social.list--icons a:hover,
+:root[data-theme='dark'][data-reduced-effects='true'] #top .list--friends.list--icons a.friend-card:hover {
+  transform: none;
+}
+
+/* ---------------------------------------------------------------------
+   13. 角丸なし — Win9x（main.css 後勝ち分も含めて統一）
+   --------------------------------------------------------------------- */
+:root[data-theme='dark'] .articles-filter,
+:root[data-theme='dark'] #articles-page .articles-filter,
+:root[data-theme='dark'] .articles-filter__tab,
+:root[data-theme='dark'] #articles-page .articles-filter__tab,
+:root[data-theme='dark'] #articles-page .card,
+:root[data-theme='dark'] #articles-page .card--article,
+:root[data-theme='dark'] #works-page .card,
+:root[data-theme='dark'] #works-page .card--work,
+:root[data-theme='dark'] #articles-page .card--article .card__thumb,
+:root[data-theme='dark'] #works-page .card--work .card__thumb,
+:root[data-theme='dark'] #articles-page .card--article .card__thumb img,
+:root[data-theme='dark'] #works-page .card--work .card__thumb img,
+:root[data-theme='dark'] .card,
+:root[data-theme='dark'] .card::before,
+:root[data-theme='dark'] .card__thumb,
+:root[data-theme='dark'] .card__thumb img,
+:root[data-theme='dark'] .hero__avatar,
+:root[data-theme='dark'] #profile-page .profile-portrait,
+:root[data-theme='dark'] #profile-page .profile-intro-card,
+:root[data-theme='dark'] #profile-page .profile-block,
+:root[data-theme='dark'] #profile-page .profile-card,
+:root[data-theme='dark'] #article-page .article-cover,
+:root[data-theme='dark'] #article-page .article-cover img,
+:root[data-theme='dark'] .friend-card__avatar,
+:root[data-theme='dark'] .reload-btn,
+:root[data-theme='dark'] .theme-toggle,
+:root[data-theme='dark'] .theme-toggle__track,
+:root[data-theme='dark'] .theme-toggle__knob,
+:root[data-theme='dark'] .top-nav a::after,
+:root[data-theme='dark'] .scroll-progress,
+:root[data-theme='dark'] .scroll-progress__bar,
+:root[data-theme='dark'] #top .list--icons a,
+:root[data-theme='dark'] #top .list--friends a.friend-card {
+  border-radius: 0 !important;
+}
+
+/* ---------------------------------------------------------------------
+   14. デスクトップシェル — タスクバー・アイコン・マーキー・カーソル
+   --------------------------------------------------------------------- */
+@keyframes ztmy-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+@keyframes ztmy-marquee {
+  to { transform: translateX(-50%); }
+}
+@keyframes ztmy-eq {
+  from { transform: scaleY(0.35); }
+  to { transform: scaleY(1); }
+}
+
+/* --- タスクバー（Win9x） --- */
+.ztmy-taskbar { display: none; }
+:root[data-theme='dark'] .ztmy-taskbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2050;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.24rem 0.45rem calc(0.24rem + env(safe-area-inset-bottom));
+  background: var(--btn-face);
+  border-top: 2px solid var(--bevel-light);
+  box-shadow: 0 -2px 0 rgba(10, 8, 14, 0.5);
+  font-family: var(--font-dot);
+}
+:root[data-theme='dark'] .ztmy-taskbar__start {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  padding: 0.22rem 0.62rem;
+  border: 2px solid;
+  border-color: var(--bevel-light) var(--bevel-dark) var(--bevel-dark) var(--bevel-light);
+  border-radius: 0;
+  background: var(--btn-face);
+  color: var(--fg-panel);
+  font-family: var(--font-dot);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  cursor: pointer;
+}
+:root[data-theme='dark'] .ztmy-taskbar__start:active {
+  border-color: var(--bevel-dark) var(--bevel-light) var(--bevel-light) var(--bevel-dark);
+  background: #a8a4b0;
+}
+:root[data-theme='dark'] .ztmy-taskbar__heart {
+  color: var(--ztmy-pink);
+  font-size: 0.8em;
+}
+:root[data-theme='dark'] .ztmy-taskbar__sep {
+  width: 2px;
+  align-self: stretch;
+  margin: 0.1rem 0.15rem;
+  background: var(--bevel-dark);
+  box-shadow: 1px 0 0 var(--bevel-light);
+}
+:root[data-theme='dark'] .ztmy-taskbar__task {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.24rem 0.7rem;
+  border: 2px solid;
+  border-color: var(--bevel-light) var(--bevel-dark) var(--bevel-dark) var(--bevel-light);
+  background: var(--btn-face);
+  color: var(--fg-panel);
+  font-size: 0.66rem;
+  letter-spacing: 0.07em;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+}
+:root[data-theme='dark'] .ztmy-taskbar__task:hover {
+  background: #c2bec9;
+}
+:root[data-theme='dark'] .ztmy-taskbar__task.is-active {
+  border-color: var(--bevel-dark) var(--bevel-light) var(--bevel-light) var(--bevel-dark);
+  background-color: #c9c5d1;
+  background-image: repeating-conic-gradient(rgba(255, 255, 255, 0.55) 0% 25%, transparent 0% 50%);
+  background-size: 4px 4px;
+  font-weight: 700;
+}
+:root[data-theme='dark'] .ztmy-taskbar__spacer { flex: 1; }
+:root[data-theme='dark'] .ztmy-taskbar__tray {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.24rem 0.66rem;
+  border: 2px solid;
+  border-color: var(--bevel-dark) var(--bevel-light) var(--bevel-light) var(--bevel-dark);
+  background: var(--btn-face);
+  color: var(--fg-panel);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+/* タスクバー分の下余白（フッターが隠れないように） */
+@media (min-width: 641px) {
+  :root[data-theme='dark'] body {
+    padding-bottom: calc(2.5rem + env(safe-area-inset-bottom));
+  }
+}
+@media (max-width: 640px) {
+  :root[data-theme='dark'] .ztmy-taskbar { display: none; }
+}
+@media (max-width: 880px) {
+  :root[data-theme='dark'] .ztmy-taskbar__task:not(.is-active) { display: none; }
+}
+
+/* --- デスクトップアイコン（広い画面のみ・左端） --- */
+.ztmy-deskicons { display: none; }
+:root[data-theme='dark'] .ztmy-deskicons {
+  position: fixed;
+  left: 1.1%;
+  top: 16%;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+:root[data-theme='dark'] .ztmy-deskicon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.32rem;
+  width: 86px;
+  text-decoration: none;
+  text-align: center;
+}
+:root[data-theme='dark'] .ztmy-deskicon__art {
+  width: 36px;
+  height: 36px;
+  image-rendering: pixelated;
+  filter: drop-shadow(2px 2px 0 rgba(10, 8, 14, 0.55));
+}
+:root[data-theme='dark'] .ztmy-deskicon__art svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+:root[data-theme='dark'] .ztmy-deskicon__label {
+  font-family: var(--font-dot);
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  line-height: 1.3;
+  color: #efeaf6;
+  padding: 0.1rem 0.3rem;
+  text-shadow: 1px 1px 0 rgba(10, 8, 14, 0.8);
+}
+:root[data-theme='dark'] a.ztmy-deskicon:hover .ztmy-deskicon__label,
+:root[data-theme='dark'] a.ztmy-deskicon:focus-visible .ztmy-deskicon__label {
+  background: var(--win-titlebar);
+  color: var(--ztmy-titlebar-text);
+  outline: 1px dotted rgba(255, 255, 255, 0.8);
+  text-shadow: none;
+}
+:root[data-theme='dark'] .ztmy-deskicon--static { cursor: default; }
+@media (max-width: 1100px) {
+  :root[data-theme='dark'] .ztmy-deskicons { display: none; }
+}
+
+/* --- ヒーロー内マーキー --- */
+.ztmy-ticker { display: none; }
+:root[data-theme='dark'] .ztmy-ticker {
+  display: block;
+  width: 100%;
+  margin-top: 0.7rem;
+  padding: 0.3rem 0;
+  overflow: hidden;
+  border: 2px solid;
+  border-color: var(--bevel-dark) var(--bevel-light) var(--bevel-light) var(--bevel-dark);
+  background: #14101e;
+}
+:root[data-theme='dark'] .ztmy-ticker__track {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: ztmy-marquee 22s linear infinite;
+}
+:root[data-theme='dark'] .ztmy-ticker__track span {
+  display: inline-block;
+  padding-right: 2.5rem;
+  font-family: var(--font-dot);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  color: var(--ztmy-cyan);
+  text-shadow: 0 0 8px rgba(138, 249, 246, 0.45);
+}
+
+/* --- 最新記事に NEW! 点滅 --- */
+:root[data-theme='dark'] #top [data-rss="home-articles"] .card--article:first-child .card__date::after {
+  content: "NEW!";
+  margin-left: 0.5em;
+  font-family: var(--font-dot);
+  font-size: 0.92em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ztmy-pink);
+  animation: ztmy-blink 1.1s step-end infinite;
+}
+
+/* --- イコライザポップアップを動かす --- */
+:root[data-theme='dark'] .desk-popup__body--eq span {
+  transform-origin: bottom;
+  animation: ztmy-eq 0.85s ease-in-out infinite alternate;
+}
+:root[data-theme='dark'] .desk-popup__body--eq span:nth-child(odd) { animation-duration: 0.7s; }
+:root[data-theme='dark'] .desk-popup__body--eq span:nth-child(3n) { animation-duration: 1.05s; animation-delay: 0.18s; }
+:root[data-theme='dark'] .desk-popup__body--eq span:nth-child(4n) { animation-delay: 0.32s; }
+
+/* --- Win9x スクロールバー --- */
+:root[data-theme='dark'] {
+  scrollbar-color: var(--btn-face) #181222;
+}
+:root[data-theme='dark']::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+:root[data-theme='dark']::-webkit-scrollbar-track {
+  background-color: #181222;
+  background-image: repeating-conic-gradient(#221a32 0% 25%, #181222 0% 50%);
+  background-size: 6px 6px;
+}
+:root[data-theme='dark']::-webkit-scrollbar-thumb {
+  background: var(--btn-face);
+  border-radius: 0;
+  box-shadow: inset 2px 2px 0 var(--bevel-light), inset -2px -2px 0 var(--bevel-dark);
+}
+:root[data-theme='dark']::-webkit-scrollbar-corner {
+  background: var(--btn-face);
+}
+
+/* --- ハートカーソル（リンク・ボタン） --- */
+:root[data-theme='dark'] a,
+:root[data-theme='dark'] button,
+:root[data-theme='dark'] [role="button"],
+:root[data-theme='dark'] summary,
+:root[data-theme='dark'] .articles-filter__tab {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M10 17S3 12.2 3 7.6C3 4.9 5.2 3 7.4 3c1.1 0 2 .5 2.6 1.2C10.6 3.5 11.5 3 12.6 3 14.8 3 17 4.9 17 7.6 17 12.2 10 17 10 17z' fill='%23e84fb0' stroke='%23ffffff' stroke-width='1.6'/%3E%3C/svg%3E") 10 4, pointer;
+}
+
+/* --- アクセシビリティ（シェル分） --- */
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme='dark'] .ztmy-ticker { display: none; }
+  :root[data-theme='dark'] #top [data-rss="home-articles"] .card--article:first-child .card__date::after { animation: none; }
+  :root[data-theme='dark'] .desk-popup__body--eq span { animation: none; }
+}
+:root[data-theme='dark'][data-reduced-effects='true'] .ztmy-ticker,
+:root[data-theme='dark'][data-reduced-effects='true'] .ztmy-deskicons {
+  display: none;
+}
+:root[data-theme='dark'][data-reduced-effects='true'] #top [data-rss="home-articles"] .card--article:first-child .card__date::after {
+  animation: none;
+}
