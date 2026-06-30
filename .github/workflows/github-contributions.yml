@@ -1,0 +1,46 @@
+# 非公開リポジトリのコントリビューションも含めて data/github-contributions.json を更新する。
+#
+# 初回セットアップ:
+# 1. GitHub → Settings → Developer settings → Personal access tokens
+# 2. Classic PAT を作成（スコープ: read:user）
+#    または Fine-grained PAT（Account permissions: Profile → Read-only）
+# 3. このリポジトリの Settings → Secrets → Actions に
+#    GH_CONTRIBUTIONS_TOKEN として登録
+# 4. Actions タブから "Update GitHub Contributions" を手動実行
+
+name: Update GitHub Contributions
+
+on:
+  schedule:
+    - cron: '0 15 * * *' # 毎日 0:00 JST (15:00 UTC)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch contributions (private included)
+        env:
+          GH_CONTRIBUTIONS_TOKEN: ${{ secrets.GH_CONTRIBUTIONS_TOKEN }}
+        run: node tools/fetch-github-contributions.js
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/github-contributions.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore: update GitHub contributions data"
+            git push
+          fi
