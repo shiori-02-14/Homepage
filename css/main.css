@@ -550,6 +550,68 @@ img, video, iframe {
 :root[data-theme='dark'] .theme-toggle--icon .theme-icon--sun { display: none; }
 :root[data-theme='dark'] .theme-toggle--icon .theme-icon--moon { display: block; }
 
+/* テーマ切替アニメーション */
+@supports (view-transition-name: root) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.58s;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  ::view-transition-old(root) {
+    animation-name: theme-fade-out;
+    z-index: 1;
+  }
+  ::view-transition-new(root) {
+    animation-name: theme-circle-reveal;
+    z-index: 2;
+  }
+}
+@keyframes theme-circle-reveal {
+  from {
+    clip-path: circle(0 at var(--theme-transition-x, 50vw) var(--theme-transition-y, 50vh));
+  }
+  to {
+    clip-path: circle(var(--theme-transition-radius, 150vmax) at var(--theme-transition-x, 50vw) var(--theme-transition-y, 50vh));
+  }
+}
+@keyframes theme-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0.35; }
+}
+html.theme-transitioning body {
+  transition: background-color 0.45s ease, color 0.45s ease;
+}
+html.theme-transitioning body *:not(img):not(video):not(iframe):not(canvas),
+html.theme-transitioning body *::before,
+html.theme-transitioning body *::after {
+  transition-property: background-color, border-color, color, box-shadow, outline-color, fill, stroke;
+  transition-duration: 0.45s;
+  transition-timing-function: ease;
+}
+html.theme-switching .theme-toggle__knob {
+  transition: transform 0.55s cubic-bezier(0.34, 1.35, 0.64, 1), background 0.35s ease;
+}
+html.theme-switching .theme-toggle__track::after {
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.45s ease;
+}
+html.theme-switching .theme-toggle--switch .theme-icon {
+  transition: transform 0.45s ease, opacity 0.35s ease;
+}
+html.theme-switching[data-theme-target='dark'] .theme-toggle__glyph--moon .theme-icon {
+  animation: theme-moon-rise 0.55s ease both;
+}
+html.theme-switching[data-theme-target='light'] .theme-toggle__glyph--sun .theme-icon {
+  animation: theme-sun-rise 0.55s ease both;
+}
+@keyframes theme-sun-rise {
+  from { transform: rotate(-16deg) scale(0.78); opacity: 0.4; }
+  to { transform: rotate(0deg) scale(1); opacity: 1; }
+}
+@keyframes theme-moon-rise {
+  from { transform: rotate(12deg) scale(0.75); opacity: 0.35; }
+  to { transform: rotate(0deg) scale(1); opacity: 1; }
+}
+
 /* ヘッダー（上部固定バー） */
 .site-header {
   position: sticky;
@@ -558,9 +620,20 @@ img, video, iframe {
   background: rgba(255, 255, 255, 0.92);
   border-bottom: 1px solid var(--line);
   backdrop-filter: blur(10px);
+  transition:
+    background-color .25s ease,
+    border-color .25s ease,
+    box-shadow .25s ease;
 }
 :root[data-theme='dark'] .site-header {
   background: rgba(18, 17, 16, 0.92);
+}
+.site-header--scrolled {
+  border-bottom-color: var(--line-strong);
+  box-shadow: 0 10px 24px -22px rgba(15, 23, 42, 0.45);
+}
+:root[data-theme='dark'] .site-header--scrolled {
+  box-shadow: 0 12px 28px -20px rgba(0, 0, 0, 0.55);
 }
 .site-header__inner {
   max-width: var(--w);
@@ -614,6 +687,49 @@ img, video, iframe {
   transform: scaleX(0);
   background: linear-gradient(90deg, var(--progress-fill-start), var(--progress-fill-end));
   box-shadow: none;
+  transition: transform .12s linear;
+}
+
+html.is-ready body {
+  opacity: 1;
+}
+
+html:not(.is-ready) body {
+  opacity: 0;
+}
+
+html.is-ready body {
+  transition: opacity .35s ease;
+}
+
+body:not(#top)::before {
+  content: '';
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: min(42vh, 320px);
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, var(--accent-weak), transparent 72%);
+  opacity: 0.85;
+}
+
+:root[data-reduced-effects='true'] html:not(.is-ready) body,
+:root[data-reduced-effects='true'] html.is-ready body {
+  opacity: 1;
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:not(.is-ready) body,
+  html.is-ready body {
+    opacity: 1;
+    transition: none;
+  }
+
+  .scroll-progress__bar {
+    transition: none;
+  }
 }
 .site-header__inner.is-overflowing .top-nav {
   overflow-x: auto;
@@ -733,6 +849,326 @@ section.narrow:not(:first-of-type)::before {
   opacity: 1;
   transform: translateY(0);
   filter: none;
+}
+
+.cards:not(.cards-scroll) > .card:not(.card--upcoming) {
+  transition: transform .18s ease, opacity .18s ease;
+}
+
+.cards:not(.cards-scroll) > .card:not(.card--upcoming):hover,
+.cards:not(.cards-scroll) > .card:not(.card--upcoming):focus-within {
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cards:not(.cards-scroll) > .card:not(.card--upcoming) {
+    transition: none;
+  }
+
+  .cards:not(.cards-scroll) > .card:not(.card--upcoming):hover,
+  .cards:not(.cards-scroll) > .card:not(.card--upcoming):focus-within {
+    transform: none;
+  }
+}
+
+/* ── サイト全体：さりげないインタラクション ── */
+.hero--motion .hero__inner {
+  transform: translate3d(0, calc(var(--hero-scroll-y, 0px) * -1), 0);
+  will-change: transform;
+}
+
+#top .hero__status-line .status-dot {
+  animation: statusPulse 2.8s ease-in-out infinite;
+}
+
+@keyframes statusPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.72;
+    transform: scale(0.9);
+  }
+}
+
+.section__more {
+  transition: color .18s ease, opacity .18s ease, transform .18s ease;
+}
+
+.section__more:hover,
+.section__more:focus-visible {
+  transform: translateX(3px);
+}
+
+.list--social a,
+.friend-card {
+  transition: transform .18s ease, background .18s ease, color .18s ease;
+}
+
+.list--social a:hover,
+.list--social a:focus-visible,
+.friend-card:hover,
+.friend-card:focus-visible {
+  transform: translateX(3px);
+}
+
+.friend-card:hover .friend-card__avatar,
+.friend-card:focus-visible .friend-card__avatar {
+  transform: scale(1.04);
+}
+
+.friend-card__avatar {
+  transition: transform .2s ease;
+}
+
+.articles-filter__tab {
+  transition: color .2s ease, background .2s ease, border-color .2s ease, transform .12s ease;
+}
+
+.articles-filter__tab:active {
+  transform: scale(0.98);
+}
+
+.cards .card {
+  transition:
+    opacity .22s ease,
+    transform .22s ease,
+    background .18s ease,
+    border-color .18s ease;
+}
+
+.cards.cards--filtering .card {
+  opacity: 0.55;
+  transform: translateY(4px);
+}
+
+#top .advent-banner {
+  transition: background .18s ease, border-color .18s ease, transform .18s ease;
+}
+
+#top .advent-banner:hover,
+#top .advent-banner:focus-visible {
+  transform: translateY(-2px);
+}
+
+.scroll-top {
+  position: fixed;
+  right: clamp(0.75rem, 2vw, 1.1rem);
+  bottom: max(0.85rem, env(safe-area-inset-bottom));
+  z-index: 1900;
+  display: grid;
+  place-items: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(10px);
+  color: var(--accent);
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition:
+    opacity .22s ease,
+    transform .22s ease,
+    background .18s ease,
+    border-color .18s ease;
+}
+
+.scroll-top.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  animation: scrollTopFloat 2.6s ease-in-out 0.4s infinite;
+}
+
+.scroll-top:hover,
+.scroll-top:focus-visible {
+  background: var(--accent-weak);
+  border-color: var(--accent);
+  outline: none;
+}
+
+:root.has-reveal .reveal-target.is-visible .section__intro .icon {
+  animation: iconPop .55s cubic-bezier(.22,.61,.36,1) both;
+  animation-delay: calc(var(--reveal-delay, 0ms) + 60ms);
+}
+
+@keyframes iconPop {
+  0% {
+    transform: scale(0.92) rotate(-6deg);
+    opacity: 0.65;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+/* ヒーロー：読み込み時の段階表示 */
+html:not(.is-ready) #top .hero__masthead,
+html:not(.is-ready) #top .hero__lead,
+html:not(.is-ready) #top .hero__footer {
+  opacity: 0;
+  transform: translateY(14px);
+}
+html.is-ready #top .hero__masthead {
+  animation: heroEnter 0.7s cubic-bezier(.22, .61, .36, 1) 0.04s both;
+}
+html.is-ready #top .hero__lead {
+  animation: heroEnter 0.7s cubic-bezier(.22, .61, .36, 1) 0.12s both;
+}
+html.is-ready #top .hero__footer {
+  animation: heroEnter 0.7s cubic-bezier(.22, .61, .36, 1) 0.2s both;
+}
+@keyframes heroEnter {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* セクション見出し：下線が伸びる */
+:root.has-reveal .reveal-target .section__intro--bar,
+:root.has-reveal .reveal-target .section__intro--split {
+  position: relative;
+  border-bottom-color: transparent;
+}
+:root.has-reveal .reveal-target .section__intro--bar::after,
+:root.has-reveal .reveal-target .section__intro--split::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--line);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.55s cubic-bezier(.22, .61, .36, 1);
+  transition-delay: calc(var(--reveal-delay, 0ms) + 90ms);
+}
+:root.has-reveal .reveal-target.is-visible .section__intro--bar::after,
+:root.has-reveal .reveal-target.is-visible .section__intro--split::after {
+  transform: scaleX(1);
+}
+#top .reveal-target .section__intro--bar::after,
+#top .reveal-target .section__intro--split::after {
+  background: var(--line-strong);
+}
+
+/* ロゴ・SNS・トップへ戻る */
+.reload-icon {
+  transition: transform 0.28s cubic-bezier(.34, 1.35, .64, 1);
+}
+.reload-btn:hover .reload-icon,
+.reload-btn:focus-visible .reload-icon {
+  transform: rotate(-10deg) scale(1.05);
+}
+#top .list--icons .social-icon svg,
+#top .list--icons .social-icon img,
+#top .list--icons .social-icon .social-icon__amazon {
+  transition: transform 0.22s cubic-bezier(.34, 1.35, .64, 1), color 0.18s ease;
+}
+#top .list--social.list--icons a[data-social]:is(:hover, :focus-visible, :active) .social-icon svg,
+#top .list--social.list--icons a[data-social]:is(:hover, :focus-visible, :active) .social-icon img,
+#top .list--social.list--icons a[data-social]:is(:hover, :focus-visible, :active) .social-icon .social-icon__amazon {
+  transform: scale(1.14);
+}
+@keyframes scrollTopFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero--motion .hero__inner {
+    transform: none;
+  }
+
+  #top .hero__status-line .status-dot {
+    animation: none;
+  }
+
+  .section__more:hover,
+  .section__more:focus-visible,
+  .list--social a:hover,
+  .list--social a:focus-visible,
+  .friend-card:hover,
+  .friend-card:focus-visible,
+  #top .advent-banner:hover,
+  #top .advent-banner:focus-visible {
+    transform: none;
+  }
+
+  .friend-card:hover .friend-card__avatar,
+  .friend-card:focus-visible .friend-card__avatar {
+    transform: none;
+  }
+
+  .articles-filter__tab:active {
+    transform: none;
+  }
+
+  .cards.cards--filtering .card {
+    opacity: 1;
+    transform: none;
+  }
+
+  :root.has-reveal .reveal-target.is-visible .section__intro .icon {
+    animation: none;
+  }
+
+  html.is-ready #top .hero__masthead,
+  html.is-ready #top .hero__lead,
+  html.is-ready #top .hero__footer {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .reload-btn:hover .reload-icon,
+  .reload-btn:focus-visible .reload-icon,
+  #top .list--social.list--icons a[data-social]:is(:hover, :focus-visible, :active) .social-icon svg,
+  #top .list--social.list--icons a[data-social]:is(:hover, :focus-visible, :active) .social-icon img,
+  #top .list--social.list--icons a[data-social]:is(:hover, :focus-visible, :active) .social-icon .social-icon__amazon {
+    transform: none;
+  }
+
+  .scroll-top.is-visible {
+    animation: none;
+  }
+
+  .btn--ghost:hover,
+  .btn--ghost:focus-visible {
+    transform: none;
+  }
+
+  :root.has-reveal .reveal-target .section__intro--bar::after,
+  :root.has-reveal .reveal-target .section__intro--split::after {
+    transition: none;
+    transform: scaleX(1);
+  }
+}
+
+:root[data-reduced-effects='true'] .hero--motion .hero__inner,
+:root[data-reduced-effects='true'] #top .hero__status-line .status-dot,
+:root[data-reduced-effects='true'] .scroll-top {
+  animation: none;
+  transform: none;
+}
+
+:root[data-reduced-effects='true'] .scroll-top {
+  display: none;
 }
 .quick-dock {
   position: fixed;
@@ -1866,12 +2302,18 @@ h2 .icon svg {
   background: transparent;
   color: var(--fg);
   border-color: var(--line-strong);
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
 }
 .btn--ghost:hover,
 .btn--ghost:focus-visible {
   background: var(--accent-weak);
   border-color: var(--line-strong);
   color: var(--fg);
+  transform: translateY(-2px);
 }
 .hero__orb {
   position: absolute;
@@ -2416,8 +2858,7 @@ h2 .icon svg {
   box-shadow: none;
 }
 .list--icons .social-icon svg,
-.list--icons .social-icon img,
-.list--icons .social-icon .social-icon__amazon {
+.list--icons .social-icon img {
   width: var(--tile-social-icon-size);
   height: var(--tile-social-icon-size);
 }
@@ -2434,15 +2875,14 @@ h2 .icon svg {
   display: block;
   width: 100%;
   height: 100%;
-  flex-shrink: 0;
-  background-color: var(--muted);
+  background-color: currentColor;
   -webkit-mask-image: url("../assets/icons/brands/amazon-a-black.png");
-  mask-image: url("../assets/icons/brands/amazon-a-black.png");
   -webkit-mask-size: contain;
-  mask-size: contain;
   -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
   -webkit-mask-position: center;
+  mask-image: url("../assets/icons/brands/amazon-a-black.png");
+  mask-size: contain;
+  mask-repeat: no-repeat;
   mask-position: center;
 }
 
@@ -6613,17 +7053,13 @@ section.fortune-section .fortune-title {
 #top .list--social.list--icons a[data-social]:is(:hover, :focus-visible, :active) .social-icon {
   color: var(--social-brand);
 }
-#top .list--social.list--icons a[data-social="amazon"]:is(:hover, :focus-visible, :active) .social-icon__amazon {
-  background-color: var(--social-brand);
-}
 #top .list--icons .social-icon {
   width: 1.35rem;
   height: 1.35rem;
   color: var(--muted);
 }
 #top .list--icons .social-icon svg,
-#top .list--icons .social-icon img,
-#top .list--icons .social-icon .social-icon__amazon {
+#top .list--icons .social-icon img {
   width: 1.35rem;
   height: 1.35rem;
 }
