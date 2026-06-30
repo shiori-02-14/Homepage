@@ -1,7 +1,12 @@
 (() => {
   const GITHUB_USER = 'shiori-02-14';
-  const DATA_URL = 'data/github-contributions.json';
+  const DATA_URLS = [
+    'data/github-contributions.json',
+    'data/github-contributions.js',
+    'https://raw.githubusercontent.com/shiori-02-14/Homepage/main/data/github-contributions.json',
+  ];
   const FALLBACK_API_URL = `https://github-contributions-api.jogruber.de/v4/${GITHUB_USER}?y=last`;
+  const DATA_KEY = '__GITHUB_CONTRIBUTIONS__';
 
   const root = document.getElementById('profile-github');
   if (!root) return;
@@ -195,6 +200,27 @@
     graphEl.appendChild(message);
   };
 
+  const parsePayload = (payload) => {
+    if (payload && typeof payload === 'object' && Array.isArray(payload.contributions)) {
+      return payload;
+    }
+    return null;
+  };
+
+  const fetchDataSource = async (url) => {
+    const response = await fetch(url);
+    if (!response.ok) return null;
+
+    if (url.endsWith('.js')) {
+      const scriptText = await response.text();
+      const module = { exports: {} };
+      const runner = new Function('window', 'module', 'exports', `${scriptText}; return window.${DATA_KEY};`);
+      return parsePayload(runner(window, module, module.exports));
+    }
+
+    return parsePayload(await response.json());
+  };
+
   const loadContributions = async () => {
     const applyData = (data) => {
       const contributions = Array.isArray(data.contributions) ? data.contributions : [];
@@ -204,17 +230,24 @@
       renderGraph(contributions);
     };
 
-    try {
-      const localRes = await fetch(DATA_URL);
-      if (localRes.ok) {
-        const localData = await localRes.json();
-        if (Array.isArray(localData.contributions) && localData.contributions.length > 0) {
-          applyData(localData);
+    if (window[DATA_KEY]) {
+      const cached = parsePayload(window[DATA_KEY]);
+      if (cached) {
+        applyData(cached);
+        return;
+      }
+    }
+
+    for (const url of DATA_URLS) {
+      try {
+        const data = await fetchDataSource(url);
+        if (data?.contributions?.length) {
+          applyData(data);
           return;
         }
+      } catch (_) {
+        // try next source
       }
-    } catch (_) {
-      // fall through to public API
     }
 
     try {

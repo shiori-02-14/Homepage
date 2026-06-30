@@ -82,8 +82,14 @@ const main = async () => {
   };
 
   const outPath = path.join(__dirname, '../data/github-contributions.json');
-  fs.writeFileSync(outPath, `${JSON.stringify(output, null, 2)}\n`, 'utf8');
-  console.log(`Saved ${contributions.length} days (${calendar.totalContributions} contributions) → ${outPath}`);
+  const jsPath = path.join(__dirname, '../data/github-contributions.js');
+  const jsonText = `${JSON.stringify(output, null, 2)}\n`;
+
+  fs.writeFileSync(outPath, jsonText, 'utf8');
+  fs.writeFileSync(jsPath, `window.__GITHUB_CONTRIBUTIONS__ = ${JSON.stringify(output, null, 2)};\n`, 'utf8');
+  console.log(`Saved ${contributions.length} days (${calendar.totalContributions} contributions)`);
+  console.log(`→ ${outPath}`);
+  console.log(`→ ${jsPath}`);
 };
 
 main().catch((error) => {
