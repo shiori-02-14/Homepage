@@ -361,8 +361,10 @@ img, video, iframe {
   background: transparent;
 }
 .reload-mark {
+  display: inline-block;
   font-size: 0.72em;
   margin-left: 0.04em;
+  transform-origin: 18% 88%;
 }
 .site-header .reload-text {
   font-size: 0.95rem;
@@ -915,7 +917,7 @@ section.narrow:not(:first-of-type)::before {
 
 .friend-card:hover .friend-card__avatar,
 .friend-card:focus-visible .friend-card__avatar {
-  transform: scale(1.04);
+  transform: scale(1.30);
 }
 
 .friend-card__avatar {
@@ -1090,6 +1092,68 @@ html.is-ready #top .hero__footer {
   50% { transform: translateY(-5px); }
 }
 
+/* yui540 系モーション（bookmark-swing / popup / circle-anim） */
+@keyframes bookmarkSwing {
+  0% { rotate: 25deg; }
+  40% { rotate: -4deg; }
+  60% { rotate: 2deg; }
+  80% { rotate: -1deg; }
+  100% { rotate: 0deg; }
+}
+html.is-ready .reload-mark {
+  animation: bookmarkSwing 1s cubic-bezier(0.78, 0.01, 0.19, 0.98) 0.4s both;
+}
+html.is-ready #top .hero__mark {
+  animation: bookmarkSwing 1.1s cubic-bezier(0.78, 0.01, 0.19, 0.98) 0.9s both;
+}
+.reload-btn:hover .reload-mark,
+.reload-btn:focus-visible .reload-mark,
+#top .hero h1:hover .hero__mark,
+#top .hero h1:focus-within .hero__mark {
+  animation: bookmarkSwing 0.75s cubic-bezier(0.78, 0.01, 0.19, 0.98) both;
+}
+
+.has-click-ripple {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.click-ripple {
+  --ripple-opacity: 0.4;
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid var(--ripple-color, var(--accent));
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+  animation: circleRipple 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+.click-ripple--fortune {
+  --ripple-color: var(--fortune-red);
+  --ripple-opacity: 0.5;
+  border-width: 2px;
+}
+@keyframes circleRipple {
+  from {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: var(--ripple-opacity, 0.4);
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+  }
+}
+#top .list--social.list--icons a[data-social="x"] { --ripple-color: #000; }
+#top .list--social.list--icons a[data-social="github"] { --ripple-color: #24292f; }
+#top .list--social.list--icons a[data-social="linkedin"] { --ripple-color: #0a66c2; }
+#top .list--social.list--icons a[data-social="note"] { --ripple-color: #2cb696; }
+#top .list--social.list--icons a[data-social="qiita"] { --ripple-color: #55c500; }
+#top .list--social.list--icons a[data-social="zenn"] { --ripple-color: #3ea8ff; }
+#top .list--social.list--icons a[data-social="youtube"] { --ripple-color: #ff0000; }
+#top .list--social.list--icons a[data-social="amazon"] { --ripple-color: #ff9900; }
+:root[data-theme='dark'] #top .list--social.list--icons a[data-social="x"] { --ripple-color: #e6e2db; }
+
 @media (prefers-reduced-motion: reduce) {
   .hero--motion .hero__inner {
     transform: none;
@@ -1151,6 +1215,26 @@ html.is-ready #top .hero__footer {
   .btn--ghost:hover,
   .btn--ghost:focus-visible {
     transform: none;
+  }
+
+  html.is-ready .reload-mark,
+  html.is-ready #top .hero__mark,
+  .reload-btn:hover .reload-mark,
+  .reload-btn:focus-visible .reload-mark,
+  #top .hero h1:hover .hero__mark,
+  #top .hero h1:focus-within .hero__mark {
+    animation: none;
+  }
+
+  .click-ripple {
+    animation: none;
+    display: none;
+  }
+
+  .fortune-slip--revealed .fortune-shine,
+  .fortune-slot-stopped,
+  .fortune-result-text.fortune-popup {
+    animation: none;
   }
 
   :root.has-reveal .reveal-target .section__intro--bar::after,
@@ -2104,6 +2188,7 @@ h2 .icon svg {
   margin-left: 0.08em;
   vertical-align: -0.08em;
   line-height: 1;
+  transform-origin: 18% 88%;
 }
 .hero__divider {
   display: block;
@@ -6304,6 +6389,46 @@ section.narrow.fortune-section {
   border-bottom: 1px solid color-mix(in srgb, var(--fortune-red) 22%, var(--line));
   background: color-mix(in srgb, var(--fortune-red) 5%, var(--surface));
   transition: border-color 0.35s ease, background 0.35s ease;
+  overflow: hidden;
+}
+
+.fortune-shine {
+  --shine-width: 2.5rem;
+  --shine-skew: 50%;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background-color: rgba(255, 255, 255, 0.2);
+  opacity: 0;
+}
+.fortune-slip--revealed .fortune-shine {
+  animation: fortuneShineSweep 1.5s ease-in-out 0.25s both;
+}
+:root[data-theme='dark'] .fortune-shine {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+@keyframes fortuneShineSweep {
+  from {
+    clip-path: polygon(
+      calc(var(--shine-width) * -1) 0,
+      0 0,
+      calc(var(--shine-skew) * -1) 100%,
+      calc((var(--shine-skew) + var(--shine-width)) * -1) 100%
+    );
+    opacity: 0;
+  }
+  15% { opacity: 1; }
+  40%,
+  to {
+    clip-path: polygon(
+      calc(100% + var(--shine-skew)) 0,
+      calc(100% + var(--shine-skew) + var(--shine-width)) 0,
+      calc(100% + var(--shine-width)) 100%,
+      100% 100%
+    );
+    opacity: 0;
+  }
 }
 
 .fortune-slip__stage::before,
@@ -6334,6 +6459,7 @@ section.narrow.fortune-section {
 
 .fortune-slip__outcome {
   display: none;
+  position: relative;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -6343,7 +6469,7 @@ section.narrow.fortune-section {
   padding: clamp(0.75rem, 2vw, 0.95rem) clamp(0.1rem, 0.8vw, 0.25rem) 0;
   border-top: 1px solid color-mix(in srgb, var(--line-strong) 55%, transparent);
   text-align: center;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .fortune-slip:has(.fortune-result[style*="block"]) .fortune-slip__inner {
@@ -6465,7 +6591,31 @@ section.narrow.fortune-section {
 }
 
 .fortune-slot-stopped {
-  animation: fortuneSlotStop 0.4s ease-out forwards;
+  animation: fortunePopup 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.fortune-result-text.fortune-popup {
+  animation: fortunePopup 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fortunePopup {
+  from {
+    opacity: 0;
+    transform: scale(0, 0);
+  }
+  20%,
+  to {
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.12, 1.15);
+  }
+  75% {
+    transform: scale(0.94, 0.96);
+  }
+  to {
+    transform: scale(1, 1);
+  }
 }
 
 @keyframes fortuneSlotStop {

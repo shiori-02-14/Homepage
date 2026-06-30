@@ -617,6 +617,9 @@ const initFortune = () => {
   const commentTextEl = commentNode.querySelector('.fortune-comment__text');
   const luckyItemEl = luckyNode.querySelector('.fortune-lucky__item');
 
+  // 抽選中フラグ：結果が出るまで再抽選をブロックする
+  let isDrawing = false;
+
   const setFortuneComment = (category, text) => {
     if (commentCategoryEl) {
       if (category) {
@@ -632,6 +635,10 @@ const initFortune = () => {
 
   const setFortuneLucky = (item) => {
     if (luckyItemEl) luckyItemEl.textContent = item || '推しTシャツ';
+  };
+
+  const markFortuneRevealed = () => {
+    if (slipNode) slipNode.classList.add('fortune-slip--revealed');
   };
 
   const resetFortuneOutcome = () => {
@@ -671,7 +678,10 @@ const initFortune = () => {
     slotReel.classList.add('fortune-slot-spinning');
   };
 
-  const showFortune = (fortuneData) => {
+  const showFortune = (fortuneData, onComplete) => {
+    const finish = () => {
+      if (typeof onComplete === 'function') onComplete();
+    };
     const data = fortuneData || defaultFortuneData;
     
     // おみくじの確率設定（一般的な確率分布）
@@ -691,7 +701,7 @@ const initFortune = () => {
     const finalResult = randomResult;
 
     if (slipNode) {
-      slipNode.classList.remove('fortune-slip--daikichi', 'fortune-slip--kyou');
+      slipNode.classList.remove('fortune-slip--daikichi', 'fortune-slip--kyou', 'fortune-slip--revealed');
       if (randomResult === '大吉') slipNode.classList.add('fortune-slip--daikichi');
       if (randomResult === '凶') slipNode.classList.add('fortune-slip--kyou');
     }
@@ -723,6 +733,8 @@ const initFortune = () => {
       resultNode.style.display = 'block';
       commentNode.style.display = 'block';
       luckyNode.style.display = 'block';
+      markFortuneRevealed();
+      finish();
     } else {
       // スロットマシン風の演出
       resultNode.style.display = 'block';
@@ -817,6 +829,7 @@ const initFortune = () => {
             if (slotContainer) {
               slotContainer.classList.add('fortune-slot-stopped');
             }
+            markFortuneRevealed();
             
             // コメントを表示
             setTimeout(() => {
@@ -828,6 +841,7 @@ const initFortune = () => {
             setTimeout(() => {
               luckyNode.style.display = 'block';
               luckyNode.classList.add('fortune-reveal');
+              finish();
             }, 360);
           }, slowDuration);
         }, spinDuration);
@@ -837,11 +851,13 @@ const initFortune = () => {
           resultText.textContent = finalResult;
           resultText.style.display = 'flex';
           resultText.style.opacity = '1';
+          resultText.classList.add('fortune-popup');
         } else {
           resultNode.textContent = finalResult;
           resultNode.style.opacity = '1';
         }
         resultNode.classList.add('fortune-reveal');
+        markFortuneRevealed();
         
         setTimeout(() => {
           commentNode.style.display = 'block';
@@ -851,6 +867,7 @@ const initFortune = () => {
         setTimeout(() => {
           luckyNode.style.display = 'block';
           luckyNode.classList.add('fortune-reveal');
+          finish();
         }, 520);
       }
     }
@@ -859,12 +876,16 @@ const initFortune = () => {
   const reveal = (fortuneData) => {
     btn.style.display = 'none';
     if (hintNode) hintNode.style.display = 'none';
-    showFortune(fortuneData);
-    
-    // 「もう一度」ボタンを表示
-    if (retryBtn) {
-      retryBtn.style.display = 'inline-flex';
-    }
+
+    // 結果が完全に出てから「もう一度」ボタンを表示し、再抽選を解禁する
+    showFortune(fortuneData, () => {
+      if (retryBtn) {
+        retryBtn.style.display = 'inline-flex';
+        retryBtn.removeAttribute('aria-busy');
+        retryBtn.disabled = false;
+      }
+      isDrawing = false;
+    });
     
     // 結果部分のクリックは無効化（ボタンのみクリック可能）
     if (container) {
@@ -879,6 +900,10 @@ const initFortune = () => {
   };
 
   const drawFortune = () => {
+    // 結果が出るまでは二重抽選を防ぐ
+    if (isDrawing) return;
+    isDrawing = true;
+
     const isFirstDraw = btn.style.display !== 'none';
     const activeBtn = isFirstDraw ? btn : retryBtn;
     const reduceMotion = reduceMotionQuery && reduceMotionQuery.matches;
@@ -894,7 +919,7 @@ const initFortune = () => {
     }
 
     if (slipNode) {
-      slipNode.classList.remove('fortune-slip--daikichi', 'fortune-slip--kyou');
+      slipNode.classList.remove('fortune-slip--daikichi', 'fortune-slip--kyou', 'fortune-slip--revealed');
       slipNode.classList.add('fortune-slip--drawing');
     }
 
@@ -916,7 +941,7 @@ const initFortune = () => {
     if (resultTextReset) {
       resultTextReset.style.display = 'none';
       resultTextReset.textContent = '';
-      resultTextReset.classList.remove('fortune-reveal');
+      resultTextReset.classList.remove('fortune-reveal', 'fortune-popup');
     }
     resetFortuneOutcome();
     if (retryBtn) {
@@ -952,16 +977,16 @@ const initFortune = () => {
 
     drawPromise
       .then((fortuneData) => finishDraw(fortuneData))
-      .finally(() => {
-        if (btn) {
-          btn.removeAttribute('aria-busy');
-          btn.disabled = false;
-        }
+      .catch(() => {
+        // 取得に失敗しても抽選ロックは解除して操作可能に戻す
+        isDrawing = false;
         if (retryBtn) {
+          retryBtn.style.display = 'inline-flex';
           retryBtn.removeAttribute('aria-busy');
           retryBtn.disabled = false;
         }
       });
+    // btn / retryBtn の再有効化は結果表示完了時（reveal の onComplete）に行う
   };
 
   // ボタンクリックでおみくじを引く
@@ -1126,6 +1151,68 @@ const initScrollToTop = () => {
   update();
 };
 
+const initClickRipple = () => {
+  if (isReducedEffects()) return;
+
+  const targets = document.querySelectorAll(
+    '#top .list--social.list--icons a, #top .hero__actions .btn--ghost, .fortune-btn, .btn--ghost'
+  );
+
+  const getRippleHost = (target) => {
+    if (target.classList.contains('fortune-btn')) {
+      return target.closest('.fortune-slip__stage')
+        || target.closest('.fortune-slip__outcome')
+        || target;
+    }
+    return target;
+  };
+
+  const spawnClickRipple = (host, clientX, clientY, { fortune = false } = {}) => {
+    const rect = host.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    // クリック地点から最も遠い角までの距離 = 要素全体を覆うのに必要な半径
+    const radius = Math.hypot(
+      Math.max(x, rect.width - x),
+      Math.max(y, rect.height - y),
+    );
+    const size = radius * 2;
+
+    const ripple = document.createElement('span');
+    ripple.className = fortune ? 'click-ripple click-ripple--fortune' : 'click-ripple';
+    ripple.style.width = `${size}px`;
+    ripple.style.height = `${size}px`;
+    ripple.style.left = `${x}px`;
+    ripple.style.top = `${y}px`;
+    host.appendChild(ripple);
+    ripple.addEventListener('animationend', () => {
+      ripple.remove();
+    }, { once: true });
+  };
+
+  targets.forEach((target) => {
+    if (target.dataset.clickRippleBound === 'true') return;
+    target.dataset.clickRippleBound = 'true';
+
+    const isFortuneBtn = target.classList.contains('fortune-btn');
+    if (!isFortuneBtn) {
+      target.classList.add('has-click-ripple');
+    }
+
+    target.addEventListener('pointerdown', (event) => {
+      if (event.button !== 0) return;
+
+      const host = getRippleHost(target);
+      if (host !== target && !host.classList.contains('has-click-ripple')) {
+        host.classList.add('has-click-ripple');
+      }
+      spawnClickRipple(host, event.clientX, event.clientY, { fortune: isFortuneBtn });
+    });
+  });
+};
+
 const initFilterCardMotion = () => {
   document.querySelectorAll('.articles-filter__tab').forEach((tab) => {
     tab.addEventListener('click', () => {
@@ -1168,6 +1255,7 @@ const initPage = () => {
   initHeaderScroll();
   initHeroMotion();
   initScrollToTop();
+  initClickRipple();
   initFilterCardMotion();
   initFortune();
   initProfileTimelineFuture();
