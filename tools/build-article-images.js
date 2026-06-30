@@ -193,7 +193,7 @@ const buildNoteImages = async (manifest, noteFeedOut) => {
 
 const buildQiitaImages = async (manifest) => {
   console.log('qiita API...');
-  const items = await fetchJson(`${QIITA_API_URL}?per_page=20`);
+  const items = await fetchJson(`${QIITA_API_URL}?per_page=100`);
   if (!Array.isArray(items)) return;
   for (const item of items) {
     const link = item.url || '';

@@ -239,7 +239,6 @@
   const saveArticleListCache = (articles) => {
     try {
       const items = (Array.isArray(articles) ? articles : [])
-        .slice(0, 30)
         .map((item) => ({
           title: item?.title || '',
           link: item?.link || '',
@@ -454,7 +453,7 @@
 
   // Qiita API v2 で記事を直接取得（認証不要・JSONで安定）
   const fetchQiitaItemsViaAPI = async () => {
-    const apiUrl = QIITA_API_URL + '?per_page=20';
+    const apiUrl = QIITA_API_URL + '?per_page=100';
     const tryDirect = async () => {
       const res = await fetchWithTimeout(apiUrl, { timeoutMs: 4500 });
       if (!res.ok) throw new Error(`Qiita API error: ${res.status}`);
@@ -1291,9 +1290,9 @@
     const merged = mergeAndSortArticles(articles);
     if (merged.length === 0) return [];
 
-    // Articlesページ（縦リスト）
+    // Articlesページ（縦リスト）— 全件表示
     if (articlesPageContainer) {
-      const latestArticles = merged.slice(0, 10);
+      const latestArticles = merged;
       const existing = Array.from(articlesPageContainer.querySelectorAll('.card--article:not([data-rss])'));
       displayArticles(articlesPageContainer, latestArticles, {
         mode: 'insertBeforeExisting',
@@ -1315,10 +1314,9 @@
       }
     }
 
-    // トップページ（横スクロール）
+    // トップページ（横スクロール）— 最新10件
     if (homeArticlesContainer) {
-      const latestHome = merged.slice(0, 10);
-      displayArticles(homeArticlesContainer, latestHome, { mode: 'replaceAll' });
+      displayArticles(homeArticlesContainer, merged.slice(0, 10), { mode: 'replaceAll' });
     }
 
     return merged;
