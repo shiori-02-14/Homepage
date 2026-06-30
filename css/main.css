@@ -7070,3 +7070,288 @@ section.fortune-section .fortune-title {
   opacity: 0.6;
 }
 
+/* ══════════════════════════════════════════
+   一人アドカレ2026
+   ══════════════════════════════════════════ */
+
+#advent2026-page .advent-page__hero {
+  margin-bottom: clamp(1.35rem, 3vw, 1.85rem);
+  padding: clamp(1.1rem, 2.8vw, 1.45rem) clamp(1rem, 2.5vw, 1.2rem);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background:
+    linear-gradient(145deg, var(--accent-weak) 0%, transparent 55%),
+    var(--surface);
+  text-align: center;
+}
+
+#advent2026-page .advent-page__eyebrow {
+  margin: 0 0 0.55rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+#advent2026-page .advent-page__title {
+  margin: 0 0 0.65rem;
+  font-family: var(--font-serif);
+  font-size: clamp(1.45rem, 4vw, 1.85rem);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1.35;
+  color: var(--fg);
+}
+
+#advent2026-page .advent-page__year {
+  display: inline-block;
+  margin-left: 0.35rem;
+  padding: 0.12rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72em;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  vertical-align: middle;
+  color: var(--accent-strong);
+  background: var(--accent-weak);
+  border: 1px solid var(--line);
+}
+
+#advent2026-page .advent-page__lead {
+  margin: 0 auto;
+  max-width: 34em;
+  font-size: clamp(0.88rem, 1.8vw, 0.96rem);
+  line-height: 1.75;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+#advent2026-page .advent-page__meta {
+  margin: 0.85rem 0 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+
+#advent2026-page .advent-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(0.45rem, 1.5vw, 0.65rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#advent2026-page .advent-door {
+  min-width: 0;
+}
+
+#advent2026-page .advent-door__panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  aspect-ratio: 1;
+  width: 100%;
+  padding: 0.45rem 0.35rem 0.5rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+#advent2026-page .advent-door__month {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+#advent2026-page .advent-door__num {
+  font-family: var(--font-serif);
+  font-size: clamp(1.15rem, 3.2vw, 1.45rem);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: var(--fg);
+}
+
+#advent2026-page .advent-door__hint {
+  margin-top: 0.1rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+#advent2026-page .advent-door--locked .advent-door__panel {
+  background: color-mix(in srgb, var(--line) 28%, var(--surface));
+  border-style: dashed;
+  opacity: 0.72;
+}
+
+#advent2026-page .advent-door--locked .advent-door__num {
+  color: var(--muted);
+}
+
+#advent2026-page .advent-door--ready .advent-door__panel {
+  border-color: var(--accent);
+  background: var(--accent-weak);
+}
+
+#advent2026-page .advent-door--ready .advent-door__month,
+#advent2026-page .advent-door--ready .advent-door__hint {
+  color: var(--accent);
+}
+
+#advent2026-page .advent-door--open .advent-door__link {
+  cursor: pointer;
+  border-color: var(--accent);
+  background:
+    linear-gradient(160deg, var(--accent-weak) 0%, var(--surface) 70%);
+}
+
+#advent2026-page .advent-door--open .advent-door__link:hover,
+#advent2026-page .advent-door--open .advent-door__link:focus-visible {
+  border-color: var(--accent);
+  background: var(--row-hover);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+#advent2026-page .advent-door--open .advent-door__month,
+#advent2026-page .advent-door--open .advent-door__hint {
+  color: var(--accent);
+}
+
+#advent2026-page .advent-door--open .advent-door__hint {
+  font-weight: 500;
+}
+
+@media (max-width: 560px) {
+  #advent2026-page .advent-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 420px) {
+  #advent2026-page .advent-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  #advent2026-page .advent-door__hint {
+    font-size: 0.58rem;
+  }
+}
+
+@media (min-width: 641px) {
+  #advent2026-page .advent-page__hero {
+    text-align: left;
+  }
+
+  #advent2026-page .advent-page__lead {
+    margin-inline: 0;
+  }
+}
+
+/* トップページ：Articles 内のアドカレ告知バナー */
+#top .advent-banner {
+  margin-block: 0 0.75rem;
+  display: block;
+  padding: 1rem 1.05rem 0.95rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background:
+    linear-gradient(135deg, var(--accent-weak) 0%, transparent 58%),
+    var(--surface);
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+#top .advent-banner:hover,
+#top .advent-banner:focus-visible {
+  background: var(--row-hover);
+  border-color: var(--accent);
+  outline: none;
+}
+
+#top .advent-banner__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.45rem;
+}
+
+#top .advent-banner__eyebrow {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+#top .advent-banner__badge {
+  flex-shrink: 0;
+  padding: 0.28rem 0.68rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--accent-strong);
+  background: var(--accent-weak);
+  border: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+#top .advent-banner__title {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: clamp(1.04rem, 2.2vw, 1.18rem);
+  font-weight: 600;
+  font-family: var(--font-serif);
+  letter-spacing: 0.03em;
+  line-height: 1.45;
+  color: var(--fg);
+}
+
+#top .advent-banner__desc {
+  display: block;
+  margin-bottom: 0.62rem;
+  font-size: 0.84rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+#top .advent-banner__cta {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  transition: transform 0.15s ease;
+}
+
+#top .advent-banner:hover .advent-banner__cta,
+#top .advent-banner:focus-visible .advent-banner__cta {
+  transform: translateX(3px);
+}
+
+@media (min-width: 641px) {
+  #top .advent-banner {
+    padding: 1.05rem 1.15rem 1rem;
+  }
+}
+
