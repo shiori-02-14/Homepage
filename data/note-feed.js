@@ -1,5 +1,13 @@
 window.__NOTE_FEED__ = [
   {
+    "title": "印刷博物館に行ってみた",
+    "link": "https://note.com/shiori_02_14_/n/n19f4742fd92e",
+    "date": "2026/06/11",
+    "dateMs": 1781184745000,
+    "imageUrl": "https://assets.st-note.com/production/uploads/images/263359172/rectangle_large_type_2_84d328338d8222b6bc636dcdecb769c7.jpg?width=640",
+    "source": "note"
+  },
+  {
     "title": "雨が降ったっていいじゃん！",
     "link": "https://note.com/shiori_02_14_/n/n00f47b24fba6",
     "date": "2026/05/31",
