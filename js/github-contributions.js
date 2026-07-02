@@ -177,15 +177,6 @@
     return weeks.slice(-count);
   };
 
-  const syncWeekdayRows = () => {
-    const cell = graphEl.querySelector('.profile-github__cell:not(.profile-github__cell--empty)');
-    if (!cell) return;
-    const height = cell.getBoundingClientRect().height;
-    if (height > 0) {
-      root.style.setProperty('--gh-row-height', `${height}px`);
-    }
-  };
-
   const fitGraphLayout = () => {
     const width = graphEl.clientWidth;
     const count = Number(getComputedStyle(root).getPropertyValue('--gh-week-count')) || 0;
@@ -196,7 +187,6 @@
         root.style.setProperty('--gh-cell-size', `${cellSize}px`);
       }
     }
-    syncWeekdayRows();
   };
 
   let lastContributions = null;
@@ -216,10 +206,12 @@
       `Past year of GitHub contributions (${formatCount(yearlyTotal)})`
     );
 
+    const layoutEl = root.querySelector('.profile-github__graph-layout');
+    layoutEl?.querySelector('.profile-github__months')?.remove();
+    layoutEl?.insertBefore(buildMonths(weeks), graphEl);
+
     const inner = document.createElement('div');
     inner.className = 'profile-github__graph-inner';
-
-    inner.appendChild(buildMonths(weeks));
 
     const grid = document.createElement('div');
     grid.className = 'profile-github__grid';

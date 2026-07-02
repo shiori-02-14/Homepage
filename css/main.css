@@ -8049,11 +8049,14 @@ section.fortune-section .fortune-title {
   --gh-cell-size: 15px;
   --gh-cell-gap: 4px;
   --gh-legend-size: 14px;
+  --gh-font-mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Noto Sans Mono CJK JP", monospace;
   --gh-level-0: #ebedf0;
   --gh-level-1: #9be9a8;
   --gh-level-2: #40c463;
   --gh-level-3: #30a14e;
   --gh-level-4: #216e39;
+  font-family: var(--gh-font-mono);
+  font-variant-numeric: tabular-nums;
 }
 :root[data-theme='dark'] #profile-page .profile-github {
   --gh-level-0: #2d333b;
@@ -8075,6 +8078,7 @@ section.fortune-section .fortune-title {
   box-shadow: none;
   background: transparent;
   width: auto;
+  font-family: inherit;
 }
 #profile-page .profile-github__panel {
   display: grid;
@@ -8099,7 +8103,6 @@ section.fortune-section .fortune-title {
   margin: 0;
   padding: 0;
   border: 0;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   font-size: clamp(0.92rem, 2.1vw, 1.05rem);
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -8127,7 +8130,6 @@ section.fortune-section .fortune-title {
   border: 1px solid var(--line-strong);
   border-radius: 999px;
   background: color-mix(in srgb, var(--accent) 10%, var(--surface) 90%);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   font-size: clamp(0.78rem, 1.7vw, 0.86rem);
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -8138,7 +8140,7 @@ section.fortune-section .fortune-title {
   background: color-mix(in srgb, var(--accent) 16%, transparent);
 }
 #profile-page .profile-github__total-value {
-  font-size: 1.15em;
+  font-size: 1em;
   font-weight: 800;
   color: var(--accent-strong);
 }
@@ -8147,7 +8149,7 @@ section.fortune-section .fortune-title {
 }
 #profile-page .profile-github__total-label {
   color: var(--muted);
-  font-weight: 600;
+  font-weight: 700;
 }
 #profile-page .profile-github__graph-wrap {
   position: relative;
@@ -8171,25 +8173,42 @@ section.fortune-section .fortune-title {
 #profile-page .profile-github__range {
   margin: 0 0 0.55rem;
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.02em;
   color: var(--muted);
 }
 #profile-page .profile-github__graph-layout {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  gap: 0.45rem;
+  grid-template-rows: auto auto;
+  column-gap: 0.45rem;
+  row-gap: 0.3rem;
   align-items: start;
 }
 #profile-page .profile-github {
   --gh-months-h: 1.05rem;
 }
-#profile-page .profile-github__weekdays {
+#profile-page .profile-github__months {
+  grid-column: 2;
+  grid-row: 1;
   display: grid;
-  grid-template-rows: repeat(7, var(--gh-row-height, var(--gh-cell-size)));
+  grid-template-columns: repeat(var(--gh-week-count, 53), var(--gh-cell-size, 12px));
   gap: var(--gh-cell-gap);
-  padding-top: calc(var(--gh-months-h) + 0.3rem);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  height: var(--gh-months-h);
+  margin-bottom: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  width: 100%;
+}
+#profile-page .profile-github__weekdays {
+  grid-column: 1;
+  grid-row: 2;
+  display: grid;
+  grid-template-rows: repeat(7, var(--gh-cell-size, 12px));
+  gap: var(--gh-cell-gap);
+  padding-top: 0;
   font-size: 0.68rem;
   font-weight: 700;
   line-height: 1;
@@ -8206,9 +8225,11 @@ section.fortune-section .fortune-title {
 #profile-page .profile-github__weekdays span {
   display: flex;
   align-items: center;
-  height: var(--gh-row-height, var(--gh-cell-size));
+  height: var(--gh-cell-size, 12px);
 }
 #profile-page .profile-github__graph {
+  grid-column: 2;
+  grid-row: 2;
   overflow: hidden;
   padding-bottom: 0;
 }
@@ -8217,19 +8238,6 @@ section.fortune-section .fortune-title {
   flex-direction: column;
   width: 100%;
   min-width: 0;
-}
-#profile-page .profile-github__months {
-  display: grid;
-  grid-template-columns: repeat(var(--gh-week-count, 53), var(--gh-cell-size, 12px));
-  gap: var(--gh-cell-gap);
-  height: var(--gh-months-h);
-  margin-bottom: 0.3rem;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  color: var(--muted);
-  width: 100%;
 }
 #profile-page .profile-github__months span {
   min-width: 0;
@@ -8311,7 +8319,6 @@ section.fortune-section .fortune-title {
   justify-content: flex-end;
   gap: 0.5rem;
   margin: 0.65rem 0 0;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -8350,7 +8357,6 @@ section.fortune-section .fortune-title {
   border: 1px solid var(--line-strong);
   background: var(--surface);
   box-shadow: var(--elev-2);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   font-size: 0.78rem;
   letter-spacing: 0.01em;
   color: var(--fg);
@@ -8399,7 +8405,6 @@ section.fortune-section .fortune-title {
   border: 1px solid var(--line-strong);
   border-radius: 8px;
   background: var(--panel-bg);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   font-size: clamp(0.84rem, 1.9vw, 0.94rem);
   font-weight: 700;
   letter-spacing: 0.05em;
