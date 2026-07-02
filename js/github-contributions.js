@@ -17,7 +17,6 @@
 
   if (!graphEl || !totalEl) return;
 
-  const VISIBLE_WEEKS = 26;
   const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const prefersReducedMotion = window.matchMedia
     ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -41,6 +40,9 @@
       week.push(day);
 
       if (dayOfWeek === 6 || index === contributions.length - 1) {
+        while (week.length < 7) {
+          week.push(null);
+        }
         weeks.push(week);
         week = [];
       }
@@ -125,29 +127,105 @@
     return months;
   };
 
+  const trimLeadingEmptyWeeks = (weeks) => {
+    const firstActive = weeks.findIndex((weekDays) =>
+      weekDays.some((day) => day && day.count > 0)
+    );
+    return firstActive === -1 ? weeks : weeks.slice(firstActive);
+  };
+
+  const getGraphWidth = () => {
+    const width = graphEl.clientWidth;
+    if (width > 0) return width;
+
+    const layout = root.querySelector('.profile-github__graph-layout');
+    const weekdays = root.querySelector('.profile-github__weekdays');
+    if (!layout) return 0;
+
+    const weekdaysWidth = weekdays?.getBoundingClientRect().width ?? 0;
+    return Math.max(0, layout.clientWidth - weekdaysWidth - 8);
+  };
+
+  const fitWeeksToWidth = (weeks) => {
+    const width = getGraphWidth();
+    if (!width || !weeks.length) return weeks;
+
+    const minCell = width < 520 ? 10 : 8;
+    let count = weeks.length;
+
+    const cellSizeFor = (weekCount, gapSize) =>
+      (width - (weekCount - 1) * gapSize) / weekCount;
+
+    while (count > 12) {
+      let gapSize = width < 520 ? 2 : 4;
+      let cellSize = cellSizeFor(count, gapSize);
+
+      while (cellSize < minCell && gapSize > 1) {
+        gapSize -= 1;
+        cellSize = cellSizeFor(count, gapSize);
+      }
+
+      if (cellSize >= minCell) {
+        root.style.setProperty('--gh-cell-gap', `${gapSize}px`);
+        return weeks.slice(weeks.length - count);
+      }
+
+      count -= 1;
+    }
+
+    root.style.setProperty('--gh-cell-gap', '1px');
+    return weeks.slice(-count);
+  };
+
+  const syncWeekdayRows = () => {
+    const cell = graphEl.querySelector('.profile-github__cell:not(.profile-github__cell--empty)');
+    if (!cell) return;
+    const height = cell.getBoundingClientRect().height;
+    if (height > 0) {
+      root.style.setProperty('--gh-row-height', `${height}px`);
+    }
+  };
+
+  const fitGraphLayout = () => {
+    const width = graphEl.clientWidth;
+    const count = Number(getComputedStyle(root).getPropertyValue('--gh-week-count')) || 0;
+    if (width > 0 && count > 0) {
+      const gap = Number.parseFloat(getComputedStyle(root).getPropertyValue('--gh-cell-gap')) || 4;
+      const cellSize = (width - (count - 1) * gap) / count;
+      if (cellSize > 0) {
+        root.style.setProperty('--gh-cell-size', `${cellSize}px`);
+      }
+    }
+    syncWeekdayRows();
+  };
+
+  let lastContributions = null;
+
   const renderGraph = (contributions) => {
+    lastContributions = contributions;
     graphEl.replaceChildren();
     graphEl.setAttribute('role', 'img');
 
-    const weeks = groupByWeeks(contributions);
-    const visibleWeeks = weeks.slice(-VISIBLE_WEEKS);
-    const total = contributions.reduce((sum, day) => sum + day.count, 0);
+    const weeks = fitWeeksToWidth(trimLeadingEmptyWeeks(groupByWeeks(contributions)));
+    const yearlyTotal = contributions.reduce((sum, day) => sum + day.count, 0);
+
+    root.style.setProperty('--gh-week-count', String(weeks.length));
 
     graphEl.setAttribute(
       'aria-label',
-      `Past ${VISIBLE_WEEKS} weeks of GitHub contributions (${formatCount(total)} in the last year)`
+      `Past year of GitHub contributions (${formatCount(yearlyTotal)})`
     );
 
     const inner = document.createElement('div');
     inner.className = 'profile-github__graph-inner';
 
-    inner.appendChild(buildMonths(visibleWeeks));
+    inner.appendChild(buildMonths(weeks));
 
     const grid = document.createElement('div');
     grid.className = 'profile-github__grid';
     grid.setAttribute('role', 'grid');
 
-    visibleWeeks.forEach((weekDays, weekIndex) => {
+    weeks.forEach((weekDays, weekIndex) => {
       const column = document.createElement('div');
       column.className = 'profile-github__week';
       column.setAttribute('role', 'presentation');
@@ -185,9 +263,7 @@
       grid.classList.add('profile-github__grid--animate');
     }
 
-    window.requestAnimationFrame(() => {
-      graphEl.scrollLeft = graphEl.scrollWidth;
-    });
+    window.requestAnimationFrame(fitGraphLayout);
   };
 
   const renderError = () => {
@@ -262,5 +338,14 @@
   };
 
   root.addEventListener('mouseleave', hideTooltip);
+
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(() => {
+      if (lastContributions) renderGraph(lastContributions);
+    }, 120);
+  });
+
   loadContributions();
 })();

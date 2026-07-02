@@ -8157,6 +8157,17 @@ section.fortune-section .fortune-title {
   border-radius: 8px;
   background: var(--surface);
 }
+@media (max-width: 640px) {
+  #profile-page .profile-github__graph-wrap {
+    padding: 0.65rem 0.5rem 0.5rem;
+  }
+  #profile-page .profile-github__months {
+    font-size: 0.62rem;
+  }
+  #profile-page .profile-github__weekdays {
+    font-size: 0.62rem;
+  }
+}
 #profile-page .profile-github__range {
   margin: 0 0 0.55rem;
   font-size: 0.82rem;
@@ -8167,7 +8178,7 @@ section.fortune-section .fortune-title {
 #profile-page .profile-github__graph-layout {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  gap: 0.55rem;
+  gap: 0.45rem;
   align-items: start;
 }
 #profile-page .profile-github {
@@ -8175,7 +8186,7 @@ section.fortune-section .fortune-title {
 }
 #profile-page .profile-github__weekdays {
   display: grid;
-  grid-template-rows: repeat(7, var(--gh-cell-size));
+  grid-template-rows: repeat(7, var(--gh-row-height, var(--gh-cell-size)));
   gap: var(--gh-cell-gap);
   padding-top: calc(var(--gh-months-h) + 0.3rem);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
@@ -8184,29 +8195,32 @@ section.fortune-section .fortune-title {
   line-height: 1;
   color: var(--muted);
 }
+#profile-page .profile-github__weekdays span:not(:empty) {
+  min-width: 1.45rem;
+}
+@media (min-width: 720px) {
+  #profile-page .profile-github__weekdays span:not(:empty) {
+    min-width: 1.85rem;
+  }
+}
 #profile-page .profile-github__weekdays span {
   display: flex;
   align-items: center;
-  height: var(--gh-cell-size);
-}
-#profile-page .profile-github__weekdays span:not(:empty) {
-  min-width: 1.85rem;
+  height: var(--gh-row-height, var(--gh-cell-size));
 }
 #profile-page .profile-github__graph {
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding-bottom: 0.2rem;
-  scrollbar-width: thin;
-  scroll-behavior: smooth;
+  overflow: hidden;
+  padding-bottom: 0;
 }
 #profile-page .profile-github__graph-inner {
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
-  width: max-content;
-  min-width: 100%;
+  width: 100%;
+  min-width: 0;
 }
 #profile-page .profile-github__months {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(var(--gh-week-count, 53), var(--gh-cell-size, 12px));
   gap: var(--gh-cell-gap);
   height: var(--gh-months-h);
   margin-bottom: 0.3rem;
@@ -8215,11 +8229,11 @@ section.fortune-section .fortune-title {
   font-weight: 700;
   letter-spacing: 0.02em;
   color: var(--muted);
+  width: 100%;
 }
 #profile-page .profile-github__months span {
-  position: relative;
-  flex: 0 0 var(--gh-cell-size);
-  width: var(--gh-cell-size);
+  min-width: 0;
+  overflow: hidden;
   white-space: nowrap;
 }
 #profile-page .profile-github__loading,
@@ -8229,20 +8243,22 @@ section.fortune-section .fortune-title {
   color: var(--muted);
 }
 #profile-page .profile-github__grid {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(var(--gh-week-count, 53), var(--gh-cell-size, 12px));
   gap: var(--gh-cell-gap);
-  width: max-content;
-  min-width: 100%;
+  width: 100%;
+  align-items: start;
 }
 #profile-page .profile-github__week {
   display: grid;
-  grid-template-rows: repeat(7, var(--gh-cell-size));
+  grid-template-rows: repeat(7, var(--gh-cell-size, 12px));
   gap: var(--gh-cell-gap);
-  flex: 0 0 auto;
+  width: var(--gh-cell-size, 12px);
+  min-width: 0;
 }
 #profile-page .profile-github__cell {
-  width: var(--gh-cell-size);
-  height: var(--gh-cell-size);
+  width: var(--gh-cell-size, 12px);
+  height: var(--gh-cell-size, 12px);
   border-radius: 3px;
   background: var(--gh-level-0);
   outline: 1px solid rgba(27, 31, 36, 0.06);
