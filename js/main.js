@@ -482,6 +482,8 @@ const initScrollReveal = () => {
     if (!observer) {
       observer = new IntersectionObserver((entries, obs) => {
         entries.forEach((entry) => {
+          // threshold は 0 固定。長い記事（.article-shell など）は
+          // 要素高 > ビューポートだと ratio が 0.12 に届かず永遠に非表示になる。
           if (!entry.isIntersecting) return;
           entry.target.classList.add('is-visible');
           obs.unobserve(entry.target);
@@ -489,12 +491,22 @@ const initScrollReveal = () => {
       }, {
         root: null,
         rootMargin: '0px 0px -8% 0px',
-        threshold: 0.12
+        threshold: 0
       });
     }
 
     targets.forEach((target) => {
       if (observed.has(target) || target.classList.contains('is-visible')) return;
+
+      // 画面内に既にある巨大要素は、IO の初回通知前でもすぐ出す
+      const rect = target.getBoundingClientRect();
+      const viewportH = window.innerHeight || 0;
+      if (viewportH > 0 && rect.top < viewportH * 0.92 && rect.bottom > 0) {
+        target.classList.add('is-visible');
+        observed.add(target);
+        return;
+      }
+
       observed.add(target);
       observer.observe(target);
     });

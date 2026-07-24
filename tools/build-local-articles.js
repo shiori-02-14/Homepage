@@ -509,7 +509,7 @@ ${article.bodyHtml.split('\n').map((line) => `        ${line}`).join('\n')}
     </footer>
   </main>
 
-  <script src="../js/main.js?v=20260630-theme" defer></script>
+  <script src="../js/main.js?v=20260724-reveal" defer></script>
   <script type="application/ld+json">
 ${jsonLd}
   </script>
