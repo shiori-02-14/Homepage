@@ -417,6 +417,7 @@ const initScrollReveal = () => {
     '.profile-card',
     '.cards:not(.cards-scroll) > .card:not(.card--upcoming)',
     '.advent-grid > .advent-door',
+    '.advent-list > .card--article',
     '.list--social > li',
     '.list--friends > li',
     'main .foot'
@@ -439,7 +440,7 @@ const initScrollReveal = () => {
   };
 
   const applyRevealStagger = (targets) => {
-    const staggerContainers = '.cards:not(.cards-scroll), .advent-grid, .list--social, .list--friends';
+    const staggerContainers = '.cards:not(.cards-scroll), .advent-grid, .advent-list, .list--social, .list--friends';
 
     document.querySelectorAll(staggerContainers).forEach((container) => {
       const children = Array.from(container.children).filter((child) => targets.includes(child));
@@ -515,7 +516,7 @@ const initScrollReveal = () => {
   bindRevealTargets();
 
   if ('MutationObserver' in window) {
-    const watchRoots = document.querySelectorAll('main, #articles-list, [data-rss="home-articles"], #advent-grid');
+    const watchRoots = document.querySelectorAll('main, #articles-list, [data-rss="home-articles"], #advent-grid, #advent-list');
     if (watchRoots.length) {
       let pending = false;
       const schedule = () => {

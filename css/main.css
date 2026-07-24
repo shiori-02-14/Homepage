@@ -7722,6 +7722,54 @@ section.fortune-section .fortune-title {
   color: var(--accent);
 }
 
+#advent2026-page .advent-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 0 0.85rem;
+}
+
+#advent2026-page .advent-view-toggle {
+  display: inline-flex;
+  align-items: stretch;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+#advent2026-page .advent-view-toggle__btn {
+  appearance: none;
+  margin: 0;
+  border: 0;
+  border-right: 1px solid var(--line);
+  padding: 0.42rem 0.85rem;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+#advent2026-page .advent-view-toggle__btn:last-child {
+  border-right: 0;
+}
+
+#advent2026-page .advent-view-toggle__btn:hover,
+#advent2026-page .advent-view-toggle__btn:focus-visible {
+  color: var(--fg);
+  background: var(--row-hover);
+  outline: none;
+}
+
+#advent2026-page .advent-view-toggle__btn.is-active {
+  color: var(--accent-strong);
+  background: var(--accent-weak);
+}
+
 #advent2026-page .advent-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -7730,6 +7778,12 @@ section.fortune-section .fortune-title {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+#advent2026-page .advent-grid--list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
 }
 
 #advent2026-page .advent-door {
@@ -7850,9 +7904,21 @@ section.fortune-section .fortune-title {
   color: var(--muted);
 }
 
+#advent2026-page .advent-door--planned.advent-door--locked .advent-door__panel--article {
+  opacity: 0.88;
+}
+
+#advent2026-page .advent-door--planned .advent-door__title {
+  color: var(--muted);
+}
+
 #advent2026-page .advent-door--ready .advent-door__panel {
   border-color: var(--accent);
   background: var(--accent-weak);
+}
+
+#advent2026-page .advent-door--planned.advent-door--ready .advent-door__title {
+  color: var(--fg);
 }
 
 #advent2026-page .advent-door--ready .advent-door__month,
@@ -7914,9 +7980,168 @@ section.fortune-section .fortune-title {
   color: var(--muted);
 }
 
+/* リスト表示（Articles と同じ横並びカード） */
+#advent2026-page .advent-grid[hidden],
+#advent2026-page .advent-list[hidden] {
+  display: none !important;
+}
+
+#advent2026-page .advent-list {
+  grid-template-columns: 1fr;
+  gap: clamp(0.75rem, 1.5vw, 1rem);
+}
+
+#advent2026-page .advent-list .card {
+  box-shadow: var(--elev-1);
+}
+
+#advent2026-page .advent-list .card:hover,
+#advent2026-page .advent-list .card:focus-within {
+  box-shadow: var(--elev-2);
+}
+
+#advent2026-page .advent-list .card--article {
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  --card-thumb-w: clamp(120px, 34vw, 220px);
+  height: calc(var(--card-thumb-w) * 9 / 16);
+  min-height: calc(var(--card-thumb-w) * 9 / 16);
+  max-height: calc(var(--card-thumb-w) * 9 / 16);
+}
+
+#advent2026-page .advent-list .card--article .card__link {
+  flex: 1 1 auto;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+#advent2026-page .advent-list .card--article .card__thumb {
+  display: block;
+  flex: 0 0 var(--card-thumb-w);
+  width: var(--card-thumb-w);
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  aspect-ratio: 16 / 9;
+  padding-top: 0;
+  align-self: stretch;
+  flex-shrink: 0;
+  border: none;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+  overflow: hidden;
+  background: var(--accent-weak);
+  box-sizing: border-box;
+  position: relative;
+}
+
+#advent2026-page .advent-list .card--article .card__thumb--placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+#advent2026-page .advent-list .card--article .card__thumb img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transform: none;
+}
+
+#advent2026-page .advent-list .card--article .card__content {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  border-top: none;
+  border-left: 1px solid var(--card-border);
+  padding: 1.1rem 1.2rem;
+  justify-content: center;
+  gap: 0.38rem;
+  overflow: hidden;
+}
+
+#advent2026-page .advent-list .card--article h3 {
+  font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+  line-height: 1.35;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  align-self: stretch;
+  white-space: normal;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  text-overflow: ellipsis;
+  word-break: normal;
+  text-wrap: wrap;
+}
+
+#advent2026-page .advent-list .card--article .badge--corner {
+  z-index: 2;
+}
+
+#advent2026-page .advent-list .card--article:hover .card__thumb img,
+#advent2026-page .advent-list .card--article:focus-within .card__thumb img {
+  transform: none;
+}
+
+#advent2026-page .advent-list .card--read .card__content h3,
+#advent2026-page .advent-list .card--read .card__date {
+  color: var(--muted);
+}
+
+#advent2026-page .advent-list .card--read .card__thumb img {
+  filter: grayscale(0.4) brightness(0.96);
+  opacity: 0.9;
+}
+
+@media (min-width: 760px) {
+  #advent2026-page .advent-list .card--article {
+    --card-thumb-w: 272px;
+  }
+
+  #advent2026-page .advent-list .card--article .card__content {
+    padding: 1.25rem 1.4rem;
+  }
+}
+
 @media (max-width: 560px) {
   #advent2026-page .advent-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  #advent2026-page .advent-list .card--article {
+    --card-thumb-w: clamp(128px, 38vw, 172px);
+  }
+
+  #advent2026-page .advent-list .card--article .card__content {
+    padding: 0.56rem 0.75rem 0.56rem 0.62rem;
+    gap: 0.32rem;
+  }
+
+  #advent2026-page .advent-list .card--article h3 {
+    font-size: 0.94rem;
+    line-height: 1.34;
+  }
+
+  #advent2026-page .advent-list .card__date {
+    font-size: 0.82rem;
   }
 }
 
