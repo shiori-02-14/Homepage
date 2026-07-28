@@ -173,10 +173,7 @@
 html.theme-transitioning body {
   transition: background-color .35s ease, color .35s ease;
 }
-html.theme-transitioning body * {
-  transition-property: background-color, border-color, color, box-shadow;
-  transition-duration: .35s;
-}
+/* 全要素 transition は重いので無効化（View Transition / body のみで足りる） */
 
 /* ---------------------------------------------------------------------
    2. タイポグラフィ — 全体ドット調 DotGothic16

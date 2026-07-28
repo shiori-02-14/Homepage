@@ -552,43 +552,28 @@ img, video, iframe {
 :root[data-theme='dark'] .theme-toggle--icon .theme-icon--sun { display: none; }
 :root[data-theme='dark'] .theme-toggle--icon .theme-icon--moon { display: block; }
 
-/* テーマ切替アニメーション */
+/* テーマ切替アニメーション（円の中心は JS の WAAPI で指定） */
 @supports (view-transition-name: root) {
   ::view-transition-old(root),
   ::view-transition-new(root) {
-    animation-duration: 0.58s;
-    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    animation: none;
+    mix-blend-mode: normal;
+    /* 初回だけ object-fit 既定で座標がズレるのを防ぐ */
+    height: 100%;
+    width: 100%;
+    object-fit: none;
+    overflow: clip;
   }
   ::view-transition-old(root) {
-    animation-name: theme-fade-out;
     z-index: 1;
   }
   ::view-transition-new(root) {
-    animation-name: theme-circle-reveal;
     z-index: 2;
   }
 }
-@keyframes theme-circle-reveal {
-  from {
-    clip-path: circle(0 at var(--theme-transition-x, 50vw) var(--theme-transition-y, 50vh));
-  }
-  to {
-    clip-path: circle(var(--theme-transition-radius, 150vmax) at var(--theme-transition-x, 50vw) var(--theme-transition-y, 50vh));
-  }
-}
-@keyframes theme-fade-out {
-  from { opacity: 1; }
-  to { opacity: 0.35; }
-}
+/* フォールバック用。全要素 transition は重いので背景/文字色のみ */
 html.theme-transitioning body {
-  transition: background-color 0.45s ease, color 0.45s ease;
-}
-html.theme-transitioning body *:not(img):not(video):not(iframe):not(canvas),
-html.theme-transitioning body *::before,
-html.theme-transitioning body *::after {
-  transition-property: background-color, border-color, color, box-shadow, outline-color, fill, stroke;
-  transition-duration: 0.45s;
-  transition-timing-function: ease;
+  transition: background-color 0.35s ease, color 0.35s ease;
 }
 html.theme-switching .theme-toggle__knob {
   transition: transform 0.55s cubic-bezier(0.34, 1.35, 0.64, 1), background 0.35s ease;

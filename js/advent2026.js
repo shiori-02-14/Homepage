@@ -235,6 +235,9 @@ const createListCard = ({ day, status, article, isRead }) => {
         </div>
       </a>
     `;
+    item.querySelector('.card__link')?.addEventListener('click', (event) => {
+      event.preventDefault();
+    });
   }
 
   return item;
@@ -255,40 +258,39 @@ const getStoredView = () => {
   }
 };
 
-const applyAdventView = (view) => {
-  const grid = document.getElementById('advent-grid');
-  const list = document.getElementById('advent-list');
-  if (!grid || !list) return;
+const buildDayState = (day, jst, readDays) => {
+  const article = ADVENT_ARTICLES[day];
+  const unlocked = isDayUnlocked(day, jst);
+  const canPreview = unlocked || isBeforeAdventSeason(jst);
 
-  const next = VALID_VIEWS.has(view) ? view : 'grid';
-  const isList = next === 'list';
-
-  grid.hidden = isList;
-  list.hidden = !isList;
-  grid.dataset.view = next;
-  list.dataset.view = next;
-
-  document.querySelectorAll('[data-advent-view]').forEach((btn) => {
-    const active = btn.dataset.adventView === next;
-    btn.classList.toggle('is-active', active);
-    btn.setAttribute('aria-pressed', String(active));
-  });
-
-  try {
-    localStorage.setItem(VIEW_STORAGE_KEY, next);
-  } catch {
-    /* localStorage unavailable */
+  if (article?.href) {
+    if (canPreview) {
+      return {
+        published: true,
+        grid: () => createArticleDoor(day, article, readDays.has(day)),
+        list: () => createListCard({ day, status: 'open', article, isRead: readDays.has(day) }),
+      };
+    }
+    return {
+      published: true,
+      grid: () => createLockedDoor(day, article),
+      list: () => createListCard({ day, status: 'locked', article }),
+    };
   }
-};
 
-const initAdventViewToggle = () => {
-  applyAdventView(getStoredView());
+  if (unlocked) {
+    return {
+      published: false,
+      grid: () => createReadyDoor(day, article),
+      list: () => createListCard({ day, status: 'ready', article }),
+    };
+  }
 
-  document.querySelectorAll('[data-advent-view]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      applyAdventView(btn.dataset.adventView);
-    });
-  });
+  return {
+    published: false,
+    grid: () => createLockedDoor(day, article),
+    list: () => createListCard({ day, status: 'locked', article }),
+  };
 };
 
 const initAdvent2026 = () => {
@@ -298,42 +300,64 @@ const initAdvent2026 = () => {
 
   const jst = getJstDate();
   const readDays = getReadDays();
+  const dayStates = [];
   let publishedCount = 0;
-
-  const gridFragment = document.createDocumentFragment();
-  const listFragment = document.createDocumentFragment();
+  let listBuilt = false;
 
   for (let day = 1; day <= ADVENT_DAYS; day += 1) {
-    const article = ADVENT_ARTICLES[day];
-    const unlocked = isDayUnlocked(day, jst);
-    const canPreview = unlocked || isBeforeAdventSeason(jst);
-
-    if (article?.href) {
-      publishedCount += 1;
-      if (canPreview) {
-        const isRead = readDays.has(day);
-        gridFragment.appendChild(createArticleDoor(day, article, isRead));
-        listFragment.appendChild(createListCard({ day, status: 'open', article, isRead }));
-      } else {
-        gridFragment.appendChild(createLockedDoor(day, article));
-        listFragment.appendChild(createListCard({ day, status: 'locked', article }));
-      }
-      continue;
-    }
-
-    if (unlocked) {
-      gridFragment.appendChild(createReadyDoor(day, article));
-      listFragment.appendChild(createListCard({ day, status: 'ready', article }));
-    } else {
-      gridFragment.appendChild(createLockedDoor(day, article));
-      listFragment.appendChild(createListCard({ day, status: 'locked', article }));
-    }
+    const state = buildDayState(day, jst, readDays);
+    if (state.published) publishedCount += 1;
+    dayStates.push(state);
   }
 
+  const gridFragment = document.createDocumentFragment();
+  dayStates.forEach((state) => {
+    gridFragment.appendChild(state.grid());
+  });
   grid.appendChild(gridFragment);
-  list.appendChild(listFragment);
+
+  const ensureListBuilt = () => {
+    if (listBuilt) return;
+    listBuilt = true;
+    const listFragment = document.createDocumentFragment();
+    dayStates.forEach((state) => {
+      listFragment.appendChild(state.list());
+    });
+    list.appendChild(listFragment);
+  };
+
+  const applyAdventView = (view) => {
+    const next = VALID_VIEWS.has(view) ? view : 'grid';
+    const isList = next === 'list';
+
+    if (isList) ensureListBuilt();
+
+    grid.hidden = isList;
+    list.hidden = !isList;
+    grid.dataset.view = next;
+    list.dataset.view = next;
+
+    document.querySelectorAll('[data-advent-view]').forEach((btn) => {
+      const active = btn.dataset.adventView === next;
+      btn.classList.toggle('is-active', active);
+      btn.setAttribute('aria-pressed', String(active));
+    });
+
+    try {
+      localStorage.setItem(VIEW_STORAGE_KEY, next);
+    } catch {
+      /* localStorage unavailable */
+    }
+  };
+
   updateProgress(publishedCount);
-  initAdventViewToggle();
+  applyAdventView(getStoredView());
+
+  document.querySelectorAll('[data-advent-view]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      applyAdventView(btn.dataset.adventView);
+    });
+  });
 };
 
 if (document.readyState === 'loading') {

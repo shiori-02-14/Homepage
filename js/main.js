@@ -95,7 +95,31 @@ const setupThemeToggle = () => {
   const prefersReducedMotion = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
 
   let transitionTimer;
+  let themeTransitionPending = false;
+
+  // トグル中心をビューポート比率で返す（初回 VT で px 座標がズレる対策）
+  const resolveTransitionOrigin = () => {
+    const rect = themeToggle.getBoundingClientRect();
+    const vv = window.visualViewport;
+    const viewW = vv?.width || window.innerWidth || 1;
+    const viewH = vv?.height || window.innerHeight || 1;
+    const offsetLeft = vv?.offsetLeft || 0;
+    const offsetTop = vv?.offsetTop || 0;
+    const x = rect.left + rect.width / 2 - offsetLeft;
+    const y = rect.top + rect.height / 2 - offsetTop;
+    return {
+      x,
+      y,
+      xPct: (x / viewW) * 100,
+      yPct: (y / viewH) * 100,
+      viewW,
+      viewH,
+    };
+  };
+
   const runThemeTransition = (applyChange) => {
+    if (themeTransitionPending) return;
+
     if (prefersReducedMotion && prefersReducedMotion.matches) {
       applyChange();
       return;
@@ -105,38 +129,56 @@ const setupThemeToggle = () => {
       return;
     }
 
-    const rect = themeToggle.getBoundingClientRect();
-    const x = rect.left + rect.width / 2;
-    const y = rect.top + rect.height / 2;
+    // startViewTransition より前に同期取得（ready 後は sticky 等が動いてズレる）
+    const origin = resolveTransitionOrigin();
     const radius = Math.hypot(
-      Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y),
+      Math.max(origin.x, origin.viewW - origin.x),
+      Math.max(origin.y, origin.viewH - origin.y),
     );
-    root.style.setProperty('--theme-transition-x', `${x}px`);
-    root.style.setProperty('--theme-transition-y', `${y}px`);
-    root.style.setProperty('--theme-transition-radius', `${radius}px`);
 
     const finishSwitching = () => {
-      root.classList.remove('theme-switching');
+      themeTransitionPending = false;
+      root.classList.remove('theme-switching', 'theme-transitioning');
       root.removeAttribute('data-theme-target');
     };
 
+    themeTransitionPending = true;
+
+    // View Transition の疑似要素には CSS 変数が届かないことがあるため、
+    // clip-path は WAAPI で座標を直接指定する（% 指定で初回ズレを防ぐ）
     if (typeof document.startViewTransition === 'function') {
       root.classList.add('theme-switching');
       const transition = document.startViewTransition(() => {
         applyChange();
       });
+      transition.ready
+        .then(() => {
+          root.animate(
+            {
+              clipPath: [
+                `circle(0% at ${origin.xPct}% ${origin.yPct}%)`,
+                `circle(150% at ${origin.xPct}% ${origin.yPct}%)`,
+              ],
+            },
+            {
+              duration: 480,
+              easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+              pseudoElement: '::view-transition-new(root)',
+            },
+          );
+        })
+        .catch(() => {});
       transition.finished.finally(finishSwitching).catch(finishSwitching);
       return;
     }
 
+    root.style.setProperty('--theme-transition-x', `${origin.x}px`);
+    root.style.setProperty('--theme-transition-y', `${origin.y}px`);
+    root.style.setProperty('--theme-transition-radius', `${radius}px`);
     root.classList.add('theme-transitioning', 'theme-switching');
     applyChange();
     window.clearTimeout(transitionTimer);
-    transitionTimer = window.setTimeout(() => {
-      root.classList.remove('theme-transitioning');
-      finishSwitching();
-    }, 480);
+    transitionTimer = window.setTimeout(finishSwitching, 420);
   };
 
   const updateToggleUI = (theme) => {
@@ -155,16 +197,23 @@ const setupThemeToggle = () => {
   };
 
   const updateSkillIcons = (theme) => {
-    document.querySelectorAll('[data-skill]').forEach((img) => {
-      img.src = `https://skillicons.dev/icons?i=${img.dataset.skill}&theme=${theme}`;
+    const icons = document.querySelectorAll('[data-skill]');
+    if (!icons.length) return;
+    icons.forEach((img) => {
+      const nextSrc = `https://skillicons.dev/icons?i=${img.dataset.skill}&theme=${theme}`;
+      if (img.getAttribute('src') !== nextSrc) {
+        img.src = nextSrc;
+      }
     });
   };
 
   const applyTheme = (theme, { persist = false } = {}) => {
     const nextTheme = theme === 'dark' ? 'dark' : 'light';
-    root.setAttribute('data-theme', nextTheme);
+    if (root.getAttribute('data-theme') !== nextTheme) {
+      root.setAttribute('data-theme', nextTheme);
+      updateSkillIcons(nextTheme);
+    }
     updateToggleUI(nextTheme);
-    updateSkillIcons(nextTheme);
     if (persist) {
       localStorage.setItem(storageKey, nextTheme);
     }
@@ -175,6 +224,7 @@ const setupThemeToggle = () => {
   applyTheme(savedTheme || (prefersDarkMatches ? 'dark' : 'light'));
 
   themeToggle.addEventListener('click', () => {
+    if (themeTransitionPending) return;
     const currentTheme = root.getAttribute('data-theme');
     const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
     root.setAttribute('data-theme-target', nextTheme);
@@ -423,14 +473,23 @@ const initScrollReveal = () => {
     'main .foot'
   ];
 
+  const isRevealSkipped = (el) => (
+    el.closest('.hero')
+    || el.closest('[hidden]')
+    || el.getAttribute('hidden') !== null
+  );
+
   const collectRevealTargets = () => {
     const found = new Set();
 
-    document.querySelectorAll('.reveal-target').forEach((el) => found.add(el));
+    document.querySelectorAll('.reveal-target').forEach((el) => {
+      if (isRevealSkipped(el)) return;
+      found.add(el);
+    });
 
     REVEAL_AUTO_SELECTORS.forEach((selector) => {
       document.querySelectorAll(selector).forEach((el) => {
-        if (el.closest('.hero')) return;
+        if (isRevealSkipped(el)) return;
         el.classList.add('reveal-target');
         found.add(el);
       });
@@ -440,10 +499,12 @@ const initScrollReveal = () => {
   };
 
   const applyRevealStagger = (targets) => {
+    const targetSet = new Set(targets);
     const staggerContainers = '.cards:not(.cards-scroll), .advent-grid, .advent-list, .list--social, .list--friends';
 
     document.querySelectorAll(staggerContainers).forEach((container) => {
-      const children = Array.from(container.children).filter((child) => targets.includes(child));
+      if (container.hasAttribute('hidden')) return;
+      const children = Array.from(container.children).filter((child) => targetSet.has(child));
       children.forEach((child, index) => {
         child.style.setProperty('--reveal-delay', `${Math.min(index, 8) * 60}ms`);
       });
@@ -516,7 +577,8 @@ const initScrollReveal = () => {
   bindRevealTargets();
 
   if ('MutationObserver' in window) {
-    const watchRoots = document.querySelectorAll('main, #articles-list, [data-rss="home-articles"], #advent-grid, #advent-list');
+    // main 全体ではなく、動的追加がある場所だけ監視（二重監視を避ける）
+    const watchRoots = document.querySelectorAll('#articles-list, [data-rss="home-articles"], #advent-grid, #advent-list');
     if (watchRoots.length) {
       let pending = false;
       const schedule = () => {
@@ -535,7 +597,7 @@ const initScrollReveal = () => {
       });
 
       watchRoots.forEach((root) => {
-        mutationObserver.observe(root, { childList: true, subtree: true });
+        mutationObserver.observe(root, { childList: true, subtree: false });
       });
     }
   }
@@ -610,6 +672,10 @@ const initPageReady = () => {
   requestAnimationFrame(() => {
     root.classList.add('is-ready');
   });
+  // JS 遅延時に opacity:0 のまま固まるのを防ぐ
+  window.setTimeout(() => {
+    root.classList.add('is-ready');
+  }, 1000);
 };
 
 const initFortune = () => {
