@@ -406,6 +406,7 @@ html.theme-transitioning body {
 :root[data-theme='dark'] section.narrow > .section__intro,
 :root[data-theme='dark'] section.narrow > .list--icons,
 :root[data-theme='dark'] section.narrow > .cards-scroll,
+:root[data-theme='dark'] section.narrow > .works-marquee,
 :root[data-theme='dark'] section.narrow > .fortune-container {
   margin: 0;
   padding: 0.55rem 0.5rem 0.35rem;
@@ -421,7 +422,8 @@ html.theme-transitioning body {
   background: var(--btn-face);
 }
 :root[data-theme='dark'] section.narrow > .list--icons,
-:root[data-theme='dark'] section.narrow > .cards-scroll {
+:root[data-theme='dark'] section.narrow > .cards-scroll,
+:root[data-theme='dark'] section.narrow > .works-marquee {
   padding: 0.35rem 0.55rem 0.55rem;
 }
 
@@ -740,6 +742,7 @@ html.theme-transitioning body {
 }
 :root[data-theme='dark'] #works-page .card--work .card__thumb,
 :root[data-theme='dark'] #works-page #bookmark-org .card__thumb,
+:root[data-theme='dark'] #top .cards-scroll--works #bookmark-org .card__thumb,
 :root[data-theme='dark'] #articles-page .card--article .card__thumb {
   background: var(--surface-raised);
 }
@@ -1001,6 +1004,31 @@ html.theme-transitioning body {
   box-shadow: var(--elev-1);
 }
 
+:root[data-theme='dark'] #top .cards-scroll--works > li.card {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+:root[data-theme='dark'] #top .cards-scroll--works .card--work .card__link {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 1.65rem;
+  background: var(--win-body);
+  box-shadow: 0 10px 28px -22px rgba(0, 0, 0, 0.9);
+}
+:root[data-theme='dark'] #top .cards-scroll--works .card--work h3 {
+  font-size: 1.02rem;
+  letter-spacing: 0.02em;
+}
+:root[data-theme='dark'] #top .cards-scroll--works .card--work .card__link p:not(.card__note) {
+  font-size: 0.8rem;
+  line-height: 1.45;
+  letter-spacing: 0.02em;
+}
+:root[data-theme='dark'] #top .cards-scroll--works .card--work .card__link:hover,
+:root[data-theme='dark'] #top .cards-scroll--works .card--work:focus-within .card__link {
+  background: var(--card-bg-hover);
+}
+
 /* Reveal — シンプルフェード */
 :root[data-theme='dark'].has-reveal .reveal-target {
   transform: translateY(10px);
@@ -1128,6 +1156,12 @@ html.theme-transitioning body {
 :root[data-theme='dark'] #top .list--icons a,
 :root[data-theme='dark'] #top .list--friends a.friend-card {
   border-radius: 0 !important;
+}
+:root[data-theme='dark'] .card__thumb img.thumb-logo.thumb-logo--app {
+  border-radius: 22% !important;
+}
+:root[data-theme='dark'] #top .cards-scroll--works .card--work .card__link {
+  border-radius: 1.65rem !important;
 }
 
 /* ---------------------------------------------------------------------

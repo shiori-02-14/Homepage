@@ -3140,9 +3140,12 @@ a.friend-card::after {
   transform: translate(-50%, -50%) scale(1);
   width: auto;
   height: 72%;
-  border-radius: 22%;
+  border-radius: 0;
   border: 1px solid rgba(15,23,42,.10);
   box-shadow: 0 18px 40px -34px rgba(15,23,42,.35);
+}
+#works-page .card--work .card__thumb img.thumb-logo--app {
+  border-radius: 22%;
 }
 :root[data-theme='dark'] #works-page .card--work .card__thumb img.thumb-logo {
   border-color: rgba(255,255,255,.20);
@@ -3558,17 +3561,20 @@ a.friend-card::after {
   transform: translateX(130%);
 }
 .card__thumb img.thumb-logo {
-  /* アプリアイコンっぽく（角丸 + 枠 + 影 + 中央配置） */
+  /* ロゴは中央配置。角丸（アプリアイコン）は NEXUS のみ */
   object-fit: contain;
   inset: auto;
   top: 50%;
   left: 50%;
   width: auto;
   height: 72%;
-  border-radius: 22%;
+  border-radius: 0;
   border: 1px solid rgba(15,23,42,.10);
   box-shadow: 0 18px 40px -34px rgba(15,23,42,.35);
   transform: translate(-50%, -50%) scale(1);
+}
+.card__thumb img.thumb-logo.thumb-logo--app {
+  border-radius: 22%;
 }
 :root[data-theme='dark'] .card__thumb img.thumb-logo {
   border-color: rgba(255,255,255,.20);
@@ -7533,6 +7539,256 @@ section.fortune-section .fortune-title {
   .site-header__inner .top-nav::-webkit-scrollbar {
     display: none;
   }
+}
+
+/* トップ Works：横に流れるマーキー */
+@keyframes works-marquee {
+  to { transform: translateX(-50%); }
+}
+#top .works-marquee {
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+  min-width: 0;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: 0.35rem;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  cursor: grab;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--fg) 32%, transparent) transparent;
+}
+#top .works-marquee.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  user-select: none;
+}
+#top .works-marquee::-webkit-scrollbar {
+  height: 6px;
+}
+#top .works-marquee::-webkit-scrollbar-track {
+  background: transparent;
+}
+#top .works-marquee::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--fg) 28%, transparent);
+  border-radius: 999px;
+}
+#top .cards-scroll--works img,
+#top .cards-scroll--works svg {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+#top .cards-scroll.cards-scroll--works {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 1.15rem;
+  padding: 0.4rem 0.35rem 0.65rem;
+  overflow: visible;
+  overflow-x: visible;
+  scroll-snap-type: none;
+  width: max-content;
+  max-width: none;
+}
+#top .cards-scroll--works > li,
+#top .cards-scroll--works > li.card {
+  flex: 0 0 18rem;
+  width: 18rem;
+  min-width: 18rem;
+  max-width: 18rem;
+  border: none;
+  border-bottom: none;
+  background: transparent;
+  border-radius: 0;
+  overflow: visible;
+  box-shadow: none;
+  scroll-snap-align: start;
+}
+#top .cards-scroll--works > li.card:hover,
+#top .cards-scroll--works > li.card:focus-within {
+  border-color: transparent;
+  background: transparent;
+}
+#top .cards-scroll--works .card--work .card__link,
+#top .cards-scroll--works .card__link {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0;
+  min-height: 0;
+  width: 100%;
+  height: auto;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 1.65rem;
+  background: var(--surface);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+#top .cards-scroll--works .card__link:hover,
+#top .cards-scroll--works .card:focus-within .card__link,
+#top .cards-scroll--works .card--work .card__link:hover,
+#top .cards-scroll--works .card--work:focus-within .card__link {
+  background: var(--accent-weak);
+  border-color: var(--line-strong);
+}
+#top .cards-scroll--works .card--work .card__thumb {
+  grid-column: auto;
+  grid-row: auto;
+  flex: 0 0 auto;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  padding-top: 0;
+  aspect-ratio: 16 / 9;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  align-self: stretch;
+  overflow: hidden;
+  background: var(--accent-weak);
+}
+#top .cards-scroll--works .card--work .card__thumb img:not(.thumb-logo),
+#top .cards-scroll--works .card--work .card__thumb svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+#top .cards-scroll--works .card--work .card__thumb img.thumb-logo {
+  width: auto;
+  height: 72%;
+  object-fit: contain;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 0;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  box-shadow: none;
+}
+#top .cards-scroll--works .card--work .card__thumb img.thumb-logo--app {
+  border-radius: 22%;
+}
+#top .cards-scroll--works #bookmark-org .card__thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-weak);
+}
+#top .cards-scroll--works #bookmark-org .card__thumb img.thumb-wordmark {
+  position: static;
+  inset: auto;
+  top: auto;
+  left: auto;
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 90%;
+  max-height: 62%;
+  object-fit: contain;
+  object-position: center;
+  transform: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+#top .cards-scroll--works #bookmark-org:hover .card__thumb img.thumb-wordmark,
+#top .cards-scroll--works #bookmark-org:focus-within .card__thumb img.thumb-wordmark {
+  transform: none;
+}
+#top .cards-scroll--works .card--work:hover .card__thumb img.thumb-logo,
+#top .cards-scroll--works .card--work:focus-within .card__thumb img.thumb-logo {
+  transform: translate(-50%, -50%);
+}
+#top .cards-scroll--works .card--work .card__content {
+  grid-column: auto;
+  grid-row: auto;
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
+  padding: 0.72rem 0.9rem 0.8rem;
+  gap: 0.22rem;
+  align-self: stretch;
+  text-align: left;
+  width: 100%;
+}
+#top .cards-scroll--works .card--work .badge--corner,
+#top .cards-scroll--works .card--work .badge.badge--web.badge--corner,
+#top .cards-scroll--works .card--work .badge.badge--platform.badge--corner,
+#top .cards-scroll--works .card--work .badge.badge--organization.badge--corner {
+  display: inline-flex;
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  left: auto;
+  grid-column: auto;
+  grid-row: auto;
+  justify-self: auto;
+  align-self: auto;
+  font-size: 0.68rem;
+  padding: 0.18rem 0.5rem;
+}
+#top .cards-scroll--works .card--work .badge--soon {
+  position: absolute;
+  left: 0.5rem;
+  bottom: 0.5rem;
+  top: auto;
+  right: auto;
+  z-index: 2;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  padding: 0.16rem 0.42rem;
+}
+#top .cards-scroll--works .card--work h3 {
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: left;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+#top .cards-scroll--works .card--work .card__link p:not(.card__note) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  margin: 0;
+}
+#top .cards-scroll--works .card--work .card__note {
+  display: none;
+}
+@media (max-width: 640px) {
+  #top .cards-scroll--works > li,
+  #top .cards-scroll--works > li.card {
+    flex-basis: 15.5rem;
+    width: 15.5rem;
+    min-width: 15.5rem;
+    max-width: 15.5rem;
+  }
+  #top .cards-scroll--works .card--work h3 {
+    font-size: 0.9rem;
+  }
+  #top .cards-scroll--works .card--work .card__content {
+    padding: 0.58rem 0.72rem 0.68rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #top .works-marquee {
+    scroll-snap-type: x proximity;
+  }
+}
+:root[data-reduced-effects='true'] #top .works-marquee {
+  scroll-snap-type: x proximity;
 }
 
 /* サブページ：読みやすいカード */

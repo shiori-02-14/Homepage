@@ -1305,6 +1305,62 @@ const initFilterCardMotion = () => {
   });
 };
 
+const initWorksScroller = () => {
+  if (!document.body || document.body.id !== 'top') return;
+  const host = document.querySelector('#top .works-marquee');
+  if (!host || host.dataset.scrollerReady === 'true') return;
+  host.dataset.scrollerReady = 'true';
+
+  let pointerId = null;
+  let dragging = false;
+  let startX = 0;
+  let startScroll = 0;
+  let moved = 0;
+
+  host.addEventListener('pointerdown', (event) => {
+    if (event.pointerType === 'touch' || event.button !== 0) return;
+    pointerId = event.pointerId;
+    dragging = true;
+    moved = 0;
+    startX = event.clientX;
+    startScroll = host.scrollLeft;
+    host.classList.add('is-dragging');
+    host.setPointerCapture(event.pointerId);
+  });
+
+  host.addEventListener('pointermove', (event) => {
+    if (!dragging || event.pointerId !== pointerId) return;
+    const dx = event.clientX - startX;
+    moved = Math.max(moved, Math.abs(dx));
+    if (moved > 4) {
+      host.scrollLeft = startScroll - dx;
+    }
+  });
+
+  const endDrag = (event) => {
+    if (!dragging || (event && event.pointerId !== pointerId)) return;
+    dragging = false;
+    pointerId = null;
+    host.classList.remove('is-dragging');
+  };
+
+  host.addEventListener('pointerup', endDrag);
+  host.addEventListener('pointercancel', endDrag);
+
+  host.addEventListener('click', (event) => {
+    if (moved <= 8) return;
+    event.preventDefault();
+    event.stopPropagation();
+  }, true);
+
+  host.addEventListener('wheel', (event) => {
+    if (host.scrollWidth <= host.clientWidth) return;
+    if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+    event.preventDefault();
+    host.scrollLeft += event.deltaY;
+  }, { passive: false });
+};
+
 const initFriendAvatars = () => {
   document.querySelectorAll('.friend-card__avatar img').forEach((img) => {
     img.referrerPolicy = 'no-referrer';
@@ -1339,6 +1395,7 @@ const initPage = () => {
   initFortune();
   initProfileTimelineFuture();
   initWorksFilter();
+  initWorksScroller();
   initFriendAvatars();
 };
 
