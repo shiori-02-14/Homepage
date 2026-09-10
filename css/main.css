@@ -3139,15 +3139,22 @@ a.friend-card::after {
   left: 50%;
   transform: translate(-50%, -50%) scale(1);
   width: auto;
-  height: 72%;
+  height: auto;
+  max-width: 88%;
+  max-height: 68%;
   border-radius: 0;
-  border: 1px solid rgba(15,23,42,.10);
-  box-shadow: 0 18px 40px -34px rgba(15,23,42,.35);
+  border: none;
+  box-shadow: none;
 }
 #works-page .card--work .card__thumb img.thumb-logo--app {
   border-radius: 22%;
+  height: 72%;
+  max-width: none;
+  max-height: none;
+  border: 1px solid rgba(15,23,42,.10);
+  box-shadow: 0 18px 40px -34px rgba(15,23,42,.35);
 }
-:root[data-theme='dark'] #works-page .card--work .card__thumb img.thumb-logo {
+:root[data-theme='dark'] #works-page .card--work .card__thumb img.thumb-logo--app {
   border-color: rgba(255,255,255,.20);
   box-shadow: 0 22px 52px -42px rgba(0,0,0,.85);
 }
@@ -3240,6 +3247,19 @@ a.friend-card::after {
   word-break: normal;
   line-break: normal;
   text-wrap: wrap;
+}
+#works-page .card--work .card__content > p:not(.card__note) {
+  margin: 0.2rem 0 0;
+  min-width: 0;
+  width: 100%;
+  color: var(--muted);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: normal;
 }
 #articles-page .card__date {
   font-size: 0.9rem;
@@ -3561,22 +3581,29 @@ a.friend-card::after {
   transform: translateX(130%);
 }
 .card__thumb img.thumb-logo {
-  /* ロゴは中央配置。角丸（アプリアイコン）は NEXUS のみ */
+  /* 横長ワードマークは枠なし。角丸と枠はアプリアイコンのみ */
   object-fit: contain;
   inset: auto;
   top: 50%;
   left: 50%;
   width: auto;
-  height: 72%;
+  height: auto;
+  max-width: 88%;
+  max-height: 68%;
   border-radius: 0;
-  border: 1px solid rgba(15,23,42,.10);
-  box-shadow: 0 18px 40px -34px rgba(15,23,42,.35);
+  border: none;
+  box-shadow: none;
   transform: translate(-50%, -50%) scale(1);
 }
 .card__thumb img.thumb-logo.thumb-logo--app {
   border-radius: 22%;
+  height: 72%;
+  max-width: none;
+  max-height: none;
+  border: 1px solid rgba(15,23,42,.10);
+  box-shadow: 0 18px 40px -34px rgba(15,23,42,.35);
 }
-:root[data-theme='dark'] .card__thumb img.thumb-logo {
+:root[data-theme='dark'] .card__thumb img.thumb-logo.thumb-logo--app {
   border-color: rgba(255,255,255,.20);
   box-shadow: 0 22px 52px -42px rgba(0,0,0,.85);
 }
@@ -6011,8 +6038,8 @@ html { scroll-behavior: smooth; }
     width: 100%;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-    line-clamp: 1;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
     overflow: hidden;
   }
   #works-page .card--work .card__content > h3 + .card__note:only-of-type {
@@ -7661,17 +7688,23 @@ section.fortune-section .fortune-title {
 }
 #top .cards-scroll--works .card--work .card__thumb img.thumb-logo {
   width: auto;
-  height: 72%;
+  height: auto;
+  max-width: 88%;
+  max-height: 68%;
   object-fit: contain;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 0;
-  border: 1px solid rgba(15, 23, 42, 0.1);
+  border: none;
   box-shadow: none;
 }
 #top .cards-scroll--works .card--work .card__thumb img.thumb-logo--app {
   border-radius: 22%;
+  height: 72%;
+  max-width: none;
+  max-height: none;
+  border: 1px solid rgba(15, 23, 42, 0.1);
 }
 #top .cards-scroll--works #bookmark-org .card__thumb {
   display: flex;

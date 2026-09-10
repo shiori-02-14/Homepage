@@ -1163,9 +1163,26 @@ const initWorksFilter = () => {
     });
   });
 
-  const allTab = document.getElementById('works-filter-all');
-  if (allTab) allTab.classList.add('articles-filter__tab--active');
-  applyFilter('all');
+  const hashId = (location.hash || '').replace('#', '');
+  const hashCard = hashId ? document.getElementById(hashId) : null;
+  const hashType = hashCard && hashCard.classList.contains('card--work')
+    ? hashCard.getAttribute('data-work-type')
+    : '';
+  const initialFilter = hashType === 'plan' ? 'plan' : 'all';
+  const initialTab = document.getElementById(`works-filter-${initialFilter}`) || document.getElementById('works-filter-all');
+
+  filterTabs.forEach((tab) => {
+    const selected = tab === initialTab;
+    tab.setAttribute('aria-selected', selected ? 'true' : 'false');
+    tab.classList.toggle('articles-filter__tab--active', selected);
+  });
+  applyFilter(initialFilter);
+
+  if (hashCard) {
+    requestAnimationFrame(() => {
+      hashCard.scrollIntoView({ block: 'center' });
+    });
+  }
 };
 
 const initHeroMotion = () => {
