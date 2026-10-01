@@ -4614,6 +4614,11 @@ a.friend-card::after {
   outline: none;
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 38%, transparent);
 }
+#profile-page .profile-timeline__title-icon-link.profile-timeline__title-icon-link--inline {
+  display: inline-flex;
+  vertical-align: -0.28em;
+  margin: 0 0.28rem 0 0.12rem;
+}
 #profile-page .profile-timeline__title--with-logo {
   display: flex;
   align-items: center;
