@@ -436,7 +436,7 @@ ${pageDescription ? `  <meta property="og:description" content="${escapeAttr(pag
   <meta name="twitter:image:alt" content="${escapeAttr(article.imageAlt || `${article.title} の画像`)}" />
 ${pageDescription ? `  <meta name="twitter:description" content="${escapeAttr(pageDescription)}" />` : ''}
 
-  <link rel="stylesheet" href="../css/main.css?v=20260630-theme" />
+  <link rel="stylesheet" href="../css/main.css?v=20261003-breadcrumb" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -482,6 +482,13 @@ ${pageDescription ? `  <meta name="twitter:description" content="${escapeAttr(pa
 
   <main class="wrap">
     <article class="article-shell narrow" aria-labelledby="article-title">
+      <nav class="breadcrumb" aria-label="パンくずリスト">
+        <ol class="breadcrumb__list">
+          <li class="breadcrumb__item"><a href="../index.html">Home</a></li>
+          <li class="breadcrumb__item"><a href="../articles.html">Articles</a></li>
+          <li class="breadcrumb__item" aria-current="page">${escapeHtml(article.title)}</li>
+        </ol>
+      </nav>
       <header class="article-header section__intro section__intro--bar">
         <p class="article-kicker">Local Article</p>
         <h1 id="article-title" class="page-title">${escapeHtml(article.title)}</h1>

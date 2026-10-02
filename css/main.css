@@ -838,22 +838,22 @@ section.narrow:not(:first-of-type)::before {
   filter: none;
 }
 
-.cards:not(.cards-scroll) > .card:not(.card--upcoming) {
+.cards:not(.cards-scroll) > .card {
   transition: transform .18s ease, opacity .18s ease;
 }
 
-.cards:not(.cards-scroll) > .card:not(.card--upcoming):hover,
-.cards:not(.cards-scroll) > .card:not(.card--upcoming):focus-within {
+.cards:not(.cards-scroll) > .card:hover,
+.cards:not(.cards-scroll) > .card:focus-within {
   transform: translateY(-2px);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cards:not(.cards-scroll) > .card:not(.card--upcoming) {
+  .cards:not(.cards-scroll) > .card {
     transition: none;
   }
 
-  .cards:not(.cards-scroll) > .card:not(.card--upcoming):hover,
-  .cards:not(.cards-scroll) > .card:not(.card--upcoming):focus-within {
+  .cards:not(.cards-scroll) > .card:hover,
+  .cards:not(.cards-scroll) > .card:focus-within {
     transform: none;
   }
 }
@@ -2088,6 +2088,45 @@ h2 .icon svg {
   background: var(--icon-bg);
   border-color: var(--icon-border);
   color: var(--icon-color);
+}
+
+/* パンくず（サイト内の画面だけ） */
+.breadcrumb {
+  margin: 0 0 0.9rem;
+}
+.breadcrumb__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.breadcrumb__item {
+  display: inline-flex;
+  align-items: baseline;
+  min-width: 0;
+}
+.breadcrumb__item:not(:last-child)::after {
+  content: "/";
+  margin: 0 0.45rem;
+  color: color-mix(in srgb, var(--muted) 65%, transparent);
+}
+.breadcrumb__item a {
+  color: inherit;
+  text-decoration: none;
+}
+.breadcrumb__item a:hover,
+.breadcrumb__item a:focus-visible {
+  color: var(--fg);
+}
+.breadcrumb__item[aria-current="page"] {
+  color: var(--fg);
 }
 
 /* ページタイトル（h1） */
@@ -3499,10 +3538,7 @@ a.friend-card::after {
   letter-spacing: .06em;
 }
 .card.card--upcoming .card__link {
-  cursor: default;
-}
-.card.card--upcoming .card__link:focus-visible {
-  outline:none;
+  cursor: pointer;
 }
 .card--work.card--upcoming .card__construction {
   position: absolute;
@@ -7762,10 +7798,6 @@ section.fortune-section .fortune-title {
 #top .cards-scroll--works .card--work:focus-within .card__thumb img.thumb-logo {
   transform: translate(-50%, -50%);
 }
-:root[data-theme='dark'] #works-page #chousen-navi .card__thumb,
-:root[data-theme='dark'] #top .cards-scroll--works #chousen-navi .card__thumb {
-  background: #f4f4f4;
-}
 #top .cards-scroll--works .card--work .card__content {
   grid-column: auto;
   grid-row: auto;
@@ -8948,5 +8980,72 @@ section.fortune-section .fortune-title {
 #profile-page .profile-github__cta:hover::after,
 #profile-page .profile-github__cta:focus-visible::after {
   transform: translateX(4px);
+}
+
+#coming-soon-page .coming-soon__eyebrow {
+  margin: 0 0 0.55rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+}
+#coming-soon-page .coming-soon__title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(1.85rem, 4.2vw, 2.45rem);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.25;
+}
+#coming-soon-page .coming-soon__work {
+  margin: 0.55rem 0 0;
+  font-family: var(--font-serif);
+  font-size: clamp(1.12rem, 2.4vw, 1.35rem);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+}
+#coming-soon-page .coming-soon__figure {
+  margin: 1.35rem 0 0;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #f7f4ee;
+  aspect-ratio: 16 / 9;
+}
+:root[data-theme='dark'] #coming-soon-page .coming-soon__figure {
+  background: #1c1b19;
+  border-color: var(--line);
+}
+#coming-soon-page .coming-soon__figure img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+#coming-soon-page .coming-soon__figure--logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#coming-soon-page .coming-soon__figure--logo img {
+  width: auto;
+  height: 62%;
+  max-width: 70%;
+  object-fit: contain;
+  border-radius: 22%;
+}
+#coming-soon-page .coming-soon__lead {
+  margin: 1.15rem 0 0;
+  color: var(--muted);
+  line-height: 1.9;
+  letter-spacing: 0.04em;
+}
+#coming-soon-page .coming-soon__note {
+  margin: 0.65rem 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+#coming-soon-page .section__cta {
+  margin-top: 1.75rem;
 }
 

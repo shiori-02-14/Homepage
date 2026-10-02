@@ -14,6 +14,7 @@ const SITEMAP_PAGES = [
   { path: '/', changefreq: 'weekly', priority: '1.0' },
   { path: '/articles.html', changefreq: 'weekly', priority: '0.9' },
   { path: '/works.html', changefreq: 'monthly', priority: '0.8' },
+  { path: '/coming-soon.html', changefreq: 'monthly', priority: '0.4' },
   { path: '/profile.html', changefreq: 'monthly', priority: '0.8' },
   { path: '/advent2026.html', changefreq: 'weekly', priority: '0.7' },
   { path: '/articles/homepage.html', changefreq: 'monthly', priority: '0.7' },
