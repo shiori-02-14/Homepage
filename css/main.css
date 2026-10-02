@@ -4549,8 +4549,11 @@ a.friend-card::after {
   line-break: auto;
   text-wrap: pretty;
 }
-#profile-page .profile-timeline__title-phrase {
-  white-space: normal;
+#profile-page .profile-timeline__title-phrase,
+#profile-page .profile-timeline__nobr {
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: keep-all;
 }
 #profile-page .profile-timeline__title--with-icon {
   display: flex;
@@ -4839,12 +4842,31 @@ a.friend-card::after {
     font-size: 0.8rem;
     padding: 0.12rem 0.52rem;
   }
+  #profile-page .profile-timeline__title,
+  #profile-page .profile-timeline__title--with-icon,
+  #profile-page .profile-timeline__title-text,
   #profile-page .profile-timeline__desc {
-    font-size: 0.9rem;
-    line-height: 1.6;
+    word-break: normal;
+    overflow-wrap: break-word;
+    line-break: strict;
+    text-wrap: pretty;
+  }
+  #profile-page .profile-timeline__title--with-icon {
+    display: block;
+  }
+  #profile-page .profile-timeline__title-icon-link {
+    display: inline-flex;
+    vertical-align: -0.28em;
+    margin: 0 0.32rem 0 0;
   }
   #profile-page .profile-timeline__title-text {
-    flex: 1 1 10rem;
+    display: inline;
+    flex: none;
+    min-width: 0;
+  }
+  #profile-page .profile-timeline__desc {
+    font-size: 0.9rem;
+    line-height: 1.75;
   }
   #profile-page .profile-timeline__title--with-logo {
     gap: 0.22rem;
@@ -4969,12 +4991,10 @@ a.friend-card::after {
     height: 9px;
   }
   #profile-page .profile-timeline__title--with-icon {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.32rem;
+    display: block;
   }
   #profile-page .profile-timeline__title--with-icon .profile-timeline__title-text {
-    flex: 1 1 auto;
+    display: inline;
   }
   #profile-page .profile-timeline__title--with-logo .profile-timeline__title-logo {
     height: 1.5em;
@@ -7741,6 +7761,10 @@ section.fortune-section .fortune-title {
 #top .cards-scroll--works .card--work:hover .card__thumb img.thumb-logo,
 #top .cards-scroll--works .card--work:focus-within .card__thumb img.thumb-logo {
   transform: translate(-50%, -50%);
+}
+:root[data-theme='dark'] #works-page #chousen-navi .card__thumb,
+:root[data-theme='dark'] #top .cards-scroll--works #chousen-navi .card__thumb {
+  background: #f4f4f4;
 }
 #top .cards-scroll--works .card--work .card__content {
   grid-column: auto;
