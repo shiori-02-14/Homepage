@@ -392,7 +392,16 @@ const setupHeaderAutoFit = () => {
     el.style.fontSize = `${best}px`;
   };
 
+  const compactNavQuery = window.matchMedia('(max-width: 760px)');
+
   const fit = () => {
+    if (compactNavQuery.matches) {
+      headerInner.classList.remove('is-overflowing');
+      if (topNav) topNav.style.removeProperty('font-size');
+      if (logoText) logoText.style.removeProperty('font-size');
+      return;
+    }
+
     headerInner.classList.remove('is-overflowing');
 
     // まずCSSの計算値（clamp等）に戻してから、必要なら縮める
@@ -432,6 +441,49 @@ const setupHeaderAutoFit = () => {
   if (window.ResizeObserver) {
     const ro = new ResizeObserver(schedule);
     ro.observe(headerInner);
+  }
+};
+
+const initNavMenu = () => {
+  const header = document.querySelector('.site-header');
+  const nav = header && header.querySelector('.top-nav');
+  const button = header && header.querySelector('.nav-toggle');
+  if (!header || !nav || !button) return;
+
+  const compactNavQuery = window.matchMedia('(max-width: 760px)');
+
+  const setOpen = (open) => {
+    const isOpen = open && compactNavQuery.matches;
+    header.classList.toggle('is-nav-open', isOpen);
+    document.body.classList.toggle('is-nav-open', isOpen);
+    button.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    button.setAttribute('aria-label', isOpen ? 'メニューを閉じる' : 'メニューを開く');
+  };
+
+  button.addEventListener('click', (event) => {
+    event.stopPropagation();
+    setOpen(!header.classList.contains('is-nav-open'));
+  });
+
+  nav.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => setOpen(false));
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!header.classList.contains('is-nav-open')) return;
+    if (header.contains(event.target)) return;
+    setOpen(false);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') setOpen(false);
+  });
+
+  const onChange = () => setOpen(false);
+  if (compactNavQuery.addEventListener) {
+    compactNavQuery.addEventListener('change', onChange);
+  } else if (compactNavQuery.addListener) {
+    compactNavQuery.addListener(onChange);
   }
 };
 
@@ -1328,21 +1380,112 @@ const initWorksScroller = () => {
   if (!host || host.dataset.scrollerReady === 'true') return;
   host.dataset.scrollerReady = 'true';
 
+  const track = host.querySelector('.cards-scroll--works');
+  const reduced = isReducedEffects();
+  let loopWidth = 0;
+  let offset = 0;
+  let dragPaused = false;
+  let inView = true;
+  let raf = 0;
+  let lastTime = 0;
+  let resumeTimer = 0;
+  const speed = 32;
+  const resumeDelay = 1400;
+
+  if (!track || reduced) return;
+
+  const originals = [...track.children];
+  originals.forEach((item) => {
+    const clone = item.cloneNode(true);
+    clone.classList.add('is-clone');
+    clone.removeAttribute('id');
+    clone.setAttribute('aria-hidden', 'true');
+    clone.querySelectorAll('[id]').forEach((node) => node.removeAttribute('id'));
+    clone.querySelectorAll('a').forEach((link) => {
+      link.tabIndex = -1;
+    });
+    track.appendChild(clone);
+  });
+  host.classList.add('is-auto');
+
+  const measure = () => {
+    const count = originals.length;
+    const first = track.children[0];
+    const firstClone = track.children[count];
+    if (!first || !firstClone) {
+      loopWidth = 0;
+      return;
+    }
+    loopWidth = firstClone.offsetLeft - first.offsetLeft;
+  };
+
+  const applyOffset = () => {
+    if (loopWidth <= 0) return;
+    offset = ((offset % loopWidth) + loopWidth) % loopWidth;
+    track.style.transform = `translate3d(${-offset}px, 0, 0)`;
+  };
+
+  const holdFlow = (holding) => {
+    host.classList.toggle('is-paused', holding);
+  };
+
+  const cancelResume = () => {
+    window.clearTimeout(resumeTimer);
+  };
+
+  const scheduleResume = () => {
+    cancelResume();
+    dragPaused = true;
+    holdFlow(true);
+    resumeTimer = window.setTimeout(() => {
+      dragPaused = false;
+      holdFlow(false);
+      lastTime = 0;
+    }, resumeDelay);
+  };
+
+  const canRun = () => !dragPaused
+    && inView
+    && loopWidth > 1;
+
+  const tick = (now) => {
+    raf = requestAnimationFrame(tick);
+    if (!lastTime) lastTime = now;
+    const dt = Math.min(48, now - lastTime);
+    lastTime = now;
+    if (!canRun()) return;
+    offset += (speed * dt) / 1000;
+    applyOffset();
+  };
+
+  const start = () => {
+    if (raf) return;
+    lastTime = 0;
+    raf = requestAnimationFrame(tick);
+  };
+
   let pointerId = null;
   let dragging = false;
   let startX = 0;
-  let startScroll = 0;
+  let startOffset = 0;
   let moved = 0;
 
   host.addEventListener('pointerdown', (event) => {
-    if (event.pointerType === 'touch' || event.button !== 0) return;
+    if (event.pointerType !== 'touch' && event.button !== 0) return;
     pointerId = event.pointerId;
     dragging = true;
+    dragPaused = true;
+    cancelResume();
+    holdFlow(true);
     moved = 0;
     startX = event.clientX;
-    startScroll = host.scrollLeft;
+    startOffset = offset;
     host.classList.add('is-dragging');
-    host.setPointerCapture(event.pointerId);
+    try {
+      host.setPointerCapture(event.pointerId);
+    } catch (_) {
+      // ポインタが既に離れている場合は無視する
+    }
   });
 
   host.addEventListener('pointermove', (event) => {
@@ -1350,7 +1493,8 @@ const initWorksScroller = () => {
     const dx = event.clientX - startX;
     moved = Math.max(moved, Math.abs(dx));
     if (moved > 4) {
-      host.scrollLeft = startScroll - dx;
+      offset = startOffset - dx;
+      applyOffset();
     }
   });
 
@@ -1359,10 +1503,26 @@ const initWorksScroller = () => {
     dragging = false;
     pointerId = null;
     host.classList.remove('is-dragging');
+    if (moved > 8) {
+      scheduleResume();
+      return;
+    }
+    dragPaused = false;
+    holdFlow(false);
+    lastTime = 0;
   };
 
   host.addEventListener('pointerup', endDrag);
   host.addEventListener('pointercancel', endDrag);
+
+  host.addEventListener('wheel', (event) => {
+    if (Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
+    if (loopWidth <= 1) return;
+    event.preventDefault();
+    offset += event.deltaX;
+    applyOffset();
+    scheduleResume();
+  }, { passive: false });
 
   host.addEventListener('click', (event) => {
     if (moved <= 8) return;
@@ -1370,12 +1530,35 @@ const initWorksScroller = () => {
     event.stopPropagation();
   }, true);
 
-  host.addEventListener('wheel', (event) => {
-    if (host.scrollWidth <= host.clientWidth) return;
-    if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
-    event.preventDefault();
-    host.scrollLeft += event.deltaY;
-  }, { passive: false });
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) lastTime = 0;
+  });
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      inView = entries.some((entry) => entry.isIntersecting);
+      if (inView) lastTime = 0;
+    }, { rootMargin: '120px' });
+    observer.observe(host);
+  }
+
+  const onResize = () => {
+    const previous = loopWidth;
+    measure();
+    if (previous > 0 && loopWidth > 0) {
+      offset = offset * (loopWidth / previous);
+    }
+    applyOffset();
+  };
+  window.addEventListener('resize', onResize);
+  if ('ResizeObserver' in window) {
+    const resizeObserver = new ResizeObserver(onResize);
+    resizeObserver.observe(host);
+  }
+
+  measure();
+  applyOffset();
+  start();
 };
 
 const initFriendAvatars = () => {
@@ -1400,6 +1583,7 @@ const initPage = () => {
   initYearStamp();
   initReloadButton();
   setupHeaderAutoFit();
+  initNavMenu();
   initAnchorScroll();
   initPageReady();
   initScrollReveal();

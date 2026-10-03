@@ -26,7 +26,7 @@
   <meta name="twitter:image" content="https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg" />
   <meta name="twitter:image:alt" content="しおり🔖のアイコン" />
 
-  <link rel="stylesheet" href="css/main.css?v=20261003-breadcrumb" />
+  <link rel="stylesheet" href="css/main.css?v=20261003-circles" />
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -45,13 +45,15 @@
         <span class="reload-text">しおり🔖</span>
       </a>
 
-      <nav class="top-nav" aria-label="サイト内リンク">
+      <nav class="top-nav" id="site-nav" aria-label="サイト内リンク">
         <a href="index.html">Home</a>
         <a href="articles.html">Articles</a>
         <a href="works.html">Works</a>
+        <a href="links.html">Links</a>
         <a href="profile.html" aria-current="page">Profile</a>
       </nav>
 
+      <div class="site-header__tools">
       <button class="theme-toggle theme-toggle--switch" id="theme-toggle" type="button" role="switch" aria-checked="false" aria-label="ダークモードに切り替え" title="テーマを切り替え">
         <span class="theme-toggle__glyph theme-toggle__glyph--sun" aria-hidden="true">
           <svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24" role="presentation">
@@ -69,17 +71,20 @@
         </span>
         <span class="theme-toggle__text sr-only">ライト</span>
       </button>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="メニューを開く">
+        <svg class="nav-toggle__icon nav-toggle__icon--open" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16"></path>
+        </svg>
+        <svg class="nav-toggle__icon nav-toggle__icon--close" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18"></path>
+        </svg>
+      </button>
+      </div>
     </div>
   </header>
 
   <main class="wrap">
     <section class="profile-section narrow" aria-labelledby="profile-title">
-      <nav class="breadcrumb" aria-label="パンくずリスト">
-        <ol class="breadcrumb__list">
-          <li class="breadcrumb__item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb__item" aria-current="page">Profile</li>
-        </ol>
-      </nav>
       <div class="section__intro section__intro--bar">
         <h1 id="profile-title" class="page-title"><span class="icon icon--profile" aria-hidden="true">
           <svg viewBox="0 0 24 24" role="presentation">
@@ -119,6 +124,11 @@
             <span class="profile-intro-card__route-item profile-intro-card__route-item--past"><a href="https://www.mod.go.jp/nda/" target="_blank" rel="noopener noreferrer">防衛大学校（中退）</a></span>
             <span class="profile-intro-card__route-arrow" aria-hidden="true">→</span>
             <span class="profile-intro-card__route-item profile-intro-card__route-item--current"><a href="https://www.uec.ac.jp/" target="_blank" rel="noopener noreferrer">電気通信大学</a></span>
+          </dd>
+          <dt>Circles</dt>
+          <dd class="profile-intro-card__tags">
+            <a href="https://www.bubu.club.uec.ac.jp/" target="_blank" rel="noopener noreferrer">文藝文学総合研究会（ぶぶ研）</a>
+            <a href="https://wiki.mma.club.uec.ac.jp/" target="_blank" rel="noopener noreferrer">MMA</a>
           </dd>
           <dt>MBTI</dt>
           <dd>ENFJ-T</dd>
@@ -173,6 +183,7 @@
                   <li tabindex="0" aria-label="HTML"><img class="profile-skills__icon" data-skill="html" src="https://skillicons.dev/icons?i=html&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">HTML</span></li>
                   <li tabindex="0" aria-label="CSS"><img class="profile-skills__icon" data-skill="css" src="https://skillicons.dev/icons?i=css&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">CSS</span></li>
                   <li tabindex="0" aria-label="JavaScript"><img class="profile-skills__icon" data-skill="js" src="https://skillicons.dev/icons?i=js&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">JavaScript</span></li>
+                  <li tabindex="0" aria-label="TypeScript"><img class="profile-skills__icon" data-skill="ts" src="https://skillicons.dev/icons?i=ts&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">TypeScript</span></li>
                   <li tabindex="0" aria-label="Python"><img class="profile-skills__icon" data-skill="python" src="https://skillicons.dev/icons?i=python&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Python</span></li>
                   <li tabindex="0" aria-label="Ruby"><img class="profile-skills__icon" data-skill="ruby" src="https://skillicons.dev/icons?i=ruby&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Ruby</span></li>
                   <li tabindex="0" aria-label="Go"><img class="profile-skills__icon" data-skill="golang" src="https://skillicons.dev/icons?i=golang&amp;theme=light" alt="" width="48" height="48" loading="lazy" decoding="async" /><span class="profile-skills__label" aria-hidden="true">Go</span></li>
@@ -506,7 +517,7 @@
     </footer>
   </main>
 
-  <script src="js/main.js?v=20260728-theme-first" defer></script>
+  <script src="js/main.js?v=20261003-nav-menu2" defer></script>
   <script src="data/github-contributions.js?v=20260701-792" defer></script>
   <script src="js/github-contributions.js?v=20260702-gh16" defer></script>
 

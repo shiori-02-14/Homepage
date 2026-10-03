@@ -742,7 +742,7 @@ html.theme-transitioning body {
 }
 :root[data-theme='dark'] #works-page .card--work .card__thumb,
 :root[data-theme='dark'] #works-page #bookmark-org .card__thumb,
-:root[data-theme='dark'] #top .cards-scroll--works #bookmark-org .card__thumb,
+:root[data-theme='dark'] #top .cards-scroll--works .card--bookmark .card__thumb,
 :root[data-theme='dark'] #articles-page .card--article .card__thumb {
   background: var(--surface-raised);
 }

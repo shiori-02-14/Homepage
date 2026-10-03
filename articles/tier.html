@@ -25,7 +25,7 @@
   <meta name="twitter:image:alt" content="彼女、お借りしますの一ノ瀬千鶴の画像" />
 
 
-  <link rel="stylesheet" href="../css/main.css?v=20261003-breadcrumb" />
+  <link rel="stylesheet" href="../css/main.css?v=20261003-layout" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -42,13 +42,15 @@
         <span class="reload-text">しおり🔖</span>
       </a>
 
-      <nav class="top-nav" aria-label="サイト内リンク">
+      <nav class="top-nav" id="site-nav" aria-label="サイト内リンク">
         <a href="../index.html">Home</a>
         <a href="../articles.html">Articles</a>
         <a href="../works.html">Works</a>
+        <a href="../links.html">Links</a>
         <a href="../profile.html">Profile</a>
       </nav>
 
+      <div class="site-header__tools">
       <button class="theme-toggle theme-toggle--switch" id="theme-toggle" type="button" role="switch" aria-checked="false" aria-label="ダークモードに切り替え" title="テーマを切り替え">
         <span class="theme-toggle__glyph theme-toggle__glyph--sun" aria-hidden="true">
           <svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24" role="presentation">
@@ -66,6 +68,15 @@
         </span>
         <span class="theme-toggle__text sr-only">ライト</span>
       </button>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="メニューを開く">
+        <svg class="nav-toggle__icon nav-toggle__icon--open" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16"></path>
+        </svg>
+        <svg class="nav-toggle__icon nav-toggle__icon--close" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18"></path>
+        </svg>
+      </button>
+      </div>
     </div>
   </header>
 
@@ -257,7 +268,7 @@
     </footer>
   </main>
 
-  <script src="../js/main.js?v=20260728-theme-first" defer></script>
+  <script src="../js/main.js?v=20261003-nav-menu2" defer></script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
