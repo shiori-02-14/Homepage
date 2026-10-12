@@ -452,12 +452,37 @@ const initNavMenu = () => {
 
   const compactNavQuery = window.matchMedia('(max-width: 760px)');
 
+  const focusableInHeader = () => [...header.querySelectorAll('a, button')].filter((el) => (
+    el.getClientRects().length > 0
+  ));
+
+  const syncScrollbarGap = (lock) => {
+    if (!lock) {
+      document.documentElement.style.removeProperty('--nav-scrollbar-gap');
+      return;
+    }
+    const gap = Math.max(0, window.innerWidth - document.documentElement.clientWidth);
+    document.documentElement.style.setProperty('--nav-scrollbar-gap', `${gap}px`);
+  };
+
   const setOpen = (open) => {
     const isOpen = open && compactNavQuery.matches;
+    const wasOpen = header.classList.contains('is-nav-open');
+    if (isOpen && !wasOpen) syncScrollbarGap(true);
     header.classList.toggle('is-nav-open', isOpen);
     document.body.classList.toggle('is-nav-open', isOpen);
+    if (!isOpen) syncScrollbarGap(false);
     button.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
     button.setAttribute('aria-label', isOpen ? 'メニューを閉じる' : 'メニューを開く');
+
+    if (isOpen && !wasOpen) {
+      const current = nav.querySelector('[aria-current="page"]') || nav.querySelector('a');
+      window.requestAnimationFrame(() => {
+        if (current) current.focus({ preventScroll: true });
+      });
+    } else if (!isOpen && wasOpen && nav.contains(document.activeElement)) {
+      button.focus({ preventScroll: true });
+    }
   };
 
   button.addEventListener('click', (event) => {
@@ -476,7 +501,25 @@ const initNavMenu = () => {
   });
 
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') setOpen(false);
+    if (!header.classList.contains('is-nav-open')) return;
+    if (event.key === 'Escape') {
+      setOpen(false);
+      return;
+    }
+    if (event.key !== 'Tab') return;
+
+    const items = focusableInHeader();
+    if (!items.length) return;
+    const first = items[0];
+    const last = items[items.length - 1];
+    const active = document.activeElement;
+    if (event.shiftKey && (active === first || !header.contains(active))) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && (active === last || !header.contains(active))) {
+      event.preventDefault();
+      first.focus();
+    }
   });
 
   const onChange = () => setOpen(false);

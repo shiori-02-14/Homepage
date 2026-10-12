@@ -436,7 +436,7 @@ ${pageDescription ? `  <meta property="og:description" content="${escapeAttr(pag
   <meta name="twitter:image:alt" content="${escapeAttr(article.imageAlt || `${article.title} の画像`)}" />
 ${pageDescription ? `  <meta name="twitter:description" content="${escapeAttr(pageDescription)}" />` : ''}
 
-  <link rel="stylesheet" href="../css/main.css?v=20261003-nav-menu2" />
+  <link rel="stylesheet" href="../css/main.css?v=20261012-card-h" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -454,11 +454,11 @@ ${pageDescription ? `  <meta name="twitter:description" content="${escapeAttr(pa
       </a>
 
       <nav class="top-nav" id="site-nav" aria-label="サイト内リンク">
-        <a href="../index.html">Home</a>
-        <a href="../articles.html">Articles</a>
-        <a href="../works.html">Works</a>
-        <a href="../links.html">Links</a>
-        <a href="../profile.html">Profile</a>
+        <a href="../index.html"><span class="nav-label">ホーム</span><span class="nav-en" lang="en" aria-hidden="true">Home</span></a>
+        <a href="../articles.html" aria-current="page"><span class="nav-label">記事</span><span class="nav-en" lang="en" aria-hidden="true">Articles</span></a>
+        <a href="../works.html"><span class="nav-label">作品</span><span class="nav-en" lang="en" aria-hidden="true">Works</span></a>
+        <a href="../links.html"><span class="nav-label">リンク</span><span class="nav-en" lang="en" aria-hidden="true">Links</span></a>
+        <a href="../profile.html"><span class="nav-label">プロフィール</span><span class="nav-en" lang="en" aria-hidden="true">Profile</span></a>
       </nav>
 
       <div class="site-header__tools">
@@ -493,13 +493,6 @@ ${pageDescription ? `  <meta name="twitter:description" content="${escapeAttr(pa
 
   <main class="wrap">
     <article class="article-shell narrow" aria-labelledby="article-title">
-      <nav class="breadcrumb" aria-label="パンくずリスト">
-        <ol class="breadcrumb__list">
-          <li class="breadcrumb__item"><a href="../index.html">Home</a></li>
-          <li class="breadcrumb__item"><a href="../articles.html">Articles</a></li>
-          <li class="breadcrumb__item" aria-current="page">${escapeHtml(article.title)}</li>
-        </ol>
-      </nav>
       <header class="article-header section__intro section__intro--bar">
         <p class="article-kicker">Local Article</p>
         <h1 id="article-title" class="page-title">${escapeHtml(article.title)}</h1>
@@ -527,7 +520,7 @@ ${article.bodyHtml.split('\n').map((line) => `        ${line}`).join('\n')}
     </footer>
   </main>
 
-  <script src="../js/main.js?v=20261003-nav-menu2" defer></script>
+  <script src="../js/main.js?v=20261011-nav-width" defer></script>
   <script type="application/ld+json">
 ${jsonLd}
   </script>

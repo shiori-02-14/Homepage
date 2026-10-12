@@ -25,7 +25,7 @@
   <meta name="twitter:image" content="https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg" />
   <meta name="twitter:image:alt" content="しおり🔖のアイコン" />
 
-  <link rel="stylesheet" href="css/main.css?v=20261003-layout" />
+  <link rel="stylesheet" href="css/main.css?v=20261012-card-h" />
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -45,11 +45,11 @@
       </a>
 
       <nav class="top-nav" id="site-nav" aria-label="サイト内リンク">
-        <a href="index.html">Home</a>
-        <a href="articles.html" aria-current="page">Articles</a>
-        <a href="works.html">Works</a>
-        <a href="links.html">Links</a>
-        <a href="profile.html">Profile</a>
+        <a href="index.html"><span class="nav-label">ホーム</span><span class="nav-en" lang="en" aria-hidden="true">Home</span></a>
+        <a href="articles.html" aria-current="page"><span class="nav-label">記事</span><span class="nav-en" lang="en" aria-hidden="true">Articles</span></a>
+        <a href="works.html"><span class="nav-label">作品</span><span class="nav-en" lang="en" aria-hidden="true">Works</span></a>
+        <a href="links.html"><span class="nav-label">リンク</span><span class="nav-en" lang="en" aria-hidden="true">Links</span></a>
+        <a href="profile.html"><span class="nav-label">プロフィール</span><span class="nav-en" lang="en" aria-hidden="true">Profile</span></a>
       </nav>
 
       <div class="site-header__tools">
@@ -84,12 +84,6 @@
 
   <main class="wrap">
     <section class="narrow" aria-labelledby="articles-title">
-      <nav class="breadcrumb" aria-label="パンくずリスト">
-        <ol class="breadcrumb__list">
-          <li class="breadcrumb__item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb__item" aria-current="page">Articles</li>
-        </ol>
-      </nav>
       <div class="section__intro section__intro--bar">
         <h1 id="articles-title" class="page-title"><span class="icon icon--articles" aria-hidden="true">
           <svg viewBox="0 0 24 24" role="presentation">
@@ -190,7 +184,7 @@
     </footer>
   </main>
 
-  <script src="js/main.js?v=20261003-nav-menu2" defer></script>
+  <script src="js/main.js?v=20261011-nav-width" defer></script>
   <script src="data/article-images.js" defer></script>
   <script src="data/note-feed.js" defer></script>
   <script src="data/local-articles.js" defer></script>
