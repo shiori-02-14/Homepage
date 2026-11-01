@@ -191,13 +191,19 @@ const buildNoteImages = async (manifest, noteFeedOut) => {
   }
 };
 
+const hasImage = (manifest, link) => Boolean(manifest[normalizeLink(link)]);
+
 const buildQiitaImages = async (manifest) => {
   console.log('qiita API...');
   const items = await fetchJson(`${QIITA_API_URL}?per_page=100`);
   if (!Array.isArray(items)) return;
   for (const item of items) {
     const link = item.url || '';
-    let imageUrl = await fetchOgpImage(link);
+    if (hasImage(manifest, link)) {
+      console.log(`  · ${(item.title || '').slice(0, 40)}`);
+      continue;
+    }
+    const imageUrl = await fetchOgpImage(link);
     setImage(manifest, link, imageUrl);
     console.log(`  ${imageUrl ? '✓' : '–'} ${(item.title || '').slice(0, 40)}`);
   }
@@ -209,6 +215,10 @@ const buildZennImages = async (manifest) => {
   const items = Array.isArray(data?.items) ? data.items : [];
   for (const item of items) {
     const link = item.link || '';
+    if (hasImage(manifest, link)) {
+      console.log(`  · ${(item.title || '').slice(0, 40)}`);
+      continue;
+    }
     let imageUrl = imageFromRss2JsonItem(item);
     if (!imageUrl) imageUrl = await fetchOgpImage(link);
     setImage(manifest, link, imageUrl);
@@ -216,12 +226,35 @@ const buildZennImages = async (manifest) => {
   }
 };
 
+const loadExistingManifest = () => {
+  try {
+    const existing = JSON.parse(fs.readFileSync(path.join(dataDir, 'article-images.json'), 'utf8'));
+    return existing && typeof existing === 'object' ? existing : {};
+  } catch (_) {
+    return {};
+  }
+};
+
 const main = async () => {
-  const manifest = {};
+  const noteOnly = process.argv.includes('--note-only');
+  const manifest = loadExistingManifest();
   const noteFeed = [];
   await buildNoteImages(manifest, noteFeed);
-  await buildQiitaImages(manifest);
-  await buildZennImages(manifest);
+  if (!noteFeed.length) {
+    throw new Error('note feed was empty');
+  }
+  if (!noteOnly) {
+    try {
+      await buildQiitaImages(manifest);
+    } catch (error) {
+      console.warn('qiita images skipped:', error.message);
+    }
+    try {
+      await buildZennImages(manifest);
+    } catch (error) {
+      console.warn('zenn images skipped:', error.message);
+    }
+  }
 
   const sorted = Object.fromEntries(
     Object.entries(manifest).sort(([a], [b]) => a.localeCompare(b))

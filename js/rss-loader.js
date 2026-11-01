@@ -91,11 +91,15 @@
     saveThumbCache();
   };
 
-  const fetchWithTimeout = (url, { timeoutMs = 8000 } = {}) => {
+  const fetchWithTimeout = (url, { timeoutMs = 8000, headers, cache } = {}) => {
+    const init = {};
+    if (headers) init.headers = headers;
+    if (cache) init.cache = cache;
+
     if (typeof AbortController === 'function') {
       const controller = new AbortController();
       const timerId = window.setTimeout(() => controller.abort(), timeoutMs);
-      return fetch(url, { signal: controller.signal })
+      return fetch(url, { ...init, signal: controller.signal })
         .then((response) => {
           window.clearTimeout(timerId);
           return response;
@@ -115,7 +119,7 @@
         reject(new Error(`fetch timeout (${timeoutMs}ms)`));
       }, timeoutMs);
 
-      Promise.resolve(fetch(url))
+      Promise.resolve(fetch(url, init))
         .then((response) => {
           if (settled) return;
           settled = true;
@@ -436,6 +440,7 @@
       const imageUrl = extractOgpImageFromHtml(html);
       if (imageUrl) {
         setCachedOgp(articleUrl, imageUrl);
+        rememberImageUrl(articleUrl, imageUrl);
         return imageUrl;
       }
     } catch (e) {
@@ -445,7 +450,11 @@
   };
 
   const parseItemDate = (item) => {
-    const raw = item?.pubDate || item?.published || item?.updated || item?.created || '';
+    let raw = item?.pubDate || item?.published || item?.updated || item?.created || '';
+    // rss2json は "2026-08-07 06:05:34"。空白のままだと Safari では Invalid Date になり、新しい記事が末尾に落ちる
+    if (typeof raw === 'string' && /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/.test(raw)) {
+      raw = raw.replace(' ', 'T');
+    }
     const date = raw ? new Date(raw) : null;
     if (!date || Number.isNaN(date.getTime())) return { dateMs: 0, dateText: '' };
     return { dateMs: date.getTime(), dateText: formatDate(date) };
@@ -509,6 +518,8 @@
     if (trimmed.length < 100) return false;
     if (/^error code:/i.test(trimmed)) return false;
     if (trimmed.startsWith('{') && trimmed.includes('"error"')) return false;
+    // 廃止されたプロキシは 200 で案内HTMLを返す。フィードとして扱うと新着が消える
+    if (/^<!doctype html/i.test(trimmed) || /^<html[\s>]/i.test(trimmed)) return false;
     return true;
   };
 
@@ -532,7 +543,7 @@
 
     try {
       const allOriginsUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
-      const res = await fetchWithTimeout(allOriginsUrl, { timeoutMs: Math.max(timeoutMs, 8000) });
+      const res = await fetchWithTimeout(allOriginsUrl, { timeoutMs });
       if (!res.ok) return '';
       const payload = await res.json();
       const text = typeof payload?.contents === 'string' ? payload.contents : '';
@@ -544,15 +555,59 @@
   };
 
   const fetchHtmlForOgp = async (pageUrl, { timeoutMs = 7000 } = {}) => {
+    try {
+      const res = await fetchWithTimeout(`https://r.jina.ai/${pageUrl}`, {
+        timeoutMs,
+        headers: {
+          'X-Return-Format': 'html',
+          Accept: 'text/html'
+        },
+        cache: 'no-store'
+      });
+      if (res.ok) {
+        const text = await res.text();
+        if (text && /og:image|twitter:image/i.test(text)) return text;
+      }
+    } catch (error) {
+      debugWarn('jina ogp fetch failed:', pageUrl, error);
+    }
+
     const viaProxy = await fetchTextViaCorsProxy(pageUrl, { timeoutMs });
     if (viaProxy) return viaProxy;
     return '';
   };
 
-  // noteは rss2json 単独だと更新遅延・取得失敗時に止まりやすいため、直接RSS取得も併用
+  // note の RSS は CORS 不可。r.jina.ai は生XMLを返し、廃止済みプロキシより先に届く
+  const fetchNoteRssXml = async () => {
+    const fromJina = (async () => {
+      try {
+        const res = await fetchWithTimeout(`https://r.jina.ai/${NOTE_FEED_URL}`, {
+          timeoutMs: 8000,
+          headers: {
+            'X-Return-Format': 'text',
+            Accept: 'text/plain'
+          },
+          cache: 'no-store'
+        });
+        if (!res.ok) return '';
+        const text = await res.text();
+        return text.includes('<item') ? text : '';
+      } catch (error) {
+        debugWarn('note RSS via jina failed:', error);
+        return '';
+      }
+    })();
+
+    const fromProxy = fetchTextViaCorsProxy(NOTE_FEED_URL, { timeoutMs: 6000 })
+      .then((text) => (text && text.includes('<item') ? text : ''))
+      .catch(() => '');
+
+    return firstTruthy([fromJina, fromProxy]);
+  };
+
   const fetchNoteViaRssRaw = async () => {
     try {
-      const xmlText = await fetchTextViaCorsProxy(NOTE_FEED_URL, { timeoutMs: 10000 });
+      const xmlText = await fetchNoteRssXml();
       if (!xmlText) return [];
       return mapParsedRssItems(parseRSS(xmlText), 'note');
     } catch (e) {
@@ -573,6 +628,27 @@
     });
   };
   registerArticleImages(window.__ARTICLE_IMAGES__);
+
+  const rememberImageUrl = (link, imageUrl) => {
+    const key = normalizeArticleLink(link);
+    const url = String(imageUrl || '').trim();
+    if (!key || !url) return;
+    articleImagesByLink.set(key, url);
+  };
+
+  const applyImageToLiveCards = (link, imageUrl) => {
+    const key = normalizeArticleLink(link);
+    const url = String(imageUrl || '').trim();
+    if (!key || !url) return;
+    document.querySelectorAll('.card--article[data-link]').forEach((card) => {
+      if (card.getAttribute('data-link') !== key) return;
+      setThumbImage(
+        card.querySelector('.card__thumb'),
+        url,
+        card.getAttribute('data-title') || ''
+      );
+    });
+  };
 
   const readSeededNoteFeed = () => {
     const seeded = window.__NOTE_FEED__;
@@ -657,14 +733,24 @@
     return Array.from(byLink.values());
   };
 
-  const fetchNoteArticlesMerged = async () => {
-    const [raw, json] = await Promise.all([
-      fetchNoteViaRssRaw().catch(() => []),
-      fetchFeedItems(NOTE_FEED_URL, 'note', { timeoutMs: 3800 }).catch(() => [])
-    ]);
-    const live = mergeNoteFeedWithRawThumbs(raw, json);
+  // 遅いプロキシを待たず、取れた経路から順に一覧へ足す。失敗した経路でシードを消さない
+  const fetchNoteArticlesMerged = async (onUpdate) => {
     const seeded = readSeededNoteFeed();
-    return seeded.length ? mergeNoteFeedWithRawThumbs(live, seeded) : live;
+    let current = seeded.slice();
+
+    const publish = (incoming) => {
+      const items = Array.isArray(incoming) ? incoming : [];
+      if (!items.length) return;
+      current = mergeNoteFeedWithRawThumbs(items, current);
+      if (typeof onUpdate === 'function') onUpdate(current.slice());
+    };
+
+    await promiseAllSettled([
+      fetchNoteViaRssRaw().then(publish).catch(() => {}),
+      fetchFeedItems(NOTE_FEED_URL, 'note', { timeoutMs: 8000 }).then(publish).catch(() => {})
+    ]);
+
+    return current;
   };
 
   const fetchQiitaViaAtomRaw = async () => {
@@ -862,7 +948,7 @@
     }
 
     const callbackName = `__shioriRss2Jsonp_${Date.now()}_${Math.floor(Math.random() * 1000000)}`;
-    const feedUrl = `${RSS_PROXY}${encodeURIComponent(feedUrlRaw)}&callback=${callbackName}`;
+    const feedUrl = `${RSS_PROXY}${encodeURIComponent(feedUrlRaw)}&_=${Date.now()}&callback=${callbackName}`;
     const script = document.createElement('script');
     let settled = false;
 
@@ -913,7 +999,9 @@
     const timeoutMs = typeof options.timeoutMs === 'number' ? options.timeoutMs : 4200;
     try {
       if (!feedUrlRaw) return [];
-      const feedUrl = RSS_PROXY ? `${RSS_PROXY}${encodeURIComponent(feedUrlRaw)}` : feedUrlRaw;
+      const feedUrl = RSS_PROXY
+        ? `${RSS_PROXY}${encodeURIComponent(feedUrlRaw)}&_=${Date.now()}`
+        : feedUrlRaw;
       
       // RSS2JSONを使う場合
       if (RSS_PROXY.includes('rss2json')) {
@@ -922,7 +1010,7 @@
         }
 
         const viaFetch = (async () => {
-          const response = await fetchWithTimeout(feedUrl, { timeoutMs });
+          const response = await fetchWithTimeout(feedUrl, { timeoutMs, cache: 'no-store' });
           if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
           const data = await response.json();
           debugLog('rss2json items:', Array.isArray(data.items) ? data.items.length : 0);
@@ -1043,6 +1131,7 @@
       li.setAttribute('data-source', article.source);
     }
     li.setAttribute('data-title', article.title);
+    li.setAttribute('data-link', normalizeArticleLink(article.link));
     
     const link = document.createElement('a');
     link.className = 'card__link';
@@ -1250,7 +1339,9 @@
             if (!imageUrl && current.link) imageUrl = await fetchOgpImage(current.link);
             if (!imageUrl) imageUrl = await fetchNoteEyecatch(current.noteKey, current.link);
             if (imageUrl) {
+              rememberImageUrl(current.link, imageUrl);
               current.thumbEls.forEach((thumbEl) => setThumbImage(thumbEl, imageUrl, current.title));
+              applyImageToLiveCards(current.link, imageUrl);
             }
           } catch (error) {
             debugWarn('thumbnail hydrate failed:', error);
@@ -1273,7 +1364,9 @@
             let imageUrl = lookupSeededImageUrl(current.link);
             if (!imageUrl) imageUrl = await fetchOgpImage(current.link);
             if (imageUrl) {
+              rememberImageUrl(current.link, imageUrl);
               setThumbImage(current.thumbEl, imageUrl, current.title);
+              applyImageToLiveCards(current.link, imageUrl);
             }
           } catch (err) {
             debugWarn('OGP hydrate failed:', current.link, err);
@@ -1363,9 +1456,12 @@
         });
 
       // 生RSS と rss2json を並列取得し、MRSS のサムネをリンクでマージ（先勝ちレースだとサムネが落ちる）
-      const noteTask = fetchNoteArticlesMerged()
+      const noteTask = fetchNoteArticlesMerged((items) => {
+        sourceArticles.note = items;
+        renderLive();
+      })
         .then((items) => {
-          sourceArticles.note = Array.isArray(items) ? items : seededNote.slice();
+          sourceArticles.note = Array.isArray(items) && items.length ? items : seededNote.slice();
           renderLive();
         })
         .catch((error) => {

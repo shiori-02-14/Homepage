@@ -4,6 +4,7 @@
   "scripts": {
     "build:articles": "node tools/build-local-articles.js",
     "build:images": "node tools/build-article-images.js",
+    "fetch:note": "node tools/build-article-images.js --note-only",
     "build:sitemap": "node tools/build-sitemap.js",
     "fetch:contributions": "node tools/fetch-github-contributions.js",
     "build": "npm run build:articles && npm run build:images && npm run build:sitemap"

@@ -1,0 +1,37 @@
+# note / Qiita / Zenn の新しい記事と、未登録のサムネイルを取り込む。
+# ページを開いたときの取得に失敗しても、翌日の一覧には残るようにする。
+
+name: Update article feeds
+
+on:
+  schedule:
+    - cron: '30 15 * * *' # 毎日 0:30 JST (15:30 UTC)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch articles and thumbnails
+        run: npm run build:images
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/note-feed.json data/note-feed.js data/article-images.json data/article-images.js
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore: update article feeds"
+            git push
+          fi
