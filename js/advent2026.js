@@ -2,16 +2,21 @@
 'use strict';
 
 /**
- * 公開したらエントリを足すとリンク化されます。
+ * 公開したら href を足すとリンクになります。title は公開記事のタイトルで上書きできます。
  * 例: 1: { href: 'articles/xxx.html', title: 'タイトル', image: 'assets/...', platform: 'local' }
+ * サムネイルは、公開済み記事のタイトルか href から自動で取ります。image があればそれを優先します。
  * platform: local | qiita | note | zenn
  */
-const ADVENT_ARTICLES = {};
+const ADVENT_ARTICLES = Object.fromEntries(
+  Array.from({ length: 25 }, (_, index) => [index + 1, { title: 'タイトル未定' }])
+);
 
 const ADVENT_DAYS = 25;
 const READ_STORAGE_KEY = 'advent2026-read';
 const VIEW_STORAGE_KEY = 'advent2026-view';
 const VALID_VIEWS = new Set(['grid', 'list']);
+
+const UNPUBLISHED_THUMB = 'assets/media/advent/unpublished.jpg';
 
 const PLATFORM_BADGE = {
   local: { label: 'Local', className: 'badge--local' },
@@ -78,15 +83,15 @@ const resolveArticleMeta = (article) => {
   return {
     ...article,
     title: article.title || local?.title || '',
-    image: article.image || local?.imageUrl || '',
-    platform: article.platform || local?.source || 'local',
+    image: article.image || local?.imageUrl || lookupManifestImage(article.href) || '',
+    platform: article.platform || local?.source || '',
   };
 };
 
 const formatAdventDate = (day) => {
   const dd = String(day).padStart(2, '0');
   return {
-    display: `2026/12/${dd}`,
+    display: `Day ${day}`,
     datetime: `2026-12-${dd}`,
   };
 };
@@ -95,149 +100,85 @@ const getPlatformBadge = (platform) => (
   PLATFORM_BADGE[platform] || { label: 'Day', className: 'badge--local' }
 );
 
-const createSimpleDoorFace = (day) => `
-  <span class="advent-door__month" aria-hidden="true">Dec</span>
-  <span class="advent-door__num advent-door__num--large">${day}</span>
-`;
-
-const createArticleDoorHead = (day) => `
-  <span class="advent-door__head">
-    <span class="advent-door__month" aria-hidden="true">Dec</span>
-    <span class="advent-door__num">${day}</span>
-  </span>
-`;
-
-const createLockedDoor = (day, article) => {
-  const title = article?.title?.trim();
+const createPadCell = () => {
   const item = document.createElement('li');
-  item.className = `advent-door advent-door--locked${title ? ' advent-door--planned' : ''}`;
-  item.dataset.day = String(day);
-
-  if (title) {
-    item.innerHTML = `
-      <div class="advent-door__panel advent-door__panel--article" aria-label="12月${day}日 — ${escapeHtml(title)}（予定）">
-        ${createArticleDoorHead(day)}
-        <span class="advent-door__title">${escapeHtml(title)}</span>
-        <span class="advent-door__hint">予定</span>
-      </div>
-    `;
-  } else {
-    item.innerHTML = `
-      <div class="advent-door__panel" aria-label="12月${day}日 — 未定">
-        ${createSimpleDoorFace(day)}
-        <span class="advent-door__hint" aria-hidden="true">—</span>
-      </div>
-    `;
-  }
-
+  item.className = 'advent-cell advent-cell--pad';
+  item.setAttribute('aria-hidden', 'true');
   return item;
 };
 
-const createArticleDoor = (day, article, isRead) => {
-  const meta = resolveArticleMeta(article);
-  const title = meta.title || `12月${day}日`;
-  const hint = isRead ? '読了' : '読む';
+const createCalendarCell = (day, article, status) => {
+  const meta = article ? resolveArticleMeta(article) : null;
+  const title = meta?.title?.trim() || '';
+  const isOpen = status === 'open' && Boolean(meta?.href);
   const item = document.createElement('li');
-  item.className = `advent-door advent-door--open${isRead ? ' advent-door--read' : ''}`;
+  item.className = 'advent-cell';
   item.dataset.day = String(day);
+  if (title) item.classList.add('advent-cell--entry');
+  if (isOpen) item.classList.add('advent-cell--open');
+  if (status === 'ready') item.classList.add('advent-cell--ready');
 
-  const thumbHtml = meta.image
-    ? `<span class="advent-door__thumb"><img src="${escapeHtml(meta.image)}" alt="" width="120" height="68" loading="lazy" decoding="async" /></span>`
+  const image = String(meta?.image || '').trim();
+  const unpublished = Boolean(title) && !isOpen && !image;
+  if (image) item.classList.add('advent-cell--has-thumb');
+  const label = title ? `12月${day}日 — ${title}${unpublished ? '（未公開）' : ''}` : `12月${day}日`;
+  const thumb = image
+    ? `<span class="advent-cell__thumb"><img src="${escapeHtml(image)}" alt="" /></span>`
     : '';
-
-  item.innerHTML = `
-    <a class="advent-door__panel advent-door__link advent-door__panel--article" href="${escapeHtml(meta.href)}" aria-label="12月${day}日 — ${escapeHtml(title)}${isRead ? '（読了）' : ''}">
-      ${createArticleDoorHead(day)}
-      ${thumbHtml}
-      <span class="advent-door__title">${escapeHtml(title)}</span>
-      <span class="advent-door__hint">${hint}</span>
-    </a>
+  const statusHtml = unpublished ? '<span class="advent-cell__status">未公開</span>' : '';
+  const body = `
+    <span class="advent-cell__date">${day}</span>
+    ${thumb}
+    ${statusHtml}
   `;
 
-  item.querySelector('.advent-door__link')?.addEventListener('click', () => {
-    markDayRead(day);
-  });
-
-  return item;
-};
-
-const createReadyDoor = (day, article) => {
-  const title = article?.title?.trim();
-  const item = document.createElement('li');
-  item.className = `advent-door advent-door--ready${title ? ' advent-door--planned' : ''}`;
-  item.dataset.day = String(day);
-
-  if (title) {
-    item.innerHTML = `
-      <div class="advent-door__panel advent-door__panel--article" aria-label="12月${day}日 — ${escapeHtml(title)}（準備中）">
-        ${createArticleDoorHead(day)}
-        <span class="advent-door__title">${escapeHtml(title)}</span>
-        <span class="advent-door__hint">準備中</span>
-      </div>
-    `;
-  } else {
-    item.innerHTML = `
-      <div class="advent-door__panel" aria-label="12月${day}日 — 準備中">
-        ${createSimpleDoorFace(day)}
-        <span class="advent-door__hint">準備中</span>
-      </div>
-    `;
-  }
-
-  return item;
-};
-
-const createListCard = ({ day, status, article, isRead }) => {
-  const meta = article ? resolveArticleMeta(article) : null;
-  const date = formatAdventDate(day);
-  const isOpen = status === 'open' && meta?.href;
-  const plannedTitle = meta?.title?.trim() || '';
-  const title = isOpen
-    ? (plannedTitle || `12月${day}日`)
-    : plannedTitle || (status === 'ready' ? '準備中' : '未定');
-  const statusLabel = status === 'ready' ? '準備中' : (plannedTitle ? '予定' : '未定');
-  const badge = getPlatformBadge(meta?.platform);
-
-  const item = document.createElement('li');
-  item.className = `card card--article${isOpen ? '' : ' card--upcoming'}${isRead ? ' card--read' : ''}`;
-  item.dataset.day = String(day);
-
-  const thumbHtml = meta?.image
-    ? `<div class="card__thumb"><img src="${escapeHtml(meta.image)}" alt="${escapeHtml(title)}のサムネ" width="272" height="153" loading="lazy" decoding="async" /></div>`
-    : `<div class="card__thumb card__thumb--placeholder" aria-hidden="true">${
-        isOpen ? '' : `<span class="badge badge--soon">${statusLabel}</span>`
-      }</div>`;
-
-  const badgeHtml = `<span class="badge ${badge.className} badge--corner" aria-hidden="true">${escapeHtml(badge.label)}</span>`;
-
   if (isOpen) {
-    item.innerHTML = `
-      <a class="card__link" href="${escapeHtml(meta.href)}" title="${escapeHtml(title)}">
-        ${badgeHtml}
-        ${thumbHtml}
-        <div class="card__content">
-          <time class="card__date" datetime="${date.datetime}">${date.display}</time>
-          <h3>${escapeHtml(title)}</h3>
-        </div>
-      </a>
-    `;
-    item.querySelector('.card__link')?.addEventListener('click', () => {
+    item.innerHTML = `<a class="advent-cell__body" href="${escapeHtml(meta.href)}" aria-label="${escapeHtml(label)}">${body}</a>`;
+    item.querySelector('a')?.addEventListener('click', () => {
       markDayRead(day);
     });
   } else {
-    item.innerHTML = `
-      <a class="card__link" href="#!" aria-disabled="true" tabindex="-1">
+    item.innerHTML = `<div class="advent-cell__body" aria-label="${escapeHtml(label)}">${body}</div>`;
+  }
+
+  return item;
+};
+
+const createListCard = ({ day, article, isRead }) => {
+  const meta = article ? resolveArticleMeta(article) : null;
+  const title = meta?.title?.trim() || 'タイトル未定';
+
+  const date = formatAdventDate(day);
+  const isOpen = Boolean(meta?.href);
+  const badge = meta?.platform ? getPlatformBadge(meta.platform) : null;
+  const item = document.createElement('li');
+  item.className = `card card--article${isOpen ? '' : ' card--upcoming'}${isOpen && isRead ? ' card--read' : ''}`;
+  item.dataset.day = String(day);
+
+  const thumbHtml = isOpen && meta?.image
+    ? `<div class="card__thumb"><img src="${escapeHtml(meta.image)}" alt="" width="272" height="153" loading="lazy" decoding="async" /></div>`
+    : `<div class="card__thumb card__thumb--unpublished"><img src="${UNPUBLISHED_THUMB}" alt="" width="1024" height="576" loading="lazy" decoding="async" /></div>`;
+  const badgeHtml = badge
+    ? `<span class="badge ${badge.className} badge--corner">${escapeHtml(badge.label)}</span>`
+    : '';
+  const body = `
+    ${thumbHtml}
+    <div class="card__content">
+      <div class="card__head">
+        <time class="card__date" datetime="${date.datetime}">${date.display}</time>
         ${badgeHtml}
-        ${thumbHtml}
-        <div class="card__content">
-          <time class="card__date" datetime="${date.datetime}">${date.display}</time>
-          <h3>${escapeHtml(title)}</h3>
-        </div>
-      </a>
-    `;
-    item.querySelector('.card__link')?.addEventListener('click', (event) => {
-      event.preventDefault();
+      </div>
+      <h3>${escapeHtml(title)}</h3>
+    </div>
+  `;
+
+  if (isOpen) {
+    item.innerHTML = `<a class="card__link" href="${escapeHtml(meta.href)}">${body}</a>`;
+    item.querySelector('a')?.addEventListener('click', () => {
+      markDayRead(day);
     });
+  } else {
+    item.innerHTML = `<div class="card__link">${body}</div>`;
   }
 
   return item;
@@ -267,30 +208,202 @@ const buildDayState = (day, jst, readDays) => {
     if (canPreview) {
       return {
         published: true,
-        grid: () => createArticleDoor(day, article, readDays.has(day)),
-        list: () => createListCard({ day, status: 'open', article, isRead: readDays.has(day) }),
+        grid: () => createCalendarCell(day, article, 'open'),
+        list: () => createListCard({ day, article, isRead: readDays.has(day) }),
       };
     }
     return {
       published: true,
-      grid: () => createLockedDoor(day, article),
-      list: () => createListCard({ day, status: 'locked', article }),
+      grid: () => createCalendarCell(day, article, 'locked'),
+      list: () => createListCard({ day, article, isRead: readDays.has(day) }),
     };
   }
 
   if (unlocked) {
     return {
       published: false,
-      grid: () => createReadyDoor(day, article),
-      list: () => createListCard({ day, status: 'ready', article }),
+      grid: () => createCalendarCell(day, article, 'ready'),
+      list: () => createListCard({ day, article, isRead: readDays.has(day) }),
     };
   }
 
   return {
     published: false,
-    grid: () => createLockedDoor(day, article),
-    list: () => createListCard({ day, status: 'locked', article }),
+    grid: () => createCalendarCell(day, article, 'locked'),
+    list: () => createListCard({ day, article, isRead: readDays.has(day) }),
   };
+};
+
+const normalizeTitle = (value) => String(value || '')
+  .replace(/\s+/g, '')
+  .replace(/[～〜]/g, '~')
+  .toLowerCase();
+
+const lookupManifestImage = (link) => {
+  const images = window.__ARTICLE_IMAGES__;
+  if (!images || !link) return '';
+  const key = String(link).trim().replace(/\/$/, '');
+  return images[key] || images[link] || '';
+};
+
+const mountListThumb = (day, imageUrl) => {
+  const card = document.querySelector(`#advent-list [data-day="${day}"]`);
+  const slot = card?.querySelector('.card__thumb');
+  if (!slot || !imageUrl || slot.querySelector('img')) return;
+  slot.classList.remove('card__thumb--placeholder');
+  card.querySelector('.advent-entry__status')?.remove();
+  const img = document.createElement('img');
+  img.alt = '';
+  img.width = 272;
+  img.height = 153;
+  img.loading = 'lazy';
+  img.decoding = 'async';
+  img.src = imageUrl;
+  slot.appendChild(img);
+};
+
+const mountCellThumb = (day, imageUrl) => {
+  mountListThumb(day, imageUrl);
+  const cell = document.querySelector(`#advent-grid [data-day="${day}"]`);
+  const body = cell?.querySelector('.advent-cell__body');
+  if (!cell || !body || !imageUrl || cell.querySelector('.advent-cell__thumb')) return;
+  cell.classList.add('advent-cell--has-thumb');
+  cell.querySelector('.advent-cell__status')?.remove();
+  const thumb = document.createElement('span');
+  thumb.className = 'advent-cell__thumb';
+  const img = document.createElement('img');
+  img.alt = '';
+  img.src = imageUrl;
+  thumb.appendChild(img);
+  body.appendChild(thumb);
+};
+
+const fetchJson = async (url, timeoutMs = 6000) => {
+  const controller = new AbortController();
+  const timer = window.setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, { signal: controller.signal, cache: 'no-store' });
+    if (!response.ok) throw new Error(String(response.status));
+    return await response.json();
+  } finally {
+    window.clearTimeout(timer);
+  }
+};
+
+const extractOgpImage = (html) => {
+  const patterns = [
+    /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
+    /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i
+  ];
+  for (const pattern of patterns) {
+    const match = String(html || '').match(pattern);
+    if (!match?.[1]) continue;
+    const url = match[1].replace(/&amp;/g, '&').trim();
+    if (url.startsWith('http')) return url;
+  }
+  return '';
+};
+
+const fetchOgpImage = async (pageUrl) => {
+  const seeded = lookupManifestImage(pageUrl);
+  if (seeded) return seeded;
+  const controller = new AbortController();
+  const timer = window.setTimeout(() => controller.abort(), 7000);
+  try {
+    const response = await fetch(`https://r.jina.ai/${pageUrl}`, {
+      signal: controller.signal,
+      cache: 'no-store',
+      headers: {
+        'X-Return-Format': 'html',
+        Accept: 'text/html'
+      }
+    });
+    if (!response.ok) return '';
+    return extractOgpImage(await response.text());
+  } catch (_) {
+    return '';
+  } finally {
+    window.clearTimeout(timer);
+  }
+};
+
+const collectKnownArticles = async () => {
+  const items = [];
+  const push = (title, link, imageUrl) => {
+    const name = String(title || '').trim();
+    const href = String(link || '').trim();
+    if (!name || !href) return;
+    items.push({
+      title: name,
+      link: href,
+      imageUrl: String(imageUrl || '').trim() || lookupManifestImage(href)
+    });
+  };
+
+  (window.__LOCAL_ARTICLES__ || []).forEach((item) => {
+    push(item.title, item.link, item.imageUrl);
+  });
+  (window.__NOTE_FEED__ || []).forEach((item) => {
+    push(item.title, item.link, item.imageUrl);
+  });
+
+  try {
+    const qiita = await fetchJson('https://qiita.com/api/v2/users/shiori_02_14_/items?per_page=100');
+    if (Array.isArray(qiita)) {
+      qiita.forEach((item) => push(item.title, item.url, ''));
+    }
+  } catch (_) {}
+
+  try {
+    const zenn = await fetchJson('https://zenn.dev/api/articles?username=shiori_02_14&order=latest', 4000);
+    const articles = Array.isArray(zenn?.articles) ? zenn.articles : [];
+    articles.forEach((item) => {
+      const path = item.path || (item.slug ? `/shiori_02_14/articles/${item.slug}` : '');
+      push(item.title, path ? `https://zenn.dev${path}` : '', '');
+    });
+  } catch (_) {}
+
+  return items;
+};
+
+const hydrateAdventThumbs = async () => {
+  const known = await collectKnownArticles();
+  const byTitle = new Map();
+  known.forEach((item) => {
+    const key = normalizeTitle(item.title);
+    if (key && !byTitle.has(key)) byTitle.set(key, item);
+  });
+
+  const jobs = [];
+  for (let day = 1; day <= ADVENT_DAYS; day += 1) {
+    const article = ADVENT_ARTICLES[day];
+    if (!article?.title || article.image) {
+      if (article?.image) mountCellThumb(day, article.image);
+      continue;
+    }
+    const matched = byTitle.get(normalizeTitle(article.title));
+    const link = String(article.href || matched?.link || '').trim();
+    const directImage = matched?.imageUrl || lookupManifestImage(link);
+    if (directImage) {
+      mountCellThumb(day, directImage);
+      continue;
+    }
+    if (/^https?:\/\//i.test(link)) jobs.push({ day, link });
+  }
+
+  let index = 0;
+  const worker = async () => {
+    while (index < jobs.length) {
+      const job = jobs[index];
+      index += 1;
+      const imageUrl = await fetchOgpImage(job.link);
+      if (imageUrl) mountCellThumb(job.day, imageUrl);
+    }
+  };
+  const workers = Math.min(3, jobs.length);
+  if (workers > 0) {
+    await Promise.all(Array.from({ length: workers }, worker));
+  }
 };
 
 const initAdvent2026 = () => {
@@ -302,7 +415,6 @@ const initAdvent2026 = () => {
   const readDays = getReadDays();
   const dayStates = [];
   let publishedCount = 0;
-  let listBuilt = false;
 
   for (let day = 1; day <= ADVENT_DAYS; day += 1) {
     const state = buildDayState(day, jst, readDays);
@@ -311,53 +423,30 @@ const initAdvent2026 = () => {
   }
 
   const gridFragment = document.createDocumentFragment();
+  const leadingBlanks = new Date(Date.UTC(2026, 11, 1)).getUTCDay();
+  for (let index = 0; index < leadingBlanks; index += 1) {
+    gridFragment.appendChild(createPadCell());
+  }
   dayStates.forEach((state) => {
     gridFragment.appendChild(state.grid());
   });
+  const trailingBlanks = (leadingBlanks + ADVENT_DAYS) % 7;
+  if (trailingBlanks) {
+    for (let index = 0; index < 7 - trailingBlanks; index += 1) {
+      gridFragment.appendChild(createPadCell());
+    }
+  }
   grid.appendChild(gridFragment);
 
-  const ensureListBuilt = () => {
-    if (listBuilt) return;
-    listBuilt = true;
-    const listFragment = document.createDocumentFragment();
-    dayStates.forEach((state) => {
-      listFragment.appendChild(state.list());
-    });
-    list.appendChild(listFragment);
-  };
-
-  const applyAdventView = (view) => {
-    const next = VALID_VIEWS.has(view) ? view : 'grid';
-    const isList = next === 'list';
-
-    if (isList) ensureListBuilt();
-
-    grid.hidden = isList;
-    list.hidden = !isList;
-    grid.dataset.view = next;
-    list.dataset.view = next;
-
-    document.querySelectorAll('[data-advent-view]').forEach((btn) => {
-      const active = btn.dataset.adventView === next;
-      btn.classList.toggle('is-active', active);
-      btn.setAttribute('aria-pressed', String(active));
-    });
-
-    try {
-      localStorage.setItem(VIEW_STORAGE_KEY, next);
-    } catch {
-      /* localStorage unavailable */
-    }
-  };
+  const listFragment = document.createDocumentFragment();
+  dayStates.forEach((state) => {
+    const row = state.list();
+    if (row) listFragment.appendChild(row);
+  });
+  list.appendChild(listFragment);
 
   updateProgress(publishedCount);
-  applyAdventView(getStoredView());
-
-  document.querySelectorAll('[data-advent-view]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      applyAdventView(btn.dataset.adventView);
-    });
-  });
+  void hydrateAdventThumbs();
 };
 
 if (document.readyState === 'loading') {

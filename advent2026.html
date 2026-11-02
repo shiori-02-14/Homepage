@@ -25,7 +25,7 @@
   <meta name="twitter:image" content="https://i.pinimg.com/736x/59/0c/a0/590ca0a7e1027cea004f6313ca834456.jpg" />
   <meta name="twitter:image:alt" content="しおり🔖のアイコン" />
 
-  <link rel="stylesheet" href="css/main.css?v=20261012-card-h" />
+  <link rel="stylesheet" href="css/main.css?v=20261102-title-flow" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -88,23 +88,23 @@
           一人アドカレ
           <span class="advent-page__year">2026</span>
         </h1>
-        <p class="advent-page__lead">はじめての一人アドベントカレンダー。12月1日から25日まで、たぶん毎日1記事更新します。</p>
+        <p class="advent-page__lead">はじめての一人アドベントカレンダー。<br>12月1日から25日まで、たぶん毎日1記事更新します。</p>
         <p class="advent-page__meta" id="advent-progress" aria-live="polite"></p>
       </header>
 
-      <div class="advent-toolbar">
-        <div class="advent-view-toggle" role="group" aria-label="表示形式">
-          <button type="button" class="advent-view-toggle__btn is-active" data-advent-view="grid" aria-pressed="true">
-            月グリッド
-          </button>
-          <button type="button" class="advent-view-toggle__btn" data-advent-view="list" aria-pressed="false">
-            リスト
-          </button>
+      <div class="advent-calendar">
+        <div class="advent-weekdays" aria-hidden="true">
+          <span>SUN</span>
+          <span>MON</span>
+          <span>TUE</span>
+          <span>WED</span>
+          <span>THU</span>
+          <span>FRI</span>
+          <span>SAT</span>
         </div>
+        <ul class="advent-grid" id="advent-grid" data-view="grid" aria-label="アドベントカレンダー 2026"></ul>
       </div>
-
-      <ul class="advent-grid" id="advent-grid" data-view="grid" aria-label="アドベントカレンダー 2026"></ul>
-      <ul class="cards advent-list" id="advent-list" data-view="grid" hidden aria-label="アドベントカレンダー 2026 リスト"></ul>
+      <ul class="cards advent-list" id="advent-list" aria-label="アドベントカレンダー 2026 の記事"></ul>
 
       <div class="section__cta">
         <a class="btn btn--ghost" href="index.html">← トップに戻る</a>
@@ -117,8 +117,10 @@
     </footer>
   </main>
 
+  <script src="data/article-images.js" defer></script>
+  <script src="data/note-feed.js" defer></script>
   <script src="data/local-articles.js" defer></script>
-  <script src="js/advent2026.js?v=20260728-perf" defer></script>
+  <script src="js/advent2026.js?v=20261102-day1-color" defer></script>
   <script src="js/main.js?v=20261011-nav-width" defer></script>
 
   <script type="application/ld+json">
